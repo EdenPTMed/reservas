@@ -1,0 +1,1497 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>EDEN Spa - Sistema de Reservas Premium</title>
+    <!-- Tailwind CSS CDN -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <!-- Google Fonts for Premium Look -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@400;600;700&family=Montserrat:wght@300;400;500;600&display=swap" rel="stylesheet">
+    <!-- Lucide Icons for elegant icons -->
+    <script src="https://unpkg.com/lucide@latest"></script>
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    fontFamily: {
+                        serif: ['Cinzel', 'serif'],
+                        sans: ['Montserrat', 'sans-serif'],
+                    },
+                    colors: {
+                        gold: {
+                            50: '#FDFBF7',
+                            100: '#FBF7ED',
+                            200: '#F4EBCE',
+                            300: '#E6D7A4',
+                            400: '#D4AF37', // Gold Premium
+                            500: '#C29B2E',
+                            600: '#A17D20',
+                            700: '#7B5E15',
+                            800: '#523E0C',
+                            900: '#2E2205',
+                        },
+                        dark: {
+                            950: '#070707',
+                            900: '#111111',
+                            800: '#1A1A1A',
+                            700: '#262626',
+                            600: '#333333',
+                        }
+                    },
+                    boxShadow: {
+                        'gold-glow': '0 0 20px rgba(212, 175, 55, 0.15)',
+                        'gold-glow-hover': '0 0 30px rgba(212, 175, 55, 0.3)',
+                    }
+                }
+            }
+        }
+    </script>
+    <style>
+        /* Smooth transitions & custom scrollbar for luxury feel */
+        ::-webkit-scrollbar {
+            width: 6px;
+        }
+        ::-webkit-scrollbar-track {
+            background: #070707;
+        }
+        ::-webkit-scrollbar-thumb {
+            background: #D4AF37;
+            border-radius: 3px;
+        }
+        .gold-gradient-bg {
+            background: linear-gradient(135deg, #D4AF37 0%, #AA8114 100%);
+        }
+        .gold-border-gradient {
+            border-image: linear-gradient(to right, #D4AF37, #7B5E15) 1;
+        }
+    </style>
+</head>
+<body class="bg-dark-950 text-stone-300 font-sans min-h-screen selection:bg-gold-400 selection:text-dark-950">
+
+    <!-- TOP GLOW EFFECT -->
+    <div class="absolute top-0 left-1/2 -translate-x-1/2 w-full max-w-7xl h-96 bg-gold-400/5 blur-[120px] rounded-full pointer-events-none"></div>
+
+    <!-- MAIN NAVBAR -->
+    <nav class="border-b border-gold-400/10 bg-dark-950/90 backdrop-blur-md sticky top-0 z-50">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 h-20 flex items-center justify-between">
+            <div class="flex flex-col">
+                <span class="font-serif text-2xl lg:text-3xl tracking-[0.2em] text-gold-400 font-bold">EDEN</span>
+                <span class="text-[9px] uppercase tracking-[0.4em] text-stone-400 -mt-1">Luxury Wellness</span>
+            </div>
+            
+            <div class="flex items-center space-x-2 md:space-x-4">
+                <button onclick="switchTab('booking-view')" id="nav-booking" class="px-4 py-2 rounded-full text-xs md:text-sm font-medium tracking-wider transition-all duration-300 border border-gold-400/30 bg-gold-400/10 text-gold-400 shadow-gold-glow">
+                    <i data-lucide="calendar" class="inline w-4 h-4 mr-2 mb-0.5"></i>Reservar
+                </button>
+                <button onclick="switchTab('admin-view')" id="nav-admin" class="px-4 py-2 rounded-full text-xs md:text-sm font-medium tracking-wider transition-all duration-300 border border-transparent text-stone-400 hover:text-gold-400 hover:border-gold-400/20">
+                    <i data-lucide="shield-alert" class="inline w-4 h-4 mr-2 mb-0.5"></i>Administrador
+                </button>
+            </div>
+        </div>
+    </nav>
+
+    <!-- CONTENT WRAPPER -->
+    <main class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8 relative z-10">
+        
+        <!-- ================= BOOKING & CLIENT CATALOG TAB ================= -->
+        <section id="booking-view" class="space-y-12">
+            <!-- Hero section inside booking -->
+            <div class="text-center max-w-2xl mx-auto space-y-4 py-4">
+                <div class="inline-flex items-center gap-2 border border-gold-400/20 bg-gold-400/5 px-3 py-1 rounded-full text-xs text-gold-400 uppercase tracking-widest">
+                    <span class="w-1.5 h-1.5 rounded-full bg-gold-400 animate-pulse"></span>
+                    Experiencia Exclusiva de Bienestar
+                </div>
+                <h1 class="font-serif text-3xl md:text-5xl text-stone-100 tracking-wide">Agende su Momento de Paz</h1>
+                <p class="text-sm md:text-base text-stone-400 font-light">
+                    Seleccione un servicio exclusivo, elija a su especialista de confianza y reserve su sesión personalizada en segundos.
+                </p>
+            </div>
+
+            <!-- Main Booking Layout: Left (Catalog / Selection), Right (Wizard Status) -->
+            <div class="grid grid-cols-1 lg:grid-cols-12 gap-8">
+                
+                <!-- Left Column (Wizard Steps) - occupying 8 cols -->
+                <div class="lg:col-span-8 space-y-6">
+                    
+                    <!-- STEP 1: SELECT SERVICE -->
+                    <div class="bg-dark-900 border border-gold-400/10 p-6 rounded-2xl relative overflow-hidden transition-all duration-300 shadow-gold-glow">
+                        <div class="flex justify-between items-center mb-6">
+                            <div class="flex items-center gap-3">
+                                <span class="w-8 h-8 rounded-full border border-gold-400 flex items-center justify-center text-gold-400 font-serif font-bold text-sm">1</span>
+                                <h2 class="font-serif text-xl tracking-wide text-stone-100">Seleccione el Ritual</h2>
+                            </div>
+                            <span id="selected-service-badge" class="hidden text-xs px-3 py-1 rounded-full border border-gold-400/20 bg-gold-400/5 text-gold-400 font-medium"></span>
+                        </div>
+                        
+                        <!-- Services grid -->
+                        <div id="services-grid" class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                            <!-- Dynamic Content Loaded by JS -->
+                        </div>
+                    </div>
+
+                    <!-- STEP 2: SELECT THERAPIST -->
+                    <div id="step-therapist-container" class="opacity-50 pointer-events-none bg-dark-900 border border-gold-400/10 p-6 rounded-2xl transition-all duration-300">
+                        <div class="flex justify-between items-center mb-6">
+                            <div class="flex items-center gap-3">
+                                <span class="w-8 h-8 rounded-full border border-stone-600 flex items-center justify-center text-stone-400 font-serif font-bold text-sm" id="step-therapist-num">2</span>
+                                <h2 class="font-serif text-xl tracking-wide text-stone-100">Elija su Especialista</h2>
+                            </div>
+                            <span id="selected-therapist-badge" class="hidden text-xs px-3 py-1 rounded-full border border-gold-400/20 bg-gold-400/5 text-gold-400 font-medium"></span>
+                        </div>
+
+                        <!-- Therapists grid -->
+                        <div id="therapists-grid" class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                            <!-- Dynamic Content Loaded by JS -->
+                        </div>
+                    </div>
+
+                    <!-- STEP 3: SELECT DATE & TIME -->
+                    <div id="step-datetime-container" class="opacity-50 pointer-events-none bg-dark-900 border border-gold-400/10 p-6 rounded-2xl transition-all duration-300">
+                        <div class="flex justify-between items-center mb-6">
+                            <div class="flex items-center gap-3">
+                                <span class="w-8 h-8 rounded-full border border-stone-600 flex items-center justify-center text-stone-400 font-serif font-bold text-sm" id="step-datetime-num">3</span>
+                                <h2 class="font-serif text-xl tracking-wide text-stone-100">Fecha y Hora de Preferencia</h2>
+                            </div>
+                        </div>
+
+                        <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                            <!-- Date Selector -->
+                            <div>
+                                <label class="block text-xs uppercase tracking-widest text-stone-400 mb-2">Seleccione una Fecha</label>
+                                <input type="date" id="booking-date" onchange="onBookingDateChange()" class="w-full bg-dark-850 border border-stone-700 rounded-xl px-4 py-3 text-stone-200 focus:outline-none focus:border-gold-400 focus:ring-1 focus:ring-gold-400 transition">
+                                <p class="text-xs text-stone-500 mt-2 font-light">Las citas se agendan a partir de hoy y de acuerdo al horario diario de cada terapeuta.</p>
+                            </div>
+
+                            <!-- Time Slots Selector -->
+                            <div>
+                                <label class="block text-xs uppercase tracking-widest text-stone-400 mb-2">Horas Disponibles</label>
+                                <div id="time-slots-container" class="grid grid-cols-3 gap-2 max-h-48 overflow-y-auto pr-1">
+                                    <div class="col-span-3 text-center py-6 text-stone-500 text-sm">Seleccione una fecha para buscar turnos disponibles.</div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                </div>
+
+                <!-- Right Column (Booking Summary / Client Form) - occupying 4 cols -->
+                <div class="lg:col-span-4 space-y-6">
+                    <div class="bg-dark-900 border border-gold-400/20 rounded-2xl p-6 sticky top-28 space-y-6 shadow-gold-glow">
+                        <h3 class="font-serif text-lg tracking-wide text-stone-100 border-b border-gold-400/10 pb-4">Resumen del Ritual</h3>
+                        
+                        <div id="summary-empty" class="text-center py-8 text-stone-500 text-sm space-y-2">
+                            <i data-lucide="sparkles" class="w-8 h-8 mx-auto text-gold-400/20"></i>
+                            <p>Configure sus elecciones para cotizar y finalizar su reserva de bienestar.</p>
+                        </div>
+
+                        <div id="summary-content" class="hidden space-y-4">
+                            <!-- Selected Service Summary -->
+                            <div class="flex justify-between items-start">
+                                <div>
+                                    <h4 id="summary-service-name" class="text-stone-200 font-medium"></h4>
+                                    <p id="summary-service-duration" class="text-xs text-stone-400"></p>
+                                </div>
+                                <span id="summary-service-price" class="text-gold-400 font-serif font-bold"></span>
+                            </div>
+
+                            <!-- Selected Therapist -->
+                            <div class="flex items-center gap-3 border-t border-gold-400/10 pt-4" id="summary-therapist-box">
+                                <div id="summary-therapist-img" class="w-10 h-10 rounded-full bg-dark-800 flex items-center justify-center overflow-hidden border border-gold-400/20 text-gold-400 font-serif font-bold"></div>
+                                <div>
+                                    <p class="text-xs text-stone-400 uppercase tracking-widest">Terapeuta</p>
+                                    <h4 id="summary-therapist-name" class="text-stone-200 font-medium"></h4>
+                                </div>
+                            </div>
+
+                            <!-- Selected Slot -->
+                            <div class="flex items-center gap-3 border-t border-gold-400/10 pt-4" id="summary-datetime-box">
+                                <div class="w-10 h-10 rounded-full bg-dark-800 flex items-center justify-center border border-gold-400/20 text-gold-400">
+                                    <i data-lucide="clock" class="w-5 h-5"></i>
+                                </div>
+                                <div>
+                                    <p class="text-xs text-stone-400 uppercase tracking-widest">Fecha y Hora</p>
+                                    <h4 id="summary-datetime-val" class="text-stone-200 font-medium"></h4>
+                                </div>
+                            </div>
+
+                            <!-- Client Details Form -->
+                            <div class="border-t border-gold-400/10 pt-4 space-y-3">
+                                <h4 class="text-xs uppercase tracking-widest text-stone-400">Datos Personales</h4>
+                                
+                                <div class="space-y-2">
+                                    <input type="text" id="client-name" placeholder="Nombre completo" class="w-full bg-dark-850 border border-stone-800 rounded-lg px-3 py-2 text-sm text-stone-200 focus:outline-none focus:border-gold-400 transition placeholder:text-stone-600">
+                                    <input type="tel" id="client-phone" placeholder="WhatsApp / Teléfono" class="w-full bg-dark-850 border border-stone-800 rounded-lg px-3 py-2 text-sm text-stone-200 focus:outline-none focus:border-gold-400 transition placeholder:text-stone-600">
+                                    <input type="email" id="client-email" placeholder="Correo electrónico" class="w-full bg-dark-850 border border-stone-800 rounded-lg px-3 py-2 text-sm text-stone-200 focus:outline-none focus:border-gold-400 transition placeholder:text-stone-600">
+                                </div>
+                            </div>
+
+                            <button onclick="confirmBooking()" class="w-full gold-gradient-bg hover:opacity-90 text-dark-950 font-bold uppercase tracking-wider py-3 px-4 rounded-xl transition duration-300 flex items-center justify-center gap-2 shadow-gold-glow hover:shadow-gold-glow-hover text-sm">
+                                <i data-lucide="check-circle" class="w-4 h-4"></i>Confirmar Mi Reserva
+                            </button>
+                        </div>
+                    </div>
+                </div>
+
+            </div>
+        </section>
+
+
+        <!-- ================= ADMIN MANAGEMENT TAB ================= -->
+        <section id="admin-view" class="hidden space-y-8">
+            <div class="flex flex-col md:flex-row justify-between items-start md:items-center gap-4 border-b border-gold-400/10 pb-6">
+                <div>
+                    <h1 class="font-serif text-3xl tracking-wide text-stone-100">Panel Administrativo</h1>
+                    <p class="text-sm text-stone-400">Administre el catálogo de terapeutas, defina horarios de trabajo fijos y configure excepciones de fechas específicas.</p>
+                </div>
+                <div class="flex flex-wrap gap-2">
+                    <button onclick="openTherapistModal()" class="gold-gradient-bg text-dark-950 px-4 py-2 rounded-xl text-xs uppercase tracking-widest font-semibold hover:opacity-90 transition flex items-center gap-1">
+                        <i data-lucide="user-plus" class="w-4 h-4"></i> Nuevo Terapeuta
+                    </button>
+                    <button onclick="openExceptionModal()" class="bg-dark-800 border border-gold-400/30 text-gold-400 px-4 py-2 rounded-xl text-xs uppercase tracking-widest font-semibold hover:bg-gold-400/10 transition flex items-center gap-1">
+                        <i data-lucide="calendar-range" class="w-4 h-4"></i> Definir Horario de un Día
+                    </button>
+                </div>
+            </div>
+
+            <!-- Dashboard Subsections grid -->
+            <div class="grid grid-cols-1 lg:grid-cols-3 gap-8">
+                
+                <!-- COLUMN 1 & 2: List of Therapists & Exceptions -->
+                <div class="lg:col-span-2 space-y-6">
+                    <div class="bg-dark-900 border border-gold-400/10 p-6 rounded-2xl">
+                        <h2 class="font-serif text-xl text-stone-100 tracking-wide mb-4">Nuestros Terapeutas</h2>
+                        <div id="admin-therapists-list" class="space-y-4">
+                            <!-- Dynamic Therapist List for Admin -->
+                        </div>
+                    </div>
+
+                    <!-- Date-Specific Exceptions List -->
+                    <div class="bg-dark-900 border border-gold-400/10 p-6 rounded-2xl">
+                        <h2 class="font-serif text-xl text-stone-100 tracking-wide mb-2">Excepciones y Fechas Especiales</h2>
+                        <p class="text-xs text-stone-400 mb-4">Aquí se visualizan los cambios específicos para días determinados (p. ej. ausencias o ampliación de horario).</p>
+                        
+                        <div id="admin-exceptions-list" class="space-y-2 max-h-60 overflow-y-auto pr-1">
+                            <!-- Dynamic exceptions list -->
+                        </div>
+                    </div>
+                </div>
+
+                <!-- COLUMN 3: Bookings Recieved Log -->
+                <div class="lg:col-span-1 space-y-6">
+                    <div class="bg-dark-900 border border-gold-400/10 p-6 rounded-2xl">
+                        <h2 class="font-serif text-xl text-stone-100 tracking-wide mb-4">Reservas Confirmadas</h2>
+                        <div id="admin-bookings-list" class="space-y-4 max-h-[500px] overflow-y-auto pr-1">
+                            <!-- Dynamic list of booked appointments -->
+                        </div>
+                    </div>
+                </div>
+
+            </div>
+        </section>
+
+    </main>
+
+
+    <!-- ======================================================= -->
+    <!--                   MODALS AND DIALOGS                    -->
+    <!-- ======================================================= -->
+
+    <!-- 0. PORTFOLIO CAROUSEL POPUP -->
+    <div id="portfolio-modal" class="fixed inset-0 bg-black/95 backdrop-blur-md z-50 flex items-center justify-center p-4 hidden">
+        <div class="bg-dark-900 border border-gold-400/20 rounded-3xl max-w-2xl w-full overflow-hidden shadow-2xl relative">
+            
+            <!-- Absolute top bar -->
+            <div class="absolute top-0 inset-x-0 h-16 bg-gradient-to-b from-black/80 to-transparent flex items-center justify-between px-6 z-10">
+                <div>
+                    <h4 id="portfolio-therapist-name" class="font-serif text-lg text-gold-400 tracking-wide">Galería del Profesional</h4>
+                    <p class="text-[10px] uppercase text-stone-400 tracking-widest">Eden Luxury Environment</p>
+                </div>
+                <button onclick="closePortfolioModal()" class="w-10 h-10 rounded-full bg-black/40 hover:bg-gold-400 hover:text-dark-950 text-stone-300 transition flex items-center justify-center">
+                    <i data-lucide="x" class="w-5 h-5"></i>
+                </button>
+            </div>
+
+            <!-- Image display area -->
+            <div class="relative h-[450px] bg-dark-950 flex items-center justify-center group">
+                <img id="portfolio-image" src="" alt="Spa experience" class="w-full h-full object-cover transition-opacity duration-500 ease-in-out" onerror="this.src='data:image/svg+xml;utf8,<svg xmlns=\'http://www.w3.org/2000/svg\' width=\'100%\' height=\'100%\' viewBox=\'0 0 800 500\'><rect width=\'100%\' height=\'100%\' fill=\'%23111\'/><text x=\'50%\' y=\'50%\' font-size=\'20\' fill=\'%23D4AF37\' font-family=\'Cinzel\' text-anchor=\'middle\' dominant-baseline=\'middle\'>EDEN SPA - PREMIUM MOMENT</text></svg>'">
+                
+                <!-- Left/Right Arrows -->
+                <button onclick="prevSlide()" class="absolute left-4 w-11 h-11 rounded-full bg-black/50 hover:bg-gold-400 hover:text-dark-950 text-gold-400 flex items-center justify-center transition opacity-80 hover:opacity-100 border border-gold-400/20">
+                    <i data-lucide="chevron-left" class="w-6 h-6"></i>
+                </button>
+                <button onclick="nextSlide()" class="absolute right-4 w-11 h-11 rounded-full bg-black/50 hover:bg-gold-400 hover:text-dark-950 text-gold-400 flex items-center justify-center transition opacity-80 hover:opacity-100 border border-gold-400/20">
+                    <i data-lucide="chevron-right" class="w-6 h-6"></i>
+                </button>
+            </div>
+
+            <!-- Bottom bar controls / indicators -->
+            <div class="bg-dark-900 p-6 border-t border-gold-400/10 space-y-4">
+                <div class="flex justify-between items-center">
+                    <p id="portfolio-photo-index" class="text-xs font-mono text-gold-400">FOTO 1 DE 4</p>
+                    <div id="portfolio-indicators" class="flex gap-2">
+                        <!-- Dynamic Indicator dots -->
+                    </div>
+                </div>
+                <p id="portfolio-photo-description" class="text-xs text-stone-400 font-light leading-relaxed">
+                    Visualización del espacio terapéutico premium e instrumentos para la relajación profunda.
+                </p>
+            </div>
+        </div>
+    </div>
+
+    <!-- 1. ADD / EDIT THERAPIST MODAL -->
+    <div id="therapist-modal" class="fixed inset-0 bg-black/80 backdrop-blur-sm z-50 flex items-center justify-center p-4 hidden">
+        <div class="bg-dark-900 border border-gold-400/30 rounded-2xl max-w-2xl w-full max-h-[90vh] overflow-y-auto p-6 space-y-6 shadow-2xl">
+            <div class="flex justify-between items-center border-b border-gold-400/10 pb-4">
+                <h3 id="therapist-modal-title" class="font-serif text-2xl text-gold-400 tracking-wide">Nuevo Terapeuta de Élite</h3>
+                <button onclick="closeTherapistModal()" class="text-stone-400 hover:text-stone-100 transition"><i data-lucide="x" class="w-6 h-6"></i></button>
+            </div>
+
+            <form id="therapist-form" onsubmit="saveTherapist(event)" class="space-y-4">
+                <input type="hidden" id="therapist-form-id">
+                
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                    <div>
+                        <label class="block text-xs uppercase tracking-widest text-stone-400 mb-2">Nombre del Terapeuta</label>
+                        <input type="text" id="t-name" required class="w-full bg-dark-850 border border-stone-800 rounded-lg px-3 py-2 text-stone-200 focus:outline-none focus:border-gold-400 transition" placeholder="P. Ej: Valentina Gómez">
+                    </div>
+                    <div>
+                        <label class="block text-xs uppercase tracking-widest text-stone-400 mb-2">Calificación (Estrellas)</label>
+                        <input type="number" step="0.1" min="1" max="5" id="t-rating" required class="w-full bg-dark-850 border border-stone-800 rounded-lg px-3 py-2 text-stone-200 focus:outline-none focus:border-gold-400 transition" placeholder="P. Ej: 4.9">
+                    </div>
+                </div>
+
+                <div>
+                    <label class="block text-xs uppercase tracking-widest text-stone-400 mb-2">Especialidades (Separadas por comas)</label>
+                    <input type="text" id="t-specialties" required class="w-full bg-dark-850 border border-stone-800 rounded-lg px-3 py-2 text-stone-200 focus:outline-none focus:border-gold-400 transition" placeholder="Masaje Sueco, Tejido Profundo, Piedras Volcánicas">
+                </div>
+
+                <div>
+                    <label class="block text-xs uppercase tracking-widest text-stone-400 mb-2">Biografía / Presentación</label>
+                    <textarea id="t-bio" rows="3" required class="w-full bg-dark-850 border border-stone-800 rounded-lg px-3 py-2 text-stone-200 focus:outline-none focus:border-gold-400 transition" placeholder="Valentina es especialista en masajes relajantes con aceites esenciales..."></textarea>
+                </div>
+
+                <!-- Manage therapist photo URLs for the portfolio carousel -->
+                <div>
+                    <label class="block text-xs uppercase tracking-widest text-stone-400 mb-1">Fotos del Portafolio (Enlace de URL, separadas por coma)</label>
+                    <p class="text-[10px] text-stone-500 mb-2">Ingrese hasta 4 enlaces válidos de imágenes inspiradoras para el carrusel de este terapeuta.</p>
+                    <textarea id="t-gallery" rows="2" class="w-full bg-dark-850 border border-stone-800 rounded-lg px-3 py-2 text-xs text-stone-300 focus:outline-none focus:border-gold-400 transition" placeholder="https://images.unsplash.com/..., https://images.unsplash.com/..."></textarea>
+                </div>
+
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                    <div>
+                        <label class="block text-xs uppercase tracking-widest text-stone-400 mb-2">Foto / Iniciales Avatar (Color)</label>
+                        <select id="t-color" class="w-full bg-dark-850 border border-stone-800 rounded-lg px-3 py-2 text-stone-200 focus:outline-none focus:border-gold-400 transition">
+                            <option value="amber">Dorado Satinado</option>
+                            <option value="stone">Gris Plata</option>
+                            <option value="rose">Rosa Místico</option>
+                            <option value="emerald">Verde Esmeralda</option>
+                            <option value="indigo">Azul Índigo</option>
+                        </select>
+                    </div>
+                </div>
+
+                <!-- Working schedule settings per week day -->
+                <div class="border-t border-gold-400/10 pt-4">
+                    <h4 class="text-xs uppercase tracking-widest text-gold-400 mb-4 font-semibold">Horario de Trabajo Regular por Defecto</h4>
+                    <div class="space-y-2">
+                        <!-- Monday to Sunday generator placeholder -->
+                        <div id="default-schedule-inputs" class="space-y-2">
+                            <!-- Populated on opening -->
+                        </div>
+                    </div>
+                </div>
+
+                <div class="flex justify-end gap-3 pt-4 border-t border-gold-400/10">
+                    <button type="button" onclick="closeTherapistModal()" class="px-5 py-2 rounded-lg bg-dark-800 text-stone-400 hover:text-stone-200 hover:bg-dark-750 transition text-sm font-medium">Cancelar</button>
+                    <button type="submit" class="gold-gradient-bg text-dark-950 px-6 py-2 rounded-lg font-bold text-sm tracking-wider hover:opacity-90 transition">Guardar Especialista</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+
+    <!-- 2. DATE EXCEPTION / SPECIAL AVAILABILITY MODAL -->
+    <div id="exception-modal" class="fixed inset-0 bg-black/80 backdrop-blur-sm z-50 flex items-center justify-center p-4 hidden">
+        <div class="bg-dark-900 border border-gold-400/30 rounded-2xl max-w-md w-full p-6 space-y-6 shadow-2xl">
+            <div class="flex justify-between items-center border-b border-gold-400/10 pb-4">
+                <h3 class="font-serif text-2xl text-gold-400 tracking-wide">Excepción de Horario</h3>
+                <button onclick="closeExceptionModal()" class="text-stone-400 hover:text-stone-100 transition"><i data-lucide="x" class="w-6 h-6"></i></button>
+            </div>
+
+            <form id="exception-form" onsubmit="saveException(event)" class="space-y-4">
+                <div>
+                    <label class="block text-xs uppercase tracking-widest text-stone-400 mb-2">Seleccione Terapeuta</label>
+                    <select id="exc-therapist-id" required class="w-full bg-dark-850 border border-stone-800 rounded-lg px-3 py-2 text-stone-200 focus:outline-none focus:border-gold-400 transition">
+                        <!-- Options populated via JS -->
+                    </select>
+                </div>
+
+                <div>
+                    <label class="block text-xs uppercase tracking-widest text-stone-400 mb-2">Fecha del Cambio</label>
+                    <input type="date" id="exc-date" required class="w-full bg-dark-850 border border-stone-800 rounded-lg px-3 py-2 text-stone-200 focus:outline-none focus:border-gold-400 transition">
+                </div>
+
+                <div>
+                    <label class="block text-xs uppercase tracking-widest text-stone-400 mb-2">Estado de Disponibilidad</label>
+                    <div class="grid grid-cols-2 gap-2 mt-2">
+                        <label class="flex items-center gap-2 p-3 bg-dark-850 border border-stone-800 rounded-lg cursor-pointer hover:border-gold-400 transition">
+                            <input type="radio" name="exc-status" value="inactive" onchange="toggleExcTimes(false)" checked class="text-gold-400 focus:ring-gold-400">
+                            <span class="text-sm text-stone-300">No disponible / Descanso</span>
+                        </label>
+                        <label class="flex items-center gap-2 p-3 bg-dark-850 border border-stone-800 rounded-lg cursor-pointer hover:border-gold-400 transition">
+                            <input type="radio" name="exc-status" value="active" onchange="toggleExcTimes(true)" class="text-gold-400 focus:ring-gold-400">
+                            <span class="text-sm text-stone-300">Horario Especial</span>
+                        </label>
+                    </div>
+                </div>
+
+                <!-- Custom exception hours -->
+                <div id="exc-hours-container" class="hidden grid grid-cols-2 gap-2">
+                    <div>
+                        <label class="block text-xs uppercase text-stone-500 mb-1">Entrada</label>
+                        <input type="time" id="exc-start-time" class="w-full bg-dark-850 border border-stone-800 rounded-lg px-3 py-2 text-stone-200 focus:outline-none">
+                    </div>
+                    <div>
+                        <label class="block text-xs uppercase text-stone-500 mb-1">Salida</label>
+                        <input type="time" id="exc-end-time" class="w-full bg-dark-850 border border-stone-800 rounded-lg px-3 py-2 text-stone-200 focus:outline-none">
+                    </div>
+                </div>
+
+                <div class="flex justify-end gap-3 pt-4 border-t border-gold-400/10">
+                    <button type="button" onclick="closeExceptionModal()" class="px-5 py-2 rounded-lg bg-dark-800 text-stone-400 hover:text-stone-200 hover:bg-dark-750 transition text-sm font-medium">Cancelar</button>
+                    <button type="submit" class="gold-gradient-bg text-dark-950 px-6 py-2 rounded-lg font-bold text-sm tracking-wider hover:opacity-90 transition">Aplicar Excepción</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+
+    <!-- 3. CUSTOM DIALOG MESSAGE / TOAST COMPONENT -->
+    <div id="toast" class="fixed bottom-6 right-6 bg-dark-900 border border-gold-400 text-gold-400 p-4 rounded-xl shadow-2xl z-50 transform translate-y-20 opacity-0 transition-all duration-300 max-w-sm flex items-center gap-3">
+        <i data-lucide="bell" class="w-6 h-6 shrink-0"></i>
+        <div>
+            <p id="toast-message" class="text-sm text-stone-200 font-medium"></p>
+        </div>
+    </div>
+
+
+    <!-- ======================================================= -->
+    <!--                      JAVASCRIPT                         -->
+    <!-- ======================================================= -->
+    <script>
+        // Data Store (In-memory representation with premium Unsplash Spa placeholders)
+        const APP_STATE = {
+            services: [
+                { id: "s-1", name: "Ritual Relajación Profunda", duration: 60, price: 90, desc: "Masaje de cuerpo completo con óleos aromáticos y sutiles toques calientes.", category: "Relax" },
+                { id: "s-2", name: "Masaje Tejido Profundo (Deep Tissue)", duration: 80, price: 120, desc: "Diseñado para liberar tensiones crónicas mediante presión focalizada.", category: "Terapéutico" },
+                { id: "s-3", name: "Sanación con Piedras Volcánicas", duration: 90, price: 140, desc: "Armonización de chakras con piedras de basalto calientes y terapia manual.", category: "Premium" },
+                { id: "s-4", name: "Reflexología Podal Celestial", duration: 45, price: 75, desc: "Presión estimulante en puntos reflejos para reactivar el balance corporal.", category: "Focalizado" }
+            ],
+            
+            therapists: [
+                {
+                    id: "t-1",
+                    name: "Valentina Gómez",
+                    rating: 4.9,
+                    specialties: ["Relajación Profunda", "Piedras Volcánicas"],
+                    bio: "Valentina tiene más de 6 años de experiencia en terapias holísticas y aromaterapia de lujo.",
+                    color: "rose",
+                    gallery: [
+                        "https://images.unsplash.com/photo-1600334129128-685c5582fd35?auto=format&fit=crop&w=1000&q=80",
+                        "https://images.unsplash.com/photo-1540555700478-4be289fbecef?auto=format&fit=crop&w=1000&q=80",
+                        "https://images.unsplash.com/photo-1519696869836-746174917a26?auto=format&fit=crop&w=1000&q=80"
+                    ],
+                    defaultSchedule: {
+                        monday:    { active: true, start: "09:00", end: "18:00" },
+                        tuesday:   { active: true, start: "09:00", end: "18:00" },
+                        wednesday: { active: true, start: "09:00", end: "18:00" },
+                        thursday:  { active: true, start: "09:00", end: "18:00" },
+                        friday:    { active: true, start: "09:00", end: "20:00" },
+                        saturday:  { active: true, start: "10:00", end: "16:00" },
+                        sunday:    { active: false, start: "00:00", end: "00:00" }
+                    },
+                    exceptions: {
+                        "2026-06-15": { active: false },
+                        "2026-06-16": { active: true, start: "14:00", end: "19:00" }
+                    }
+                },
+                {
+                    id: "t-2",
+                    name: "Sebastián Mendoza",
+                    rating: 4.8,
+                    specialties: ["Tejido Profundo", "Reflexología Podal"],
+                    bio: "Especialista en quiromasaje deportivo y técnicas avanzadas de liberación miofascial.",
+                    color: "amber",
+                    gallery: [
+                        "https://images.unsplash.com/photo-1515377905703-c4788e51af15?auto=format&fit=crop&w=1000&q=80",
+                        "https://images.unsplash.com/photo-1519696869836-746174917a26?auto=format&fit=crop&w=1000&q=80",
+                        "https://images.unsplash.com/photo-1600334129128-685c5582fd35?auto=format&fit=crop&w=1000&q=80"
+                    ],
+                    defaultSchedule: {
+                        monday:    { active: true, start: "09:00", end: "18:00" },
+                        tuesday:   { active: true, start: "09:00", end: "18:00" },
+                        wednesday: { active: true, start: "09:00", end: "18:00" },
+                        thursday:  { active: true, start: "09:00", end: "18:00" },
+                        friday:    { active: true, start: "09:00", end: "18:00" },
+                        saturday:  { active: true, start: "09:00", end: "15:00" },
+                        sunday:    { active: false, start: "00:00", end: "00:00" }
+                    },
+                    exceptions: {}
+                },
+                {
+                    id: "t-3",
+                    name: "Elena Rostova",
+                    rating: 5.0,
+                    specialties: ["Ritual Relajación Profunda", "Sanación con Piedras", "Tejido Profundo"],
+                    bio: "Terapeuta internacional formada en Tailandia e Indonesia. Trae el arte del confort oriental a Eden.",
+                    color: "emerald",
+                    gallery: [
+                        "https://images.unsplash.com/photo-1531849626546-8619dfa45025?auto=format&fit=crop&w=1000&q=80",
+                        "https://images.unsplash.com/photo-1540555700478-4be289fbecef?auto=format&fit=crop&w=1000&q=80",
+                        "https://images.unsplash.com/photo-1515377905703-c4788e51af15?auto=format&fit=crop&w=1000&q=80"
+                    ],
+                    defaultSchedule: {
+                        monday:    { active: false, start: "00:00", end: "00:00" },
+                        tuesday:   { active: true, start: "10:00", end: "20:00" },
+                        wednesday: { active: true, start: "10:00", end: "20:00" },
+                        thursday:  { active: true, start: "10:00", end: "20:00" },
+                        friday:    { active: true, start: "10:00", end: "20:00" },
+                        saturday:  { active: true, start: "10:00", end: "18:00" },
+                        sunday:    { active: true, start: "11:00", end: "16:00" }
+                    },
+                    exceptions: {}
+                }
+            ],
+
+            bookings: [
+                {
+                    id: "b-101",
+                    clientName: "Carolina Herrera",
+                    clientPhone: "+57 301 2234 567",
+                    clientEmail: "caro.herrera@email.com",
+                    serviceId: "s-1",
+                    therapistId: "t-1",
+                    date: "2026-06-12",
+                    time: "10:00"
+                },
+                {
+                    id: "b-102",
+                    clientName: "Alejandro Sanz",
+                    clientPhone: "+57 312 9988 776",
+                    clientEmail: "alejo.sanz@email.com",
+                    serviceId: "s-2",
+                    therapistId: "t-2",
+                    date: "2026-06-12",
+                    time: "14:00"
+                }
+            ]
+        };
+
+        // Selection Wizard state
+        const WIZARD_STATE = {
+            selectedService: null,
+            selectedTherapist: null,
+            selectedDate: "",
+            selectedTime: ""
+        };
+
+        // Active Carousel State
+        const CAROUSEL_STATE = {
+            therapist: null,
+            currentIndex: 0
+        };
+
+        // Weekdays Map in Spanish & English keys
+        const WEEKDAYS_MAP = ["sunday", "monday", "tuesday", "wednesday", "thursday", "friday", "saturday"];
+        const WEEKDAYS_ES = {
+            monday: "Lunes",
+            tuesday: "Martes",
+            wednesday: "Miércoles",
+            thursday: "Jueves",
+            friday: "Viernes",
+            saturday: "Sábado",
+            sunday: "Domingo"
+        };
+
+        // On App Load initialization
+        window.addEventListener('DOMContentLoaded', () => {
+            initApp();
+            // Lucide Icons initialization
+            lucide.createIcons();
+        });
+
+        function initApp() {
+            renderServices();
+            renderTherapists();
+            renderAdminTherapists();
+            renderAdminExceptions();
+            renderAdminBookings();
+            
+            // Set minimum date input for booking to today
+            const today = new Date().toISOString().split('T')[0];
+            document.getElementById('booking-date').min = today;
+            
+            // Generate form day inputs dynamically inside the therapist modal
+            generateDefaultScheduleFormInputs();
+        }
+
+        // ================= GENERAL ROUTING / NAVIGATION =================
+        function switchTab(tabId) {
+            document.getElementById('booking-view').classList.add('hidden');
+            document.getElementById('admin-view').classList.add('hidden');
+            
+            // Update Active buttons
+            document.getElementById('nav-booking').className = "px-4 py-2 rounded-full text-xs md:text-sm font-medium tracking-wider transition-all duration-300 border border-transparent text-stone-400 hover:text-gold-400 hover:border-gold-400/20";
+            document.getElementById('nav-admin').className = "px-4 py-2 rounded-full text-xs md:text-sm font-medium tracking-wider transition-all duration-300 border border-transparent text-stone-400 hover:text-gold-400 hover:border-gold-400/20";
+
+            document.getElementById(tabId).classList.remove('hidden');
+
+            if (tabId === 'booking-view') {
+                document.getElementById('nav-booking').className = "px-4 py-2 rounded-full text-xs md:text-sm font-medium tracking-wider transition-all duration-300 border border-gold-400/30 bg-gold-400/10 text-gold-400 shadow-gold-glow";
+            } else if (tabId === 'admin-view') {
+                document.getElementById('nav-admin').className = "px-4 py-2 rounded-full text-xs md:text-sm font-medium tracking-wider transition-all duration-300 border border-gold-400/30 bg-gold-400/10 text-gold-400 shadow-gold-glow";
+            }
+        }
+
+        // ================= CLIENT SERVICE RENDER =================
+        function renderServices() {
+            const grid = document.getElementById('services-grid');
+            grid.innerHTML = '';
+            
+            APP_STATE.services.forEach(service => {
+                const card = document.createElement('div');
+                card.id = `service-card-${service.id}`;
+                card.onclick = () => selectService(service.id);
+                card.className = "group border border-stone-800 bg-dark-850 p-5 rounded-xl cursor-pointer hover:border-gold-400/40 transition-all duration-300 relative hover:shadow-[0_0_15px_rgba(212,175,55,0.05)]";
+                
+                card.innerHTML = `
+                    <div class="flex justify-between items-start">
+                        <span class="text-[10px] uppercase font-bold tracking-widest text-gold-400/70 border border-gold-400/10 px-2.5 py-0.5 rounded-full bg-gold-400/5">${service.category}</span>
+                        <span class="text-gold-400 font-serif font-bold group-hover:scale-110 transition-transform duration-300">$${service.price} USD</span>
+                    </div>
+                    <h3 class="font-serif text-lg tracking-wide text-stone-100 mt-3 group-hover:text-gold-400 transition-colors">${service.name}</h3>
+                    <p class="text-xs text-stone-400 font-light mt-1">${service.desc}</p>
+                    <div class="flex items-center gap-1.5 mt-4 text-xs text-stone-500">
+                        <i data-lucide="hourglass" class="w-3.5 h-3.5"></i>
+                        <span>${service.duration} minutos</span>
+                    </div>
+                `;
+                grid.appendChild(card);
+            });
+            lucide.createIcons();
+        }
+
+        // ================= CLIENT THERAPISTS RENDER =================
+        function renderTherapists() {
+            const grid = document.getElementById('therapists-grid');
+            grid.innerHTML = '';
+
+            APP_STATE.therapists.forEach(therapist => {
+                const specTags = therapist.specialties.map(s => `<span class="bg-dark-800 text-stone-400 text-[10px] px-2 py-0.5 rounded border border-stone-800">${s}</span>`).join('');
+                
+                const card = document.createElement('div');
+                card.id = `therapist-card-${therapist.id}`;
+                
+                // Allow card select but exclude portfolio button clicks
+                card.onclick = (e) => {
+                    if (e.target.closest('.no-select-card')) return;
+                    selectTherapist(therapist.id);
+                };
+                card.className = "group border border-stone-800 bg-dark-850 p-5 rounded-xl cursor-pointer hover:border-gold-400/40 transition-all duration-300 flex flex-col sm:flex-row gap-4 hover:shadow-[0_0_15px_rgba(212,175,55,0.05)] relative";
+
+                // Generate consistent elegant colored initials avatar based on config
+                let avatarColorClass = "bg-amber-950/40 text-amber-400 border-amber-500/20";
+                if(therapist.color === "rose") avatarColorClass = "bg-rose-950/40 text-rose-400 border-rose-500/20";
+                if(therapist.color === "emerald") avatarColorClass = "bg-emerald-950/40 text-emerald-400 border-emerald-500/20";
+                if(therapist.color === "indigo") avatarColorClass = "bg-indigo-950/40 text-indigo-400 border-indigo-500/20";
+                if(therapist.color === "stone") avatarColorClass = "bg-stone-900 text-stone-400 border-stone-500/20";
+
+                const initials = therapist.name.split(' ').map(n => n[0]).join('').substring(0,2).toUpperCase();
+
+                card.innerHTML = `
+                    <div class="w-16 h-16 rounded-full ${avatarColorClass} border flex items-center justify-center font-serif text-xl font-bold shrink-0 self-center sm:self-start">
+                        ${initials}
+                    </div>
+                    <div class="space-y-2 flex-1">
+                        <div class="flex justify-between items-start">
+                            <div>
+                                <h3 class="font-serif text-base tracking-wide text-stone-100 group-hover:text-gold-400 transition-colors">${therapist.name}</h3>
+                                <div class="flex items-center gap-1 text-xs text-amber-500 mt-0.5">
+                                    <i data-lucide="star" class="w-3.5 h-3.5 fill-current"></i>
+                                    <span class="font-semibold">${therapist.rating.toFixed(1)}</span>
+                                    <span class="text-stone-500">Elite</span>
+                                </div>
+                            </div>
+                        </div>
+                        <p class="text-xs text-stone-400 font-light line-clamp-2">${therapist.bio}</p>
+                        <div class="flex flex-wrap gap-1 pt-1">
+                            ${specTags}
+                        </div>
+                        
+                        <!-- PORTFOLIO BUTTON inside therapist card -->
+                        <div class="pt-2 no-select-card">
+                            <button onclick="openPortfolioModal('${therapist.id}')" class="text-[10px] tracking-widest uppercase text-gold-400 hover:text-gold-200 transition-colors flex items-center gap-1.5 border border-gold-400/20 hover:border-gold-400/50 bg-gold-400/5 px-2.5 py-1 rounded-full">
+                                <i data-lucide="camera" class="w-3 h-3"></i> Ver Galería de Fotos
+                            </button>
+                        </div>
+                    </div>
+                `;
+                grid.appendChild(card);
+            });
+            lucide.createIcons();
+        }
+
+        // ================= WIZARD SELECTION ACTIONS =================
+        function selectService(serviceId) {
+            WIZARD_STATE.selectedService = APP_STATE.services.find(s => s.id === serviceId);
+            
+            // Highlight selected service card
+            APP_STATE.services.forEach(s => {
+                const el = document.getElementById(`service-card-${s.id}`);
+                if (s.id === serviceId) {
+                    el.classList.add('border-gold-400', 'bg-gold-400/5', 'shadow-[0_0_15px_rgba(212,175,55,0.1)]');
+                    el.classList.remove('border-stone-800', 'bg-dark-850');
+                } else {
+                    el.classList.remove('border-gold-400', 'bg-gold-400/5', 'shadow-[0_0_15px_rgba(212,175,55,0.1)]');
+                    el.classList.add('border-stone-800', 'bg-dark-850');
+                }
+            });
+
+            // Update badge in step title
+            const badge = document.getElementById('selected-service-badge');
+            badge.innerText = WIZARD_STATE.selectedService.name;
+            badge.classList.remove('hidden');
+
+            // Unlock Step 2: Therapist Selection
+            const step2 = document.getElementById('step-therapist-container');
+            step2.classList.remove('opacity-50', 'pointer-events-none');
+            const step2Num = document.getElementById('step-therapist-num');
+            step2Num.classList.add('border-gold-400', 'text-gold-400');
+            step2Num.classList.remove('border-stone-600', 'text-stone-400');
+
+            updateBookingSummary();
+            
+            // If therapist is already selected, recalculate times (since service duration could affect booking)
+            if(WIZARD_STATE.selectedTherapist && WIZARD_STATE.selectedDate) {
+                calculateAvailableTimeSlots();
+            }
+        }
+
+        function selectTherapist(therapistId) {
+            WIZARD_STATE.selectedTherapist = APP_STATE.therapists.find(t => t.id === therapistId);
+
+            // Highlight selected therapist card
+            APP_STATE.therapists.forEach(t => {
+                const el = document.getElementById(`therapist-card-${t.id}`);
+                if (t.id === therapistId) {
+                    el.classList.add('border-gold-400', 'bg-gold-400/5', 'shadow-[0_0_15px_rgba(212,175,55,0.1)]');
+                    el.classList.remove('border-stone-800', 'bg-dark-850');
+                } else {
+                    el.classList.remove('border-gold-400', 'bg-gold-400/5', 'shadow-[0_0_15px_rgba(212,175,55,0.1)]');
+                    el.classList.add('border-stone-800', 'bg-dark-850');
+                }
+            });
+
+            // Update badge in step title
+            const badge = document.getElementById('selected-therapist-badge');
+            badge.innerText = WIZARD_STATE.selectedTherapist.name;
+            badge.classList.remove('hidden');
+
+            // Unlock Step 3: Date & Time Selector
+            const step3 = document.getElementById('step-datetime-container');
+            step3.classList.remove('opacity-50', 'pointer-events-none');
+            const step3Num = document.getElementById('step-datetime-num');
+            step3Num.classList.add('border-gold-400', 'text-gold-400');
+            step3Num.classList.remove('border-stone-600', 'text-stone-400');
+
+            updateBookingSummary();
+            
+            // Recalculate time slots if date is already picked
+            if(WIZARD_STATE.selectedDate) {
+                calculateAvailableTimeSlots();
+            }
+        }
+
+        function onBookingDateChange() {
+            WIZARD_STATE.selectedDate = document.getElementById('booking-date').value;
+            WIZARD_STATE.selectedTime = ""; // Reset time on date change
+            calculateAvailableTimeSlots();
+            updateBookingSummary();
+        }
+
+        // ================= DYNAMIC TIME SLOTS CALCULATION =================
+        function calculateAvailableTimeSlots() {
+            const container = document.getElementById('time-slots-container');
+            container.innerHTML = '';
+
+            const selectedDateStr = WIZARD_STATE.selectedDate;
+            const therapist = WIZARD_STATE.selectedTherapist;
+
+            if (!selectedDateStr || !therapist) {
+                container.innerHTML = '<div class="col-span-3 text-center py-6 text-stone-500 text-sm">Seleccione una fecha para buscar turnos disponibles.</div>';
+                return;
+            }
+
+            // Determine operating hours for this day
+            let isWorking = false;
+            let startStr = "09:00";
+            let endStr = "18:00";
+
+            // Check Date Exception first
+            if (therapist.exceptions && therapist.exceptions[selectedDateStr] !== undefined) {
+                const exception = therapist.exceptions[selectedDateStr];
+                isWorking = exception.active;
+                if (isWorking) {
+                    startStr = exception.start;
+                    endStr = exception.end;
+                }
+            } else {
+                // Fetch default schedule for day of the week
+                const dateObj = new Date(selectedDateStr + 'T00:00:00'); // prevents local timezone shift
+                const dayOfWeekName = WEEKDAYS_MAP[dateObj.getDay()];
+                const regularDay = therapist.defaultSchedule[dayOfWeekName];
+                
+                if (regularDay) {
+                    isWorking = regularDay.active;
+                    startStr = regularDay.start;
+                    endStr = regularDay.end;
+                }
+            }
+
+            if (!isWorking) {
+                container.innerHTML = '<div class="col-span-3 text-center py-6 text-rose-400/80 text-xs bg-rose-950/20 rounded-xl border border-rose-900/20 px-3">Este terapeuta no tiene disponibilidad para el día seleccionado. Intente otra fecha o especialista.</div>';
+                return;
+            }
+
+            // Generate time slots (every 1 hour)
+            const slots = [];
+            let currentMin = parseTimeString(startStr);
+            const endMin = parseTimeString(endStr);
+            const serviceDuration = WIZARD_STATE.selectedService ? WIZARD_STATE.selectedService.duration : 60;
+
+            // Generate slots as long as the service can fit before closing time
+            while (currentMin + serviceDuration <= endMin) {
+                slots.push(formatTimeFromMinutes(currentMin));
+                currentMin += 60; // 1-hour intervals for booking
+            }
+
+            // Filter out already booked slots for this therapist on this date
+            const activeBookings = APP_STATE.bookings.filter(b => b.therapistId === therapist.id && b.date === selectedDateStr);
+            const bookedTimes = activeBookings.map(b => b.time);
+
+            const availableSlots = slots.filter(time => !bookedTimes.includes(time));
+
+            if (availableSlots.length === 0) {
+                container.innerHTML = '<div class="col-span-3 text-center py-6 text-stone-400 text-xs">No quedan turnos libres para esta fecha. Intente con otro especialista o día.</div>';
+                return;
+            }
+
+            // Render Slots
+            availableSlots.forEach(time => {
+                const button = document.createElement('button');
+                button.type = "button";
+                button.onclick = () => selectTimeSlot(time, button);
+                button.className = "py-2 bg-dark-800 hover:bg-gold-400/20 border border-stone-800 hover:border-gold-400/40 text-stone-300 rounded-lg text-xs font-semibold transition tracking-wider";
+                button.innerText = time;
+                container.appendChild(button);
+            });
+        }
+
+        function selectTimeSlot(time, element) {
+            WIZARD_STATE.selectedTime = time;
+
+            // Clear previous slot selections
+            const buttons = document.querySelectorAll('#time-slots-container button');
+            buttons.forEach(btn => {
+                btn.className = "py-2 bg-dark-800 hover:bg-gold-400/20 border border-stone-800 hover:border-gold-400/40 text-stone-300 rounded-lg text-xs font-semibold transition tracking-wider";
+            });
+
+            // Highlight selected slot
+            element.className = "py-2 bg-gold-400 text-dark-950 border border-gold-400 rounded-lg text-xs font-bold transition tracking-wider shadow-gold-glow";
+
+            updateBookingSummary();
+        }
+
+        // Helper time operations
+        function parseTimeString(timeStr) {
+            const [hours, minutes] = timeStr.split(':').map(Number);
+            return (hours * 60) + minutes;
+        }
+
+        function formatTimeFromMinutes(totalMinutes) {
+            const hours = Math.floor(totalMinutes / 60);
+            const minutes = totalMinutes % 60;
+            return `${String(hours).padStart(2, '0')}:${String(minutes).padStart(2, '0')}`;
+        }
+
+
+        // ================= SUMMARY AND CONFIRMATION VIEW =================
+        function updateBookingSummary() {
+            const emptyState = document.getElementById('summary-empty');
+            const contentState = document.getElementById('summary-content');
+
+            if (!WIZARD_STATE.selectedService) {
+                emptyState.classList.remove('hidden');
+                contentState.classList.add('hidden');
+                return;
+            }
+
+            emptyState.classList.add('hidden');
+            contentState.classList.remove('hidden');
+
+            // Render Service details
+            document.getElementById('summary-service-name').innerText = WIZARD_STATE.selectedService.name;
+            document.getElementById('summary-service-duration').innerText = `${WIZARD_STATE.selectedService.duration} min de relajación`;
+            document.getElementById('summary-service-price').innerText = `$${WIZARD_STATE.selectedService.price} USD`;
+
+            // Therapist section
+            const therapistBox = document.getElementById('summary-therapist-box');
+            if (WIZARD_STATE.selectedTherapist) {
+                therapistBox.classList.remove('hidden');
+                document.getElementById('summary-therapist-name').innerText = WIZARD_STATE.selectedTherapist.name;
+                
+                const initials = WIZARD_STATE.selectedTherapist.name.split(' ').map(n => n[0]).join('').substring(0,2).toUpperCase();
+                document.getElementById('summary-therapist-img').innerText = initials;
+            } else {
+                therapistBox.classList.add('hidden');
+            }
+
+            // Datetime section
+            const datetimeBox = document.getElementById('summary-datetime-box');
+            if (WIZARD_STATE.selectedDate) {
+                datetimeBox.classList.remove('hidden');
+                const timeString = WIZARD_STATE.selectedTime ? ` a las ${WIZARD_STATE.selectedTime}` : ' (Seleccione una hora)';
+                document.getElementById('summary-datetime-val').innerText = `${WIZARD_STATE.selectedDate}${timeString}`;
+            } else {
+                datetimeBox.classList.add('hidden');
+            }
+        }
+
+        function confirmBooking() {
+            const name = document.getElementById('client-name').value.trim();
+            const phone = document.getElementById('client-phone').value.trim();
+            const email = document.getElementById('client-email').value.trim();
+
+            if (!name || !phone) {
+                showToast("Por favor, ingrese su Nombre y WhatsApp de contacto para la cita.");
+                return;
+            }
+
+            if (!WIZARD_STATE.selectedTime) {
+                showToast("Por favor, elija un horario válido para su cita.");
+                return;
+            }
+
+            // Create booking object
+            const newBooking = {
+                id: `b-${Math.floor(Math.random() * 90000) + 10000}`,
+                clientName: name,
+                clientPhone: phone,
+                clientEmail: email || "No indicado",
+                serviceId: WIZARD_STATE.selectedService.id,
+                therapistId: WIZARD_STATE.selectedTherapist.id,
+                date: WIZARD_STATE.selectedDate,
+                time: WIZARD_STATE.selectedTime
+            };
+
+            // Push to state
+            APP_STATE.bookings.push(newBooking);
+
+            // Reset client fields & state
+            document.getElementById('client-name').value = '';
+            document.getElementById('client-phone').value = '';
+            document.getElementById('client-email').value = '';
+
+            // Clean wizard state
+            WIZARD_STATE.selectedService = null;
+            WIZARD_STATE.selectedTherapist = null;
+            WIZARD_STATE.selectedDate = "";
+            WIZARD_STATE.selectedTime = "";
+
+            // Refresh UI
+            renderServices();
+            renderTherapists();
+            document.getElementById('booking-date').value = '';
+            document.getElementById('time-slots-container').innerHTML = '<div class="col-span-3 text-center py-6 text-stone-500 text-sm">Seleccione una fecha para buscar turnos disponibles.</div>';
+            
+            // Re-lock Wizard containers
+            document.getElementById('step-therapist-container').classList.add('opacity-50', 'pointer-events-none');
+            document.getElementById('step-therapist-num').className = "w-8 h-8 rounded-full border border-stone-600 flex items-center justify-center text-stone-400 font-serif font-bold text-sm";
+            document.getElementById('selected-service-badge').classList.add('hidden');
+
+            document.getElementById('step-datetime-container').classList.add('opacity-50', 'pointer-events-none');
+            document.getElementById('step-datetime-num').className = "w-8 h-8 rounded-full border border-stone-600 flex items-center justify-center text-stone-400 font-serif font-bold text-sm";
+            document.getElementById('selected-therapist-badge').classList.add('hidden');
+
+            updateBookingSummary();
+
+            // Refresh admin logs
+            renderAdminBookings();
+
+            showToast(`¡Excelente! Su reserva ha sido agendada con éxito. ID: ${newBooking.id}`);
+        }
+
+        // ================= PORTFOLIO CAROUSEL MODAL LOGIC =================
+        function openPortfolioModal(therapistId) {
+            const therapist = APP_STATE.therapists.find(t => t.id === therapistId);
+            if (!therapist) return;
+
+            // Load default placeholder list if no gallery configured
+            const gallery = (therapist.gallery && therapist.gallery.length > 0) ? therapist.gallery : [
+                "https://images.unsplash.com/photo-1600334129128-685c5582fd35?auto=format&fit=crop&w=1000&q=80",
+                "https://images.unsplash.com/photo-1540555700478-4be289fbecef?auto=format&fit=crop&w=1000&q=80"
+            ];
+
+            CAROUSEL_STATE.therapist = therapist;
+            CAROUSEL_STATE.currentIndex = 0;
+
+            document.getElementById('portfolio-therapist-name').innerText = `Galería de ${therapist.name}`;
+            
+            // Render the first image
+            renderCarousel();
+
+            document.getElementById('portfolio-modal').classList.remove('hidden');
+        }
+
+        function renderCarousel() {
+            const therapist = CAROUSEL_STATE.therapist;
+            const idx = CAROUSEL_STATE.currentIndex;
+            const gallery = therapist.gallery && therapist.gallery.length > 0 ? therapist.gallery : [];
+
+            if (gallery.length === 0) return;
+
+            const imgEl = document.getElementById('portfolio-image');
+            imgEl.style.opacity = '0'; // Smooth transition animation trigger
+            
+            setTimeout(() => {
+                imgEl.src = gallery[idx];
+                imgEl.style.opacity = '1';
+            }, 150);
+
+            // Update photo index text
+            document.getElementById('portfolio-photo-index').innerText = `FOTO ${idx + 1} DE ${gallery.length}`;
+
+            // Create indicator dots
+            const indContainer = document.getElementById('portfolio-indicators');
+            indContainer.innerHTML = '';
+            
+            gallery.forEach((_, gIdx) => {
+                const dot = document.createElement('button');
+                dot.onclick = () => {
+                    CAROUSEL_STATE.currentIndex = gIdx;
+                    renderCarousel();
+                };
+                dot.className = `w-2 h-2 rounded-full transition-all duration-300 ${gIdx === idx ? 'bg-gold-400 w-5 shadow-gold-glow' : 'bg-stone-600 hover:bg-stone-500'}`;
+                indContainer.appendChild(dot);
+            });
+
+            // Update description based on index
+            const descriptions = [
+                "Entorno terapéutico del spa. Una ambientación premium con iluminación sutil para desconectarse del ruido.",
+                "Aceites esenciales y ungüentos orgánicos que nutren la piel durante cada fricción.",
+                "Piedras volcánicas calientes pulidas a mano para armonizar la energía física y aliviar tensiones profundas.",
+                "Toallas de algodón egipcio y detalles florales para una inmersión completa en el confort."
+            ];
+            document.getElementById('portfolio-photo-description').innerText = descriptions[idx % descriptions.length];
+        }
+
+        function nextSlide() {
+            const gallery = CAROUSEL_STATE.therapist.gallery || [];
+            if (gallery.length === 0) return;
+            CAROUSEL_STATE.currentIndex = (CAROUSEL_STATE.currentIndex + 1) % gallery.length;
+            renderCarousel();
+        }
+
+        function prevSlide() {
+            const gallery = CAROUSEL_STATE.therapist.gallery || [];
+            if (gallery.length === 0) return;
+            CAROUSEL_STATE.currentIndex = (CAROUSEL_STATE.currentIndex - 1 + gallery.length) % gallery.length;
+            renderCarousel();
+        }
+
+        function closePortfolioModal() {
+            document.getElementById('portfolio-modal').classList.add('hidden');
+        }
+
+
+        // ================= ADMIN VIEW ACTIONS & RENDERS =================
+        function renderAdminTherapists() {
+            const listContainer = document.getElementById('admin-therapists-list');
+            listContainer.innerHTML = '';
+
+            APP_STATE.therapists.forEach(therapist => {
+                const div = document.createElement('div');
+                div.className = "flex flex-col md:flex-row justify-between items-start md:items-center bg-dark-850 border border-stone-800 p-4 rounded-xl gap-4";
+                
+                // Construct compact schedules representation
+                const activeDays = Object.keys(therapist.defaultSchedule)
+                    .filter(day => therapist.defaultSchedule[day].active)
+                    .map(day => `${WEEKDAYS_ES[day].substring(0,2)}: ${therapist.defaultSchedule[day].start}-${therapist.defaultSchedule[day].end}`)
+                    .join(' | ');
+
+                // Count portfolio photos
+                const photoCount = therapist.gallery ? therapist.gallery.length : 0;
+
+                div.innerHTML = `
+                    <div class="space-y-1 flex-1">
+                        <div class="flex items-center gap-2">
+                            <h3 class="font-serif text-lg text-stone-100 font-bold">${therapist.name}</h3>
+                            <span class="text-xs px-2.5 py-0.5 rounded-full bg-gold-400/10 text-gold-400 font-medium">${therapist.rating.toFixed(1)} <i class="inline w-3 h-3 fill-current mb-0.5"></i></span>
+                            <span class="text-[10px] uppercase font-bold tracking-wider text-stone-400 border border-stone-700 px-2 py-0.5 rounded bg-dark-900"><i class="inline w-3.5 h-3.5 mr-1 align-middle" data-lucide="image"></i>${photoCount} Fotos</span>
+                        </div>
+                        <p class="text-xs text-stone-400 font-light max-w-xl">${therapist.bio}</p>
+                        <p class="text-[10px] text-stone-500 font-mono tracking-tight uppercase">Horarios Regulares: ${activeDays || 'Ninguno'}</p>
+                    </div>
+                    <div class="flex gap-2 self-end md:self-center">
+                        <button onclick="editTherapist('${therapist.id}')" class="text-xs bg-dark-750 border border-stone-700 hover:border-gold-400 hover:text-gold-400 text-stone-300 px-3.5 py-2 rounded-lg transition">
+                            Editar Perfil
+                        </button>
+                        <button onclick="deleteTherapist('${therapist.id}')" class="text-xs text-rose-400 bg-rose-950/20 hover:bg-rose-900/30 border border-rose-900/30 px-3.5 py-2 rounded-lg transition">
+                            Eliminar
+                        </button>
+                    </div>
+                `;
+                listContainer.appendChild(div);
+            });
+            lucide.createIcons();
+        }
+
+        // Date-Specific Exceptions List in Admin
+        function renderAdminExceptions() {
+            const listContainer = document.getElementById('admin-exceptions-list');
+            listContainer.innerHTML = '';
+
+            let totalExc = 0;
+
+            APP_STATE.therapists.forEach(therapist => {
+                if (!therapist.exceptions) return;
+                
+                Object.keys(therapist.exceptions).forEach(dateStr => {
+                    totalExc++;
+                    const item = therapist.exceptions[dateStr];
+                    const div = document.createElement('div');
+                    div.className = "flex justify-between items-center bg-dark-850/60 border border-stone-800/60 px-4 py-3 rounded-lg text-sm";
+                    
+                    const statusText = item.active 
+                        ? `<span class="text-xs font-semibold text-gold-400 bg-gold-400/5 px-2 py-0.5 rounded border border-gold-400/20">Horario Modificado (${item.start} a ${item.end})</span>`
+                        : `<span class="text-xs font-semibold text-rose-400 bg-rose-950/20 px-2 py-0.5 rounded border border-rose-900/20">No Disponible / Descanso</span>`;
+
+                    div.innerHTML = `
+                        <div class="space-y-1">
+                            <span class="font-mono text-stone-400 font-bold">${dateStr}</span> — 
+                            <span class="text-stone-200 font-medium">${therapist.name}</span>
+                            <div class="mt-0.5">${statusText}</div>
+                        </div>
+                        <button onclick="deleteException('${therapist.id}', '${dateStr}')" class="text-xs text-stone-500 hover:text-rose-400 transition p-1">
+                            <i data-lucide="trash-2" class="w-4 h-4"></i>
+                        </button>
+                    `;
+                    listContainer.appendChild(div);
+                });
+            });
+
+            if (totalExc === 0) {
+                listContainer.innerHTML = '<div class="text-center py-6 text-stone-600 text-sm italic">No hay excepciones configuradas actualmente. Todos los días aplican el horario regular.</div>';
+            } else {
+                lucide.createIcons();
+            }
+        }
+
+        // Active Bookings in Admin
+        function renderAdminBookings() {
+            const listContainer = document.getElementById('admin-bookings-list');
+            listContainer.innerHTML = '';
+
+            // Sort bookings by date descending
+            const sortedBookings = [...APP_STATE.bookings].sort((a,b) => b.date.localeCompare(a.date));
+
+            if (sortedBookings.length === 0) {
+                listContainer.innerHTML = '<div class="text-center py-10 text-stone-600 text-sm">No hay reservas registradas en el sistema.</div>';
+                return;
+            }
+
+            sortedBookings.forEach(booking => {
+                const service = APP_STATE.services.find(s => s.id === booking.serviceId);
+                const therapist = APP_STATE.therapists.find(t => t.id === booking.therapistId);
+                const therapistName = therapist ? therapist.name : 'Desconocido';
+
+                const div = document.createElement('div');
+                div.className = "bg-dark-850 border border-stone-800 p-4 rounded-xl space-y-3 relative overflow-hidden";
+                div.innerHTML = `
+                    <div class="flex justify-between items-start">
+                        <div>
+                            <span class="text-[10px] uppercase font-mono bg-stone-800 text-stone-300 px-2 py-0.5 rounded">${booking.id}</span>
+                            <h4 class="text-stone-200 font-medium mt-1.5">${booking.clientName}</h4>
+                        </div>
+                        <span class="text-gold-400 font-bold text-sm">$${service ? service.price : '0'} USD</span>
+                    </div>
+
+                    <div class="space-y-1 text-xs text-stone-400">
+                        <p class="flex items-center gap-1.5"><i data-lucide="tag" class="w-3.5 h-3.5"></i>${service ? service.name : 'Servicio Eliminado'}</p>
+                        <p class="flex items-center gap-1.5"><i data-lucide="user" class="w-3.5 h-3.5"></i>Terapeuta: ${therapistName}</p>
+                        <p class="flex items-center gap-1.5 text-gold-400/90 font-semibold"><i data-lucide="calendar" class="w-3.5 h-3.5"></i>Fecha: ${booking.date} a las ${booking.time}</p>
+                        <p class="flex items-center gap-1.5"><i data-lucide="phone" class="w-3.5 h-3.5"></i>Teléfono: ${booking.clientPhone}</p>
+                    </div>
+
+                    <div class="flex justify-end border-t border-stone-800 pt-3">
+                        <button onclick="cancelBooking('${booking.id}')" class="text-[11px] uppercase tracking-wider text-rose-400 hover:text-rose-300 transition flex items-center gap-1 font-semibold">
+                            <i data-lucide="calendar-x" class="w-3.5 h-3.5"></i> Cancelar Cita
+                        </button>
+                    </div>
+                `;
+                listContainer.appendChild(div);
+            });
+            lucide.createIcons();
+        }
+
+        function cancelBooking(bookingId) {
+            APP_STATE.bookings = APP_STATE.bookings.filter(b => b.id !== bookingId);
+            renderAdminBookings();
+            showToast(`La reserva ${bookingId} ha sido eliminada del sistema.`);
+        }
+
+        // ================= THERAPIST CREATION & EDITS MODAL =================
+        function generateDefaultScheduleFormInputs() {
+            const container = document.getElementById('default-schedule-inputs');
+            container.innerHTML = '';
+            
+            Object.keys(WEEKDAYS_ES).forEach(dayKey => {
+                const dayName = WEEKDAYS_ES[dayKey];
+                
+                const div = document.createElement('div');
+                div.className = "grid grid-cols-12 gap-2 items-center bg-dark-850 p-2.5 rounded-lg border border-stone-800";
+                div.innerHTML = `
+                    <div class="col-span-4 flex items-center gap-2">
+                        <input type="checkbox" id="sched-active-${dayKey}" checked class="text-gold-400 focus:ring-gold-400 rounded">
+                        <label for="sched-active-${dayKey}" class="text-xs font-medium text-stone-200">${dayName}</label>
+                    </div>
+                    <div class="col-span-4 flex items-center gap-1">
+                        <span class="text-[10px] text-stone-500 uppercase">Abre</span>
+                        <input type="time" id="sched-start-${dayKey}" value="09:00" class="w-full bg-dark-900 border border-stone-800 rounded px-1.5 py-0.5 text-xs text-stone-200">
+                    </div>
+                    <div class="col-span-4 flex items-center gap-1">
+                        <span class="text-[10px] text-stone-500 uppercase">Cierra</span>
+                        <input type="time" id="sched-end-${dayKey}" value="18:00" class="w-full bg-dark-900 border border-stone-800 rounded px-1.5 py-0.5 text-xs text-stone-200">
+                    </div>
+                `;
+                container.appendChild(div);
+            });
+        }
+
+        function openTherapistModal() {
+            // Clean/Reset Form fields
+            document.getElementById('therapist-form-id').value = '';
+            document.getElementById('t-name').value = '';
+            document.getElementById('t-rating').value = '4.8';
+            document.getElementById('t-specialties').value = '';
+            document.getElementById('t-bio').value = '';
+            document.getElementById('t-gallery').value = '';
+            document.getElementById('t-color').value = 'amber';
+            document.getElementById('therapist-modal-title').innerText = "Nuevo Terapeuta de Élite";
+
+            // Reset days checkboxes and values
+            Object.keys(WEEKDAYS_ES).forEach(dayKey => {
+                document.getElementById(`sched-active-${dayKey}`).checked = true;
+                document.getElementById(`sched-start-${dayKey}`).value = "09:00";
+                document.getElementById(`sched-end-${dayKey}`).value = "18:00";
+            });
+
+            document.getElementById('therapist-modal').classList.remove('hidden');
+        }
+
+        function editTherapist(therapistId) {
+            const therapist = APP_STATE.therapists.find(t => t.id === therapistId);
+            if (!therapist) return;
+
+            document.getElementById('therapist-form-id').value = therapist.id;
+            document.getElementById('t-name').value = therapist.name;
+            document.getElementById('t-rating').value = therapist.rating;
+            document.getElementById('t-specialties').value = therapist.specialties.join(', ');
+            document.getElementById('t-bio').value = therapist.bio;
+            document.getElementById('t-gallery').value = therapist.gallery ? therapist.gallery.join(', ') : '';
+            document.getElementById('t-color').value = therapist.color || 'amber';
+            document.getElementById('therapist-modal-title').innerText = `Editar Perfil: ${therapist.name}`;
+
+            // Load therapist's regular schedule
+            Object.keys(WEEKDAYS_ES).forEach(dayKey => {
+                const daySched = therapist.defaultSchedule[dayKey];
+                if (daySched) {
+                    document.getElementById(`sched-active-${dayKey}`).checked = daySched.active;
+                    document.getElementById(`sched-start-${dayKey}`).value = daySched.start || "09:00";
+                    document.getElementById(`sched-end-${dayKey}`).value = daySched.end || "18:00";
+                } else {
+                    document.getElementById(`sched-active-${dayKey}`).checked = false;
+                }
+            });
+
+            document.getElementById('therapist-modal').classList.remove('hidden');
+        }
+
+        function closeTherapistModal() {
+            document.getElementById('therapist-modal').classList.add('hidden');
+        }
+
+        function saveTherapist(event) {
+            event.preventDefault();
+
+            const therapistId = document.getElementById('therapist-form-id').value;
+            const name = document.getElementById('t-name').value.trim();
+            const rating = parseFloat(document.getElementById('t-rating').value);
+            const specialties = document.getElementById('t-specialties').value.split(',').map(s => s.trim()).filter(s => s.length > 0);
+            const bio = document.getElementById('t-bio').value.trim();
+            
+            // Parse input gallery URLs
+            const galleryVal = document.getElementById('t-gallery').value.trim();
+            const gallery = galleryVal ? galleryVal.split(',').map(u => u.trim()).filter(u => u.length > 0) : [];
+            
+            const color = document.getElementById('t-color').value;
+
+            // Construct default working hours
+            const defaultSchedule = {};
+            Object.keys(WEEKDAYS_ES).forEach(dayKey => {
+                defaultSchedule[dayKey] = {
+                    active: document.getElementById(`sched-active-${dayKey}`).checked,
+                    start: document.getElementById(`sched-start-${dayKey}`).value,
+                    end: document.getElementById(`sched-end-${dayKey}`).value
+                };
+            });
+
+            if (therapistId) {
+                // Editing existing
+                const index = APP_STATE.therapists.findIndex(t => t.id === therapistId);
+                if (index !== -1) {
+                    APP_STATE.therapists[index] = {
+                        ...APP_STATE.therapists[index],
+                        name, rating, specialties, bio, gallery, color, defaultSchedule
+                    };
+                    showToast(`Perfil de ${name} actualizado con éxito.`);
+                }
+            } else {
+                // Adding new
+                const newTherapist = {
+                    id: `t-${Math.floor(Math.random() * 1000) + 10}`,
+                    name, rating, specialties, bio, gallery, color, defaultSchedule,
+                    exceptions: {}
+                };
+                APP_STATE.therapists.push(newTherapist);
+                showToast(`Especialista ${name} registrado en el catálogo.`);
+            }
+
+            // Close, Refresh all lists
+            closeTherapistModal();
+            renderTherapists();
+            renderAdminTherapists();
+            renderAdminExceptions();
+        }
+
+        function deleteTherapist(therapistId) {
+            APP_STATE.therapists = APP_STATE.therapists.filter(t => t.id !== therapistId);
+            renderTherapists();
+            renderAdminTherapists();
+            renderAdminExceptions();
+            showToast("Se ha removido el terapeuta del catálogo.");
+        }
+
+
+        // ================= EXCEPTION FORM ACTIONS =================
+        function openExceptionModal() {
+            const select = document.getElementById('exc-therapist-id');
+            select.innerHTML = '';
+
+            APP_STATE.therapists.forEach(t => {
+                const opt = document.createElement('option');
+                opt.value = t.id;
+                opt.innerText = t.name;
+                select.appendChild(opt);
+            });
+
+            // Set today's date for exception
+            const today = new Date().toISOString().split('T')[0];
+            document.getElementById('exc-date').value = today;
+            document.getElementById('exc-date').min = today;
+
+            // reset inputs
+            document.querySelector('input[name="exc-status"][value="inactive"]').checked = true;
+            toggleExcTimes(false);
+
+            document.getElementById('exception-modal').classList.remove('hidden');
+        }
+
+        function closeExceptionModal() {
+            document.getElementById('exception-modal').classList.add('hidden');
+        }
+
+        function toggleExcTimes(show) {
+            const container = document.getElementById('exc-hours-container');
+            if (show) {
+                container.classList.remove('hidden');
+                document.getElementById('exc-start-time').required = true;
+                document.getElementById('exc-end-time').required = true;
+                document.getElementById('exc-start-time').value = "09:00";
+                document.getElementById('exc-end-time').value = "15:00";
+            } else {
+                container.classList.add('hidden');
+                document.getElementById('exc-start-time').removeAttribute('required');
+                document.getElementById('exc-end-time').removeAttribute('required');
+            }
+        }
+
+        function saveException(event) {
+            event.preventDefault();
+
+            const therapistId = document.getElementById('exc-therapist-id').value;
+            const excDate = document.getElementById('exc-date').value;
+            const excStatus = document.querySelector('input[name="exc-status"]:checked').value;
+            
+            const therapist = APP_STATE.therapists.find(t => t.id === therapistId);
+            if (!therapist) return;
+
+            if (!therapist.exceptions) {
+                therapist.exceptions = {};
+            }
+
+            if (excStatus === "inactive") {
+                // Not available exception
+                therapist.exceptions[excDate] = { active: false };
+            } else {
+                // Special customized times
+                const start = document.getElementById('exc-start-time').value;
+                const end = document.getElementById('exc-end-time').value;
+                therapist.exceptions[excDate] = { active: true, start, end };
+            }
+
+            closeExceptionModal();
+            renderAdminExceptions();
+            showToast(`Cambio de disponibilidad guardado para el día ${excDate}.`);
+        }
+
+        function deleteException(therapistId, dateStr) {
+            const therapist = APP_STATE.therapists.find(t => t.id === therapistId);
+            if (therapist && therapist.exceptions) {
+                delete therapist.exceptions[dateStr];
+                renderAdminExceptions();
+                showToast(`Se restableció el horario regular para ${therapist.name} el día ${dateStr}.`);
+            }
+        }
+
+
+        // ================= GENERAL NOTIFICATION TOAST =================
+        function showToast(message) {
+            const toast = document.getElementById('toast');
+            const msgEl = document.getElementById('toast-message');
+            
+            msgEl.innerText = message;
+            toast.className = "fixed bottom-6 right-6 bg-dark-900 border border-gold-400 text-gold-400 p-4 rounded-xl shadow-2xl z-50 transform translate-y-0 opacity-100 transition-all duration-300 max-w-sm flex items-center gap-3";
+            
+            setTimeout(() => {
+                toast.className = "fixed bottom-6 right-6 bg-dark-900 border border-gold-400 text-gold-400 p-4 rounded-xl shadow-2xl z-50 transform translate-y-20 opacity-0 transition-all duration-300 max-w-sm flex items-center gap-3";
+            }, 5000);
+        }
+
+    </script>
+</body>
+</html>

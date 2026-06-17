@@ -1,0 +1,4 @@
+node_modules/
+eden_spa.db
+.env
+.DS_Store
