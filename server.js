@@ -1,12 +1,33 @@
 import express from 'express';
 import cors from 'cors';
 import path from 'path';
+import fs from 'fs';
+import multer from 'multer';
 import { fileURLToPath } from 'url';
 import { initDb, getDatabaseConnection } from './database.js';
 
 const __dirname = path.dirname(fileURLToPath(import.meta.url));
 const app = express();
 const PORT = process.env.PORT || 3000;
+
+// Ensure public/uploads folder exists
+const uploadDir = path.join(__dirname, 'public', 'uploads');
+if (!fs.existsSync(uploadDir)) {
+    fs.mkdirSync(uploadDir, { recursive: true });
+}
+
+// Multer Storage Configuration
+const storage = multer.diskStorage({
+    destination: (req, file, cb) => {
+        cb(null, uploadDir);
+    },
+    filename: (req, file, cb) => {
+        const uniqueSuffix = Date.now() + '-' + Math.round(Math.random() * 1e9);
+        const ext = path.extname(file.originalname);
+        cb(null, uniqueSuffix + ext);
+    }
+});
+const upload = multer({ storage });
 
 app.use(cors());
 app.use(express.json());
@@ -24,6 +45,19 @@ try {
 }
 
 // ================= API ENDPOINTS =================
+
+// File Upload
+app.post('/api/upload', upload.array('photos', 10), (req, res) => {
+    try {
+        if (!req.files || req.files.length === 0) {
+            return res.status(400).json({ error: "No files uploaded" });
+        }
+        const urls = req.files.map(file => `/uploads/${file.filename}`);
+        res.json({ urls });
+    } catch (err) {
+        res.status(500).json({ error: err.message });
+    }
+});
 
 // 0. SETTINGS
 app.get('/api/settings', async (req, res) => {

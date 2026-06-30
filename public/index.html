@@ -1,15 +1,18 @@
 <!DOCTYPE html>
 <html lang="es">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>EDEN Spa - Sistema de Reservas Premium</title>
     <!-- Tailwind CSS CDN -->
     <script src="https://cdn.tailwindcss.com"></script>
-    <!-- Google Fonts for Premium Look -->
+    <!-- Google Fonts for Premium Look and High Legibility -->
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@400;600;700&family=Montserrat:wght@300;400;500;600&display=swap" rel="stylesheet">
+    <link
+        href="https://fonts.googleapis.com/css2?family=Cinzel:wght@400;600;700&family=Plus+Jakarta+Sans:wght@300;400;500;600;700;800&display=swap"
+        rel="stylesheet">
     <!-- Lucide Icons for elegant icons -->
     <script src="https://unpkg.com/lucide@latest"></script>
     <script>
@@ -18,7 +21,7 @@
                 extend: {
                     fontFamily: {
                         serif: ['Cinzel', 'serif'],
-                        sans: ['Montserrat', 'sans-serif'],
+                        sans: ['Plus Jakarta Sans', 'sans-serif'],
                     },
                     colors: {
                         gold: {
@@ -50,43 +53,68 @@
         }
     </script>
     <style>
+        /* Globally increase font size and scale proportionally based on viewport */
+        html {
+            font-size: 16.5px;
+        }
+
+        @media (min-width: 640px) {
+            html {
+                font-size: 17.5px;
+            }
+        }
+
+        @media (min-width: 1024px) {
+            html {
+                font-size: 18.5px;
+            }
+        }
+
         /* Smooth transitions & custom scrollbar for luxury feel */
         ::-webkit-scrollbar {
             width: 6px;
         }
+
         ::-webkit-scrollbar-track {
             background: #070707;
         }
+
         ::-webkit-scrollbar-thumb {
             background: #D4AF37;
             border-radius: 3px;
         }
+
         .gold-gradient-bg {
             background: linear-gradient(135deg, #D4AF37 0%, #AA8114 100%);
         }
+
         .gold-border-gradient {
             border-image: linear-gradient(to right, #D4AF37, #7B5E15) 1;
         }
     </style>
 </head>
+
 <body class="bg-dark-950 text-stone-300 font-sans min-h-screen selection:bg-gold-400 selection:text-dark-950">
 
     <!-- TOP GLOW EFFECT -->
-    <div class="absolute top-0 left-1/2 -translate-x-1/2 w-full max-w-7xl h-96 bg-gold-400/5 blur-[120px] rounded-full pointer-events-none"></div>
+    <div
+        class="absolute top-0 left-1/2 -translate-x-1/2 w-full max-w-7xl h-96 bg-gold-400/5 blur-[120px] rounded-full pointer-events-none">
+    </div>
 
     <!-- MAIN NAVBAR -->
     <nav class="border-b border-gold-400/10 bg-dark-950/90 backdrop-blur-md sticky top-0 z-50">
         <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 h-20 flex items-center justify-between">
-            <div class="flex flex-col">
-                <span class="font-serif text-2xl lg:text-3xl tracking-[0.2em] text-gold-400 font-bold">EDEN</span>
-                <span class="text-[9px] uppercase tracking-[0.4em] text-stone-400 -mt-1">Luxury Wellness</span>
+            <div class="flex items-center">
+                <img src="logo.png" alt="EDEN Bienestar Masculino" class="h-16 w-auto object-contain">
             </div>
-            
+
             <div class="flex items-center space-x-2 md:space-x-4">
-                <button onclick="switchTab('booking-view')" id="nav-booking" class="px-4 py-2 rounded-full text-xs md:text-sm font-medium tracking-wider transition-all duration-300 border border-gold-400/30 bg-gold-400/10 text-gold-400 shadow-gold-glow">
+                <button onclick="switchTab('booking-view')" id="nav-booking"
+                    class="px-4 py-2 rounded-full text-xs md:text-sm font-medium tracking-wider transition-all duration-300 border border-gold-400/30 bg-gold-400/10 text-gold-400 shadow-gold-glow">
                     <i data-lucide="calendar" class="inline w-4 h-4 mr-2 mb-0.5"></i>Reservar
                 </button>
-                <button onclick="switchTab('admin-view')" id="nav-admin" class="px-4 py-2 rounded-full text-xs md:text-sm font-medium tracking-wider transition-all duration-300 border border-transparent text-stone-400 hover:text-gold-400 hover:border-gold-400/20">
+                <button onclick="switchTab('admin-view')" id="nav-admin"
+                    class="hidden px-4 py-2 rounded-full text-xs md:text-sm font-medium tracking-wider transition-all duration-300 border border-transparent text-stone-400 hover:text-gold-400 hover:border-gold-400/20">
                     <i data-lucide="shield-alert" class="inline w-4 h-4 mr-2 mb-0.5"></i>Administrador
                 </button>
             </div>
@@ -95,81 +123,136 @@
 
     <!-- CONTENT WRAPPER -->
     <main class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8 relative z-10">
-        
+
         <!-- ================= BOOKING & CLIENT CATALOG TAB ================= -->
         <section id="booking-view" class="space-y-12">
             <!-- Hero section inside booking -->
             <div class="text-center max-w-2xl mx-auto space-y-4 py-4">
-                <div class="inline-flex items-center gap-2 border border-gold-400/20 bg-gold-400/5 px-3 py-1 rounded-full text-xs text-gold-400 uppercase tracking-widest">
+                <div
+                    class="inline-flex items-center gap-2 border border-gold-400/20 bg-gold-400/5 px-3 py-1 rounded-full text-xs text-gold-400 uppercase tracking-widest">
                     <span class="w-1.5 h-1.5 rounded-full bg-gold-400 animate-pulse"></span>
                     Experiencia Exclusiva de Bienestar
                 </div>
-                <h1 class="font-serif text-3xl md:text-5xl text-stone-100 tracking-wide">Agende su Momento de Paz</h1>
+                <h1 class="font-serif text-3xl md:text-5xl text-stone-100 tracking-wide">Experiencias tantricas en cama
+                </h1>
                 <p class="text-sm md:text-base text-stone-400 font-light">
-                    Seleccione un servicio exclusivo, elija a su especialista de confianza y reserve su sesión personalizada en segundos.
+                    Seleccione un servicio exclusivo, elija a su especialista de confianza y reserve su sesión
+                    personalizada en segundos.
                 </p>
             </div>
 
             <!-- Main Booking Layout: Left (Catalog / Selection), Right (Wizard Status) -->
             <div class="grid grid-cols-1 lg:grid-cols-12 gap-8">
-                
+
                 <!-- Left Column (Wizard Steps) - occupying 8 cols -->
                 <div class="lg:col-span-8 space-y-6">
-                    
+
                     <!-- STEP 1: SELECT SERVICE -->
-                    <div class="bg-dark-900 border border-gold-400/10 p-6 rounded-2xl relative overflow-hidden transition-all duration-300 shadow-gold-glow">
-                        <div class="flex justify-between items-center mb-6">
-                            <div class="flex items-center gap-3">
-                                <span class="w-8 h-8 rounded-full border border-gold-400 flex items-center justify-center text-gold-400 font-serif font-bold text-sm">1</span>
-                                <h2 class="font-serif text-xl tracking-wide text-stone-100">Seleccione el Ritual</h2>
+                    <div id="step-1-container"
+                        class="bg-dark-900 border border-gold-400/40 rounded-2xl relative overflow-hidden transition-all duration-300 shadow-gold-glow">
+                        <div id="step-1-header"
+                            class="flex justify-between items-center cursor-pointer gold-gradient-bg text-dark-950 p-4 rounded-xl gap-4"
+                            onclick="showStep(1)">
+                            <div class="flex flex-col gap-1.5 md:flex-row md:items-center md:gap-3 flex-1 min-w-0">
+                                <div class="flex items-center gap-3">
+                                    <span
+                                        class="w-8 h-8 rounded-full bg-dark-950 text-gold-400 flex items-center justify-center font-serif font-bold text-sm shrink-0 shadow-md">1</span>
+                                    <h2
+                                        class="font-serif text-base md:text-lg tracking-wide text-dark-950 font-extrabold truncate">
+                                        Seleccione la Experiencia</h2>
+                                </div>
+                                <span id="selected-service-badge"
+                                    class="hidden text-[10px] md:text-xs px-2.5 py-1 rounded-full text-dark-950 font-extrabold truncate self-start md:self-auto"
+                                    style="background-color: #f8f2e4; border: 1px solid rgba(0,0,0,0.15);"></span>
                             </div>
-                            <span id="selected-service-badge" class="hidden text-xs px-3 py-1 rounded-full border border-gold-400/20 bg-gold-400/5 text-gold-400 font-medium"></span>
+                            <div class="flex items-center shrink-0">
+                                <i id="step-1-chevron" data-lucide="chevron-down"
+                                    class="w-5 h-5 text-dark-950 transition-transform duration-300 rotate-180"></i>
+                            </div>
                         </div>
-                        
+
                         <!-- Services grid -->
-                        <div id="services-grid" class="grid grid-cols-1 md:grid-cols-2 gap-4">
-                            <!-- Dynamic Content Loaded by JS -->
+                        <div id="step-1-content" class="mt-6 p-4">
+                            <div id="services-grid" class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                                <!-- Dynamic Content Loaded by JS -->
+                            </div>
                         </div>
                     </div>
 
                     <!-- STEP 2: SELECT THERAPIST -->
-                    <div id="step-therapist-container" class="opacity-50 pointer-events-none bg-dark-900 border border-gold-400/10 p-6 rounded-2xl transition-all duration-300">
-                        <div class="flex justify-between items-center mb-6">
-                            <div class="flex items-center gap-3">
-                                <span class="w-8 h-8 rounded-full border border-stone-600 flex items-center justify-center text-stone-400 font-serif font-bold text-sm" id="step-therapist-num">2</span>
-                                <h2 class="font-serif text-xl tracking-wide text-stone-100">Elija su Especialista</h2>
+                    <div id="step-2-container"
+                        class="opacity-50 pointer-events-none bg-dark-900 border border-gold-400/10 rounded-2xl transition-all duration-300">
+                        <div id="step-2-header"
+                            class="flex justify-between items-center cursor-pointer gold-gradient-bg text-dark-950 p-4 rounded-xl gap-4"
+                            onclick="showStep(2)">
+                            <div class="flex flex-col gap-1.5 md:flex-row md:items-center md:gap-3 flex-1 min-w-0">
+                                <div class="flex items-center gap-3">
+                                    <span
+                                        class="w-8 h-8 rounded-full bg-dark-950 text-gold-400 flex items-center justify-center font-serif font-bold text-sm shrink-0 shadow-md"
+                                        id="step-therapist-num">2</span>
+                                    <h2
+                                        class="font-serif text-base md:text-lg tracking-wide text-dark-950 font-extrabold truncate">
+                                        Elija su Especialista</h2>
+                                </div>
+                                <span id="selected-therapist-badge"
+                                    class="hidden text-[10px] md:text-xs px-2.5 py-1 rounded-full text-dark-950 font-extrabold truncate self-start md:self-auto"
+                                    style="background-color: #f8f2e4; border: 1px solid rgba(0,0,0,0.15);"></span>
                             </div>
-                            <span id="selected-therapist-badge" class="hidden text-xs px-3 py-1 rounded-full border border-gold-400/20 bg-gold-400/5 text-gold-400 font-medium"></span>
+                            <div class="flex items-center shrink-0">
+                                <i id="step-2-chevron" data-lucide="chevron-down"
+                                    class="w-5 h-5 text-dark-950 transition-transform duration-300"></i>
+                            </div>
                         </div>
 
                         <!-- Therapists grid -->
-                        <div id="therapists-grid" class="grid grid-cols-1 md:grid-cols-2 gap-4">
-                            <!-- Dynamic Content Loaded by JS -->
+                        <div id="step-2-content" class="hidden mt-6 p-4">
+                            <div id="therapists-grid" class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                                <!-- Dynamic Content Loaded by JS -->
+                            </div>
                         </div>
                     </div>
 
                     <!-- STEP 3: SELECT DATE & TIME -->
-                    <div id="step-datetime-container" class="opacity-50 pointer-events-none bg-dark-900 border border-gold-400/10 p-6 rounded-2xl transition-all duration-300">
-                        <div class="flex justify-between items-center mb-6">
+                    <div id="step-3-container"
+                        class="opacity-50 pointer-events-none bg-dark-900 border border-gold-400/10 rounded-2xl transition-all duration-300">
+                        <div id="step-3-header"
+                            class="flex justify-between items-center cursor-pointer gold-gradient-bg text-dark-950 p-4 rounded-xl"
+                            onclick="showStep(3)">
                             <div class="flex items-center gap-3">
-                                <span class="w-8 h-8 rounded-full border border-stone-600 flex items-center justify-center text-stone-400 font-serif font-bold text-sm" id="step-datetime-num">3</span>
-                                <h2 class="font-serif text-xl tracking-wide text-stone-100">Fecha y Hora de Preferencia</h2>
+                                <span
+                                    class="w-8 h-8 rounded-full bg-dark-950 text-gold-400 flex items-center justify-center font-serif font-bold text-sm shrink-0 shadow-md"
+                                    id="step-datetime-num">3</span>
+                                <h2 class="font-serif text-base md:text-lg tracking-wide text-dark-950 font-extrabold">
+                                    Fecha y Hora de Preferencia</h2>
+                            </div>
+                            <div class="flex items-center gap-2">
+                                <i id="step-3-chevron" data-lucide="chevron-down"
+                                    class="w-5 h-5 text-dark-950 transition-transform duration-300 shrink-0"></i>
                             </div>
                         </div>
 
-                        <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
-                            <!-- Date Selector -->
-                            <div>
-                                <label class="block text-xs uppercase tracking-widest text-stone-400 mb-2">Seleccione una Fecha</label>
-                                <input type="date" id="booking-date" onchange="onBookingDateChange()" class="w-full bg-white border border-stone-300 rounded-xl px-4 py-3 text-black focus:outline-none focus:border-gold-400 focus:ring-1 focus:ring-gold-400 transition">
-                                <p class="text-xs text-stone-500 mt-2 font-light">Las citas se agendan a partir de hoy y de acuerdo al horario diario de cada terapeuta.</p>
-                            </div>
+                        <div id="step-3-content" class="hidden mt-6 p-4">
+                            <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                                <!-- Date Selector -->
+                                <div>
+                                    <label
+                                        class="block text-xs uppercase tracking-widest text-stone-400 mb-2">Seleccione
+                                        una Fecha</label>
+                                    <input type="date" id="booking-date" onchange="onBookingDateChange()"
+                                        class="w-full bg-white border border-stone-300 rounded-xl px-4 py-3 text-black focus:outline-none focus:border-gold-400 focus:ring-1 focus:ring-gold-400 transition">
+                                    <p class="text-xs text-stone-500 mt-2 font-light">Las citas se agendan a partir de
+                                        hoy y de acuerdo al horario diario de cada terapeuta.</p>
+                                </div>
 
-                            <!-- Time Slots Selector -->
-                            <div>
-                                <label class="block text-xs uppercase tracking-widest text-stone-400 mb-2">Horas Disponibles</label>
-                                <div id="time-slots-container" class="grid grid-cols-3 gap-2 max-h-48 overflow-y-auto pr-1">
-                                    <div class="col-span-3 text-center py-6 text-stone-500 text-sm">Seleccione una fecha para buscar turnos disponibles.</div>
+                                <!-- Time Slots Selector -->
+                                <div>
+                                    <label class="block text-xs uppercase tracking-widest text-stone-400 mb-2">Horas
+                                        Disponibles</label>
+                                    <div id="time-slots-container"
+                                        class="grid grid-cols-3 gap-2 max-h-48 overflow-y-auto pr-1">
+                                        <div class="col-span-3 text-center py-6 text-stone-500 text-sm">Seleccione una
+                                            fecha para buscar turnos disponibles.</div>
+                                    </div>
                                 </div>
                             </div>
                         </div>
@@ -179,9 +262,11 @@
 
                 <!-- Right Column (Booking Summary / Client Form) - occupying 4 cols -->
                 <div class="lg:col-span-4 space-y-6">
-                    <div class="bg-dark-900 border border-gold-400/20 rounded-2xl p-6 sticky top-28 space-y-6 shadow-gold-glow">
-                        <h3 class="font-serif text-lg tracking-wide text-stone-100 border-b border-gold-400/10 pb-4">Resumen del Ritual</h3>
-                        
+                    <div
+                        class="bg-dark-900 border border-gold-400/20 rounded-2xl p-6 sticky top-28 space-y-6 shadow-gold-glow">
+                        <h3 class="font-serif text-lg tracking-wide text-stone-100 border-b border-gold-400/10 pb-4">
+                            Resumen del Ritual</h3>
+
                         <div id="summary-empty" class="text-center py-8 text-stone-500 text-sm space-y-2">
                             <i data-lucide="sparkles" class="w-8 h-8 mx-auto text-gold-400/20"></i>
                             <p>Configure sus elecciones para cotizar y finalizar su reserva de bienestar.</p>
@@ -198,8 +283,11 @@
                             </div>
 
                             <!-- Selected Therapist -->
-                            <div class="flex items-center gap-3 border-t border-gold-400/10 pt-4" id="summary-therapist-box">
-                                <div id="summary-therapist-img" class="w-10 h-10 rounded-full bg-dark-800 flex items-center justify-center overflow-hidden border border-gold-400/20 text-gold-400 font-serif font-bold"></div>
+                            <div class="flex items-center gap-3 border-t border-gold-400/10 pt-4"
+                                id="summary-therapist-box">
+                                <div id="summary-therapist-img"
+                                    class="w-10 h-10 rounded-full bg-dark-800 flex items-center justify-center overflow-hidden border border-gold-400/20 text-gold-400 font-serif font-bold">
+                                </div>
                                 <div>
                                     <p class="text-xs text-stone-400 uppercase tracking-widest">Terapeuta</p>
                                     <h4 id="summary-therapist-name" class="text-stone-200 font-medium"></h4>
@@ -207,8 +295,10 @@
                             </div>
 
                             <!-- Selected Slot -->
-                            <div class="flex items-center gap-3 border-t border-gold-400/10 pt-4" id="summary-datetime-box">
-                                <div class="w-10 h-10 rounded-full bg-dark-800 flex items-center justify-center border border-gold-400/20 text-gold-400">
+                            <div class="flex items-center gap-3 border-t border-gold-400/10 pt-4"
+                                id="summary-datetime-box">
+                                <div
+                                    class="w-10 h-10 rounded-full bg-dark-800 flex items-center justify-center border border-gold-400/20 text-gold-400">
                                     <i data-lucide="clock" class="w-5 h-5"></i>
                                 </div>
                                 <div>
@@ -220,15 +310,19 @@
                             <!-- Client Details Form -->
                             <div class="border-t border-gold-400/10 pt-4 space-y-3">
                                 <h4 class="text-xs uppercase tracking-widest text-stone-400">Datos Personales</h4>
-                                
+
                                 <div class="space-y-2">
-                                    <input type="text" id="client-name" placeholder="Nombre completo" class="w-full bg-white border border-stone-300 rounded-lg px-3 py-2 text-sm text-black focus:outline-none focus:border-gold-400 transition placeholder:text-stone-400">
-                                    <input type="tel" id="client-phone" placeholder="WhatsApp / Teléfono" class="w-full bg-white border border-stone-300 rounded-lg px-3 py-2 text-sm text-black focus:outline-none focus:border-gold-400 transition placeholder:text-stone-400">
-                                    <input type="email" id="client-email" placeholder="Correo electrónico" class="w-full bg-white border border-stone-300 rounded-lg px-3 py-2 text-sm text-black focus:outline-none focus:border-gold-400 transition placeholder:text-stone-400">
+                                    <input type="text" id="client-name" placeholder="Nombre completo"
+                                        class="w-full bg-white border border-stone-300 rounded-lg px-3 py-2 text-sm text-black focus:outline-none focus:border-gold-400 transition placeholder:text-stone-400">
+                                    <input type="tel" id="client-phone" placeholder="WhatsApp / Teléfono"
+                                        class="w-full bg-white border border-stone-300 rounded-lg px-3 py-2 text-sm text-black focus:outline-none focus:border-gold-400 transition placeholder:text-stone-400">
+                                    <input type="email" id="client-email" placeholder="Correo electrónico (opcional)"
+                                        class="w-full bg-white border border-stone-300 rounded-lg px-3 py-2 text-sm text-black focus:outline-none focus:border-gold-400 transition placeholder:text-stone-400">
                                 </div>
                             </div>
 
-                            <button onclick="confirmBooking()" class="w-full gold-gradient-bg hover:opacity-90 text-dark-950 font-bold uppercase tracking-wider py-3 px-4 rounded-xl transition duration-300 flex items-center justify-center gap-2 shadow-gold-glow hover:shadow-gold-glow-hover text-sm">
+                            <button onclick="confirmBooking()"
+                                class="w-full gold-gradient-bg hover:opacity-90 text-dark-950 font-bold uppercase tracking-wider py-3 px-4 rounded-xl transition duration-300 flex items-center justify-center gap-2 shadow-gold-glow hover:shadow-gold-glow-hover text-sm">
                                 <i data-lucide="check-circle" class="w-4 h-4"></i>Confirmar Mi Reserva
                             </button>
                         </div>
@@ -241,32 +335,98 @@
 
         <!-- ================= ADMIN MANAGEMENT TAB ================= -->
         <section id="admin-view" class="hidden space-y-8">
-            <div class="flex flex-col md:flex-row justify-between items-start md:items-center gap-4 border-b border-gold-400/10 pb-6">
+            <div
+                class="flex flex-col md:flex-row justify-between items-start md:items-center gap-4 border-b border-gold-400/10 pb-6">
                 <div>
                     <h1 class="font-serif text-3xl tracking-wide text-stone-100">Panel Administrativo</h1>
-                    <p class="text-sm text-stone-400">Administre el catálogo de terapeutas y rituales, defina horarios de trabajo fijos y configure excepciones de fechas específicas.</p>
+                    <p class="text-sm text-stone-400">Administre el catálogo de terapeutas y rituales, defina horarios
+                        de trabajo fijos y configure excepciones de fechas específicas.</p>
                 </div>
                 <div class="flex flex-wrap gap-2">
-                    <button onclick="openServiceModal()" class="gold-gradient-bg text-dark-950 px-4 py-2 rounded-xl text-xs uppercase tracking-widest font-semibold hover:opacity-90 transition flex items-center gap-1">
+                    <button onclick="openServiceModal()"
+                        class="gold-gradient-bg text-dark-950 px-4 py-2 rounded-xl text-xs uppercase tracking-widest font-semibold hover:opacity-90 transition flex items-center gap-1">
                         <i data-lucide="sparkles" class="w-4 h-4"></i> Nuevo Ritual
                     </button>
-                    <button onclick="openTherapistModal()" class="bg-dark-800 border border-gold-400/30 text-gold-400 px-4 py-2 rounded-xl text-xs uppercase tracking-widest font-semibold hover:bg-gold-400/10 transition flex items-center gap-1">
+                    <button onclick="openTherapistModal()"
+                        class="bg-dark-800 border border-gold-400/30 text-gold-400 px-4 py-2 rounded-xl text-xs uppercase tracking-widest font-semibold hover:bg-gold-400/10 transition flex items-center gap-1">
                         <i data-lucide="user-plus" class="w-4 h-4"></i> Nuevo Terapeuta
                     </button>
-                    <button onclick="openExceptionModal()" class="bg-dark-800 border border-gold-400/30 text-gold-400 px-4 py-2 rounded-xl text-xs uppercase tracking-widest font-semibold hover:bg-gold-400/10 transition flex items-center gap-1">
+                    <button onclick="openExceptionModal()"
+                        class="bg-dark-800 border border-gold-400/30 text-gold-400 px-4 py-2 rounded-xl text-xs uppercase tracking-widest font-semibold hover:bg-gold-400/10 transition flex items-center gap-1">
                         <i data-lucide="calendar-range" class="w-4 h-4"></i> Definir Horario de un Día
                     </button>
                 </div>
             </div>
 
+            <!-- Calendario de Reservas (Full Width) -->
+            <div class="bg-dark-900 border border-gold-400/10 p-6 rounded-2xl">
+                <div class="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4 mb-6">
+                    <div>
+                        <h2 class="font-serif text-2xl text-stone-100 tracking-wide flex items-center gap-2">
+                            <i data-lucide="calendar-days" class="w-6 h-6 text-gold-400"></i>Agenda de Reservas
+                        </h2>
+                        <p class="text-xs text-stone-400">Visualice y gestione las citas agendadas por día.</p>
+                    </div>
+                    <div class="flex items-center gap-3">
+                        <button onclick="changeCalendarMonth(-1)"
+                            class="p-2 rounded-lg bg-dark-800 border border-stone-700 hover:border-gold-400 text-stone-300 transition">
+                            <i data-lucide="chevron-left" class="w-4 h-4"></i>
+                        </button>
+                        <span id="calendar-month-title"
+                            class="font-serif text-base md:text-lg text-gold-400 font-bold min-w-[140px] text-center">Junio
+                            2026</span>
+                        <button onclick="changeCalendarMonth(1)"
+                            class="p-2 rounded-lg bg-dark-800 border border-stone-700 hover:border-gold-400 text-stone-300 transition">
+                            <i data-lucide="chevron-right" class="w-4 h-4"></i>
+                        </button>
+                        <button onclick="openDirectBookingModal()"
+                            class="gold-gradient-bg text-dark-950 px-4 py-2 rounded-xl text-xs uppercase tracking-widest font-semibold hover:opacity-90 transition flex items-center gap-1.5 ml-2">
+                            <i data-lucide="calendar-plus" class="w-4 h-4"></i> Reserva Directa
+                        </button>
+                    </div>
+                </div>
+
+                <!-- Calendar Weekdays Header -->
+                <div
+                    class="grid grid-cols-7 gap-2 text-center text-xs font-bold uppercase tracking-wider text-stone-400 border-b border-stone-800 pb-2 mb-2">
+                    <div>Dom</div>
+                    <div>Lun</div>
+                    <div>Mar</div>
+                    <div>Mié</div>
+                    <div>Jue</div>
+                    <div>Vie</div>
+                    <div>Sáb</div>
+                </div>
+
+                <!-- Calendar Month Grid -->
+                <div id="calendar-grid" class="grid grid-cols-7 gap-2 min-h-[350px]">
+                    <!-- Dynamic calendar cells populated via JS -->
+                </div>
+
+                <!-- Daily Details Section below the calendar -->
+                <div id="calendar-day-details" class="mt-6 border-t border-gold-400/10 pt-6 hidden">
+                    <div class="flex justify-between items-center mb-4">
+                        <h3 id="selected-day-title" class="font-serif text-lg text-gold-400">Citas de este día</h3>
+                        <button id="add-booking-for-day-btn"
+                            class="text-xs text-gold-400 hover:underline flex items-center gap-1">
+                            <i data-lucide="plus-circle" class="w-4 h-4"></i> Agregar cita para este día
+                        </button>
+                    </div>
+                    <div id="selected-day-bookings-list" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+                        <!-- Dynamic list of appointments for selected day -->
+                    </div>
+                </div>
+            </div>
+
             <!-- Dashboard Subsections grid -->
             <div class="grid grid-cols-1 lg:grid-cols-3 gap-8">
-                
+
                 <!-- COLUMN 1 & 2: List of Services, Therapists & Exceptions -->
                 <div class="lg:col-span-2 space-y-6">
                     <!-- Rituals (Services) Admin List -->
                     <div class="bg-dark-900 border border-gold-400/10 p-6 rounded-2xl">
-                        <h2 class="font-serif text-xl text-stone-100 tracking-wide mb-4">Nuestros Rituales (Servicios)</h2>
+                        <h2 class="font-serif text-xl text-stone-100 tracking-wide mb-4">Nuestros Rituales (Servicios)
+                        </h2>
                         <div id="admin-services-list" class="space-y-4">
                             <!-- Dynamic Services List for Admin -->
                         </div>
@@ -282,9 +442,11 @@
 
                     <!-- Date-Specific Exceptions List -->
                     <div class="bg-dark-900 border border-gold-400/10 p-6 rounded-2xl">
-                        <h2 class="font-serif text-xl text-stone-100 tracking-wide mb-2">Excepciones y Fechas Especiales</h2>
-                        <p class="text-xs text-stone-400 mb-4">Aquí se visualizan los cambios específicos para días determinados (p. ej. ausencias o ampliación de horario).</p>
-                        
+                        <h2 class="font-serif text-xl text-stone-100 tracking-wide mb-2">Excepciones y Fechas Especiales
+                        </h2>
+                        <p class="text-xs text-stone-400 mb-4">Aquí se visualizan los cambios específicos para días
+                            determinados (p. ej. ausencias o ampliación de horario).</p>
+
                         <div id="admin-exceptions-list" class="space-y-2 max-h-60 overflow-y-auto pr-1">
                             <!-- Dynamic exceptions list -->
                         </div>
@@ -295,29 +457,28 @@
                 <div class="lg:col-span-1 space-y-6">
                     <!-- Global Settings Card -->
                     <div class="bg-dark-900 border border-gold-400/20 rounded-2xl p-6 shadow-gold-glow space-y-4">
-                        <h2 class="font-serif text-xl text-stone-100 tracking-wide border-b border-gold-400/10 pb-3">Configuración Global</h2>
+                        <h2 class="font-serif text-xl text-stone-100 tracking-wide border-b border-gold-400/10 pb-3">
+                            Configuración Global</h2>
                         <form id="global-settings-form" onsubmit="saveGlobalSettings(event)" class="space-y-4">
                             <div>
-                                <label class="block text-xs uppercase tracking-widest text-stone-400 mb-2">Buffer Previo (Minutos)</label>
-                                <input type="number" id="setting-pre-buffer" min="0" required class="w-full bg-white border border-stone-300 rounded-lg px-3 py-2 text-black text-sm focus:outline-none focus:border-gold-400 transition">
+                                <label class="block text-xs uppercase tracking-widest text-stone-400 mb-2">Buffer Previo
+                                    (Minutos)</label>
+                                <input type="number" id="setting-pre-buffer" min="0" required
+                                    class="w-full bg-white border border-stone-300 rounded-lg px-3 py-2 text-black text-sm focus:outline-none focus:border-gold-400 transition">
                             </div>
                             <div>
-                                <label class="block text-xs uppercase tracking-widest text-stone-400 mb-2">Buffer Posterior (Minutos)</label>
-                                <input type="number" id="setting-post-buffer" min="0" required class="w-full bg-white border border-stone-300 rounded-lg px-3 py-2 text-black text-sm focus:outline-none focus:border-gold-400 transition">
+                                <label class="block text-xs uppercase tracking-widest text-stone-400 mb-2">Buffer
+                                    Posterior (Minutos)</label>
+                                <input type="number" id="setting-post-buffer" min="0" required
+                                    class="w-full bg-white border border-stone-300 rounded-lg px-3 py-2 text-black text-sm focus:outline-none focus:border-gold-400 transition">
                             </div>
-                            <button type="submit" class="w-full gold-gradient-bg hover:opacity-90 text-dark-950 font-bold uppercase tracking-wider py-2 px-4 rounded-lg transition duration-300 flex items-center justify-center gap-1.5 shadow-gold-glow text-xs">
+                            <button type="submit"
+                                class="w-full gold-gradient-bg hover:opacity-90 text-dark-950 font-bold uppercase tracking-wider py-2 px-4 rounded-lg transition duration-300 flex items-center justify-center gap-1.5 shadow-gold-glow text-xs">
                                 <i data-lucide="save" class="w-4 h-4"></i>Guardar Configuración
                             </button>
                         </form>
                     </div>
 
-                    <!-- Bookings -->
-                    <div class="bg-dark-900 border border-gold-400/10 p-6 rounded-2xl">
-                        <h2 class="font-serif text-xl text-stone-100 tracking-wide mb-4">Reservas Confirmadas</h2>
-                        <div id="admin-bookings-list" class="space-y-4 max-h-[500px] overflow-y-auto pr-1">
-                            <!-- Dynamic list of booked appointments -->
-                        </div>
-                    </div>
                 </div>
 
             </div>
@@ -331,91 +492,134 @@
     <!-- ======================================================= -->
 
     <!-- 0. PORTFOLIO CAROUSEL POPUP -->
-    <div id="portfolio-modal" class="fixed inset-0 bg-black/95 backdrop-blur-md z-50 flex items-center justify-center p-4 hidden">
-        <div class="bg-dark-900 border border-gold-400/20 rounded-3xl max-w-2xl w-full overflow-hidden shadow-2xl relative">
-            
+    <div id="portfolio-modal"
+        class="fixed inset-0 bg-black/95 backdrop-blur-md z-50 flex items-center justify-center p-4 hidden">
+        <div
+            class="bg-dark-900 border border-gold-400/20 rounded-3xl max-w-2xl w-full overflow-hidden shadow-2xl relative">
+
             <!-- Absolute top bar -->
-            <div class="absolute top-0 inset-x-0 h-16 bg-gradient-to-b from-black/80 to-transparent flex items-center justify-between px-6 z-10">
+            <div
+                class="absolute top-0 inset-x-0 h-16 bg-gradient-to-b from-black/80 to-transparent flex items-center justify-between px-6 z-10">
                 <div>
-                    <h4 id="portfolio-therapist-name" class="font-serif text-lg text-gold-400 tracking-wide">Galería del Profesional</h4>
-                    <p class="text-[10px] uppercase text-stone-400 tracking-widest">Eden Luxury Environment</p>
+                    <h4 id="portfolio-therapist-name" class="font-serif text-lg text-gold-400 tracking-wide">Galería del
+                        Profesional</h4>
                 </div>
-                <button onclick="closePortfolioModal()" class="w-10 h-10 rounded-full bg-black/40 hover:bg-gold-400 hover:text-dark-950 text-stone-300 transition flex items-center justify-center">
+                <button onclick="closePortfolioModal()"
+                    class="w-10 h-10 rounded-full bg-black/40 hover:bg-gold-400 hover:text-dark-950 text-stone-300 transition flex items-center justify-center">
                     <i data-lucide="x" class="w-5 h-5"></i>
                 </button>
             </div>
 
             <!-- Image display area -->
-            <div class="relative h-[450px] bg-dark-950 flex items-center justify-center group">
-                <img id="portfolio-image" src="" alt="Spa experience" class="w-full h-full object-cover transition-opacity duration-500 ease-in-out" onerror="this.src='data:image/svg+xml;utf8,<svg xmlns=\'http://www.w3.org/2000/svg\' width=\'100%\' height=\'100%\' viewBox=\'0 0 800 500\'><rect width=\'100%\' height=\'100%\' fill=\'%23111\'/><text x=\'50%\' y=\'50%\' font-size=\'20\' fill=\'%23D4AF37\' font-family=\'Cinzel\' text-anchor=\'middle\' dominant-baseline=\'middle\'>EDEN SPA - PREMIUM MOMENT</text></svg>'">
-                
+            <div
+                class="relative min-h-[300px] max-h-[70vh] bg-dark-950 flex items-center justify-center group overflow-hidden">
+                <img id="portfolio-image" src="" alt="Spa experience"
+                    class="max-w-full max-h-[70vh] w-auto h-auto object-contain transition-all duration-350 ease-in-out"
+                    onerror="this.src='data:image/svg+xml;utf8,<svg xmlns=\'http://www.w3.org/2000/svg\' width=\'100%\' height=\'100%\' viewBox=\'0 0 800 500\'><rect width=\'100%\' height=\'100%\' fill=\'%23111\'/><text x=\'50%\' y=\'50%\' font-size=\'20\' fill=\'%23D4AF37\' font-family=\'Cinzel\' text-anchor=\'middle\' dominant-baseline=\'middle\'>EDEN SPA - PREMIUM MOMENT</text></svg>'">
+
                 <!-- Left/Right Arrows -->
-                <button onclick="prevSlide()" class="absolute left-4 w-11 h-11 rounded-full bg-black/50 hover:bg-gold-400 hover:text-dark-950 text-gold-400 flex items-center justify-center transition opacity-80 hover:opacity-100 border border-gold-400/20">
+                <button onclick="prevSlide()"
+                    class="absolute left-4 w-11 h-11 rounded-full bg-black/50 hover:bg-gold-400 hover:text-dark-950 text-gold-400 flex items-center justify-center transition opacity-80 hover:opacity-100 border border-gold-400/20">
                     <i data-lucide="chevron-left" class="w-6 h-6"></i>
                 </button>
-                <button onclick="nextSlide()" class="absolute right-4 w-11 h-11 rounded-full bg-black/50 hover:bg-gold-400 hover:text-dark-950 text-gold-400 flex items-center justify-center transition opacity-80 hover:opacity-100 border border-gold-400/20">
+                <button onclick="nextSlide()"
+                    class="absolute right-4 w-11 h-11 rounded-full bg-black/50 hover:bg-gold-400 hover:text-dark-950 text-gold-400 flex items-center justify-center transition opacity-80 hover:opacity-100 border border-gold-400/20">
                     <i data-lucide="chevron-right" class="w-6 h-6"></i>
                 </button>
             </div>
 
             <!-- Bottom bar controls / indicators -->
-            <div class="bg-dark-900 p-6 border-t border-gold-400/10 space-y-4">
+            <div class="bg-dark-900 p-6 border-t border-gold-400/10">
                 <div class="flex justify-between items-center">
                     <p id="portfolio-photo-index" class="text-xs font-mono text-gold-400">FOTO 1 DE 4</p>
                     <div id="portfolio-indicators" class="flex gap-2">
                         <!-- Dynamic Indicator dots -->
                     </div>
                 </div>
-                <p id="portfolio-photo-description" class="text-xs text-stone-400 font-light leading-relaxed">
-                    Visualización del espacio terapéutico premium e instrumentos para la relajación profunda.
-                </p>
             </div>
         </div>
     </div>
 
     <!-- 1. ADD / EDIT THERAPIST MODAL -->
-    <div id="therapist-modal" class="fixed inset-0 bg-black/80 backdrop-blur-sm z-50 flex items-center justify-center p-4 hidden">
-        <div class="bg-dark-900 border border-gold-400/30 rounded-2xl max-w-2xl w-full max-h-[90vh] overflow-y-auto p-6 space-y-6 shadow-2xl">
+    <div id="therapist-modal"
+        class="fixed inset-0 bg-black/80 backdrop-blur-sm z-50 flex items-center justify-center p-4 hidden">
+        <div
+            class="bg-dark-900 border border-gold-400/30 rounded-2xl max-w-2xl w-full max-h-[90vh] overflow-y-auto p-6 space-y-6 shadow-2xl">
             <div class="flex justify-between items-center border-b border-gold-400/10 pb-4">
-                <h3 id="therapist-modal-title" class="font-serif text-2xl text-gold-400 tracking-wide">Nuevo Terapeuta de Élite</h3>
-                <button onclick="closeTherapistModal()" class="text-stone-400 hover:text-stone-100 transition"><i data-lucide="x" class="w-6 h-6"></i></button>
+                <h3 id="therapist-modal-title" class="font-serif text-2xl text-gold-400 tracking-wide">Nuevo Terapeuta
+                    de Élite</h3>
+                <button onclick="closeTherapistModal()" class="text-stone-400 hover:text-stone-100 transition"><i
+                        data-lucide="x" class="w-6 h-6"></i></button>
             </div>
 
             <form id="therapist-form" onsubmit="saveTherapist(event)" class="space-y-4">
                 <input type="hidden" id="therapist-form-id">
-                
-                <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
-                    <div>
-                        <label class="block text-xs uppercase tracking-widest text-stone-400 mb-2">Nombre del Terapeuta</label>
-                        <input type="text" id="t-name" required class="w-full bg-white border border-stone-300 rounded-lg px-3 py-2 text-black focus:outline-none focus:border-gold-400 transition" placeholder="P. Ej: Valentina Gómez">
-                    </div>
-                    <div>
-                        <label class="block text-xs uppercase tracking-widest text-stone-400 mb-2">Calificación (Estrellas)</label>
-                        <input type="number" step="0.1" min="1" max="5" id="t-rating" required class="w-full bg-white border border-stone-300 rounded-lg px-3 py-2 text-black focus:outline-none focus:border-gold-400 transition" placeholder="P. Ej: 4.9">
-                    </div>
-                </div>
-
-                <div>
-                    <label class="block text-xs uppercase tracking-widest text-stone-400 mb-2">Especialidades (Separadas por comas)</label>
-                    <input type="text" id="t-specialties" required class="w-full bg-white border border-stone-300 rounded-lg px-3 py-2 text-black focus:outline-none focus:border-gold-400 transition" placeholder="Masaje Sueco, Tejido Profundo, Piedras Volcánicas">
-                </div>
-
-                <div>
-                    <label class="block text-xs uppercase tracking-widest text-stone-400 mb-2">Biografía / Presentación</label>
-                    <textarea id="t-bio" rows="3" required class="w-full bg-white border border-stone-300 rounded-lg px-3 py-2 text-black focus:outline-none focus:border-gold-400 transition" placeholder="Valentina es especialista en masajes relajantes con aceites esenciales..."></textarea>
-                </div>
-
-                <!-- Manage therapist photo URLs for the portfolio carousel -->
-                <div>
-                    <label class="block text-xs uppercase tracking-widest text-stone-400 mb-1">Fotos del Portafolio (Enlace de URL, separadas por coma)</label>
-                    <p class="text-[10px] text-stone-500 mb-2">Ingrese hasta 4 enlaces válidos de imágenes inspiradoras para el carrusel de este terapeuta.</p>
-                    <textarea id="t-gallery" rows="2" class="w-full bg-white border border-stone-300 rounded-lg px-3 py-2 text-xs text-black focus:outline-none focus:border-gold-400 transition" placeholder="https://images.unsplash.com/..., https://images.unsplash.com/..."></textarea>
-                </div>
 
                 <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
                     <div>
-                        <label class="block text-xs uppercase tracking-widest text-stone-400 mb-2">Foto / Iniciales Avatar (Color)</label>
-                        <select id="t-color" class="w-full bg-white border border-stone-300 rounded-lg px-3 py-2 text-black focus:outline-none focus:border-gold-400 transition">
+                        <label class="block text-xs uppercase tracking-widest text-stone-400 mb-2">Nombre del
+                            Terapeuta</label>
+                        <input type="text" id="t-name" required
+                            class="w-full bg-white border border-stone-300 rounded-lg px-3 py-2 text-black focus:outline-none focus:border-gold-400 transition"
+                            placeholder="P. Ej: Valentina Gómez">
+                    </div>
+                    <div>
+                        <label class="block text-xs uppercase tracking-widest text-stone-400 mb-2">Calificación
+                            (Estrellas)</label>
+                        <input type="number" step="0.1" min="1" max="5" id="t-rating" required
+                            class="w-full bg-white border border-stone-300 rounded-lg px-3 py-2 text-black focus:outline-none focus:border-gold-400 transition"
+                            placeholder="P. Ej: 4.9">
+                    </div>
+                </div>
+
+                <div>
+                    <label class="block text-xs uppercase tracking-widest text-stone-400 mb-2">Especialidades (Separadas
+                        por comas)</label>
+                    <input type="text" id="t-specialties" required
+                        class="w-full bg-white border border-stone-300 rounded-lg px-3 py-2 text-black focus:outline-none focus:border-gold-400 transition"
+                        placeholder="Masaje Sueco, Tejido Profundo, Piedras Volcánicas">
+                </div>
+
+                <div>
+                    <label class="block text-xs uppercase tracking-widest text-stone-400 mb-2">Biografía /
+                        Presentación</label>
+                    <textarea id="t-bio" rows="3" required
+                        class="w-full bg-white border border-stone-300 rounded-lg px-3 py-2 text-black focus:outline-none focus:border-gold-400 transition"
+                        placeholder="Valentina es especialista en masajes relajantes con aceites esenciales..."></textarea>
+                </div>
+
+                <!-- Manage therapist photo uploads for the portfolio carousel -->
+                <div class="space-y-2">
+                    <label class="block text-xs uppercase tracking-widest text-stone-400">Fotos del Portafolio</label>
+                    <p class="text-[10px] text-stone-500">Seleccione hasta 4 imágenes locales para la galería de este
+                        terapeuta.</p>
+                    <div class="flex items-center justify-center w-full">
+                        <label
+                            class="flex flex-col items-center justify-center w-full h-32 border border-stone-750 border-dashed rounded-xl cursor-pointer hover:border-gold-400/50 bg-dark-950/40 transition">
+                            <div class="flex flex-col items-center justify-center pt-5 pb-6">
+                                <i data-lucide="upload-cloud" class="w-8 h-8 text-stone-500 mb-2"></i>
+                                <p class="text-xs text-stone-400"><span class="font-semibold text-gold-400">Haga clic
+                                        para subir</span> o arrastre archivos</p>
+                                <p class="text-[10px] text-stone-500">PNG, JPG o WEBP (Máx. 4 archivos)</p>
+                            </div>
+                            <input id="t-gallery-files" type="file" class="hidden" accept="image/*" multiple
+                                onchange="handleFileSelectionPreview(this)" />
+                        </label>
+                    </div>
+                    <!-- Preview Container -->
+                    <div id="t-gallery-preview" class="grid grid-cols-4 gap-2 mt-2">
+                        <!-- Dynamic file previews -->
+                    </div>
+                    <!-- Hidden input to store existing URLs when editing an existing profile -->
+                    <input type="hidden" id="t-gallery-urls">
+                </div>
+
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                    <div>
+                        <label class="block text-xs uppercase tracking-widest text-stone-400 mb-2">Foto / Iniciales
+                            Avatar (Color)</label>
+                        <select id="t-color"
+                            class="w-full bg-white border border-stone-300 rounded-lg px-3 py-2 text-black focus:outline-none focus:border-gold-400 transition">
                             <option value="amber">Dorado Satinado</option>
                             <option value="stone">Gris Plata</option>
                             <option value="rose">Rosa Místico</option>
@@ -427,7 +631,8 @@
 
                 <!-- Working schedule settings per week day -->
                 <div class="border-t border-gold-400/10 pt-4">
-                    <h4 class="text-xs uppercase tracking-widest text-gold-400 mb-4 font-semibold">Horario de Trabajo Regular por Defecto</h4>
+                    <h4 class="text-xs uppercase tracking-widest text-gold-400 mb-4 font-semibold">Horario de Trabajo
+                        Regular por Defecto</h4>
                     <div class="space-y-2">
                         <!-- Monday to Sunday generator placeholder -->
                         <div id="default-schedule-inputs" class="space-y-2">
@@ -437,8 +642,11 @@
                 </div>
 
                 <div class="flex justify-end gap-3 pt-4 border-t border-gold-400/10">
-                    <button type="button" onclick="closeTherapistModal()" class="px-5 py-2 rounded-lg bg-dark-800 text-stone-400 hover:text-stone-200 hover:bg-dark-750 transition text-sm font-medium">Cancelar</button>
-                    <button type="submit" class="gold-gradient-bg text-dark-950 px-6 py-2 rounded-lg font-bold text-sm tracking-wider hover:opacity-90 transition">Guardar Especialista</button>
+                    <button type="button" onclick="closeTherapistModal()"
+                        class="px-5 py-2 rounded-lg bg-dark-800 text-stone-400 hover:text-stone-200 hover:bg-dark-750 transition text-sm font-medium">Cancelar</button>
+                    <button type="submit"
+                        class="gold-gradient-bg text-dark-950 px-6 py-2 rounded-lg font-bold text-sm tracking-wider hover:opacity-90 transition">Guardar
+                        Especialista</button>
                 </div>
             </form>
         </div>
@@ -446,35 +654,45 @@
 
 
     <!-- 2. DATE EXCEPTION / SPECIAL AVAILABILITY MODAL -->
-    <div id="exception-modal" class="fixed inset-0 bg-black/80 backdrop-blur-sm z-50 flex items-center justify-center p-4 hidden">
+    <div id="exception-modal"
+        class="fixed inset-0 bg-black/80 backdrop-blur-sm z-50 flex items-center justify-center p-4 hidden">
         <div class="bg-dark-900 border border-gold-400/30 rounded-2xl max-w-md w-full p-6 space-y-6 shadow-2xl">
             <div class="flex justify-between items-center border-b border-gold-400/10 pb-4">
                 <h3 class="font-serif text-2xl text-gold-400 tracking-wide">Excepción de Horario</h3>
-                <button onclick="closeExceptionModal()" class="text-stone-400 hover:text-stone-100 transition"><i data-lucide="x" class="w-6 h-6"></i></button>
+                <button onclick="closeExceptionModal()" class="text-stone-400 hover:text-stone-100 transition"><i
+                        data-lucide="x" class="w-6 h-6"></i></button>
             </div>
 
             <form id="exception-form" onsubmit="saveException(event)" class="space-y-4">
                 <div>
-                    <label class="block text-xs uppercase tracking-widest text-stone-400 mb-2">Seleccione Terapeuta</label>
-                    <select id="exc-therapist-id" required class="w-full bg-white border border-stone-300 rounded-lg px-3 py-2 text-black focus:outline-none focus:border-gold-400 transition">
+                    <label class="block text-xs uppercase tracking-widest text-stone-400 mb-2">Seleccione
+                        Terapeuta</label>
+                    <select id="exc-therapist-id" required
+                        class="w-full bg-white border border-stone-300 rounded-lg px-3 py-2 text-black focus:outline-none focus:border-gold-400 transition">
                         <!-- Options populated via JS -->
                     </select>
                 </div>
 
                 <div>
                     <label class="block text-xs uppercase tracking-widest text-stone-400 mb-2">Fecha del Cambio</label>
-                    <input type="date" id="exc-date" required class="w-full bg-white border border-stone-300 rounded-lg px-3 py-2 text-black focus:outline-none focus:border-gold-400 transition">
+                    <input type="date" id="exc-date" required
+                        class="w-full bg-white border border-stone-300 rounded-lg px-3 py-2 text-black focus:outline-none focus:border-gold-400 transition">
                 </div>
 
                 <div>
-                    <label class="block text-xs uppercase tracking-widest text-stone-400 mb-2">Estado de Disponibilidad</label>
+                    <label class="block text-xs uppercase tracking-widest text-stone-400 mb-2">Estado de
+                        Disponibilidad</label>
                     <div class="grid grid-cols-2 gap-2 mt-2">
-                        <label class="flex items-center gap-2 p-3 bg-white border border-stone-300 rounded-lg cursor-pointer hover:border-gold-400 transition">
-                            <input type="radio" name="exc-status" value="inactive" onchange="toggleExcTimes(false)" checked class="text-gold-400 focus:ring-gold-400">
+                        <label
+                            class="flex items-center gap-2 p-3 bg-white border border-stone-300 rounded-lg cursor-pointer hover:border-gold-400 transition">
+                            <input type="radio" name="exc-status" value="inactive" onchange="toggleExcTimes(false)"
+                                checked class="text-gold-400 focus:ring-gold-400">
                             <span class="text-sm text-stone-800">No disponible / Descanso</span>
                         </label>
-                        <label class="flex items-center gap-2 p-3 bg-white border border-stone-300 rounded-lg cursor-pointer hover:border-gold-400 transition">
-                            <input type="radio" name="exc-status" value="active" onchange="toggleExcTimes(true)" class="text-gold-400 focus:ring-gold-400">
+                        <label
+                            class="flex items-center gap-2 p-3 bg-white border border-stone-300 rounded-lg cursor-pointer hover:border-gold-400 transition">
+                            <input type="radio" name="exc-status" value="active" onchange="toggleExcTimes(true)"
+                                class="text-gold-400 focus:ring-gold-400">
                             <span class="text-sm text-stone-800">Horario Especial</span>
                         </label>
                     </div>
@@ -484,17 +702,22 @@
                 <div id="exc-hours-container" class="hidden grid grid-cols-2 gap-2">
                     <div>
                         <label class="block text-xs uppercase text-stone-500 mb-1">Entrada</label>
-                        <input type="time" id="exc-start-time" class="w-full bg-white border border-stone-300 rounded-lg px-3 py-2 text-black focus:outline-none">
+                        <input type="time" id="exc-start-time"
+                            class="w-full bg-white border border-stone-300 rounded-lg px-3 py-2 text-black focus:outline-none">
                     </div>
                     <div>
                         <label class="block text-xs uppercase text-stone-500 mb-1">Salida</label>
-                        <input type="time" id="exc-end-time" class="w-full bg-white border border-stone-300 rounded-lg px-3 py-2 text-black focus:outline-none">
+                        <input type="time" id="exc-end-time"
+                            class="w-full bg-white border border-stone-300 rounded-lg px-3 py-2 text-black focus:outline-none">
                     </div>
                 </div>
 
                 <div class="flex justify-end gap-3 pt-4 border-t border-gold-400/10">
-                    <button type="button" onclick="closeExceptionModal()" class="px-5 py-2 rounded-lg bg-dark-800 text-stone-400 hover:text-stone-200 hover:bg-dark-750 transition text-sm font-medium">Cancelar</button>
-                    <button type="submit" class="gold-gradient-bg text-dark-950 px-6 py-2 rounded-lg font-bold text-sm tracking-wider hover:opacity-90 transition">Aplicar Excepción</button>
+                    <button type="button" onclick="closeExceptionModal()"
+                        class="px-5 py-2 rounded-lg bg-dark-800 text-stone-400 hover:text-stone-200 hover:bg-dark-750 transition text-sm font-medium">Cancelar</button>
+                    <button type="submit"
+                        class="gold-gradient-bg text-dark-950 px-6 py-2 rounded-lg font-bold text-sm tracking-wider hover:opacity-90 transition">Aplicar
+                        Excepción</button>
                 </div>
             </form>
         </div>
@@ -502,7 +725,8 @@
 
 
     <!-- 3. CUSTOM DIALOG MESSAGE / TOAST COMPONENT -->
-    <div id="toast" class="fixed bottom-6 right-6 bg-dark-900 border border-gold-400 text-gold-400 p-4 rounded-xl shadow-2xl z-50 transform translate-y-20 opacity-0 transition-all duration-300 max-w-sm flex items-center gap-3">
+    <div id="toast"
+        class="fixed bottom-6 right-6 bg-dark-900 border border-gold-400 text-gold-400 p-4 rounded-xl shadow-2xl z-50 transform translate-y-20 opacity-0 transition-all duration-300 max-w-sm flex items-center gap-3">
         <i data-lucide="bell" class="w-6 h-6 shrink-0"></i>
         <div>
             <p id="toast-message" class="text-sm text-stone-200 font-medium"></p>
@@ -511,47 +735,149 @@
 
 
     <!-- 4. ADD / EDIT RITUAL MODAL -->
-    <div id="service-modal" class="fixed inset-0 bg-black/80 backdrop-blur-sm z-50 flex items-center justify-center p-4 hidden">
+    <div id="service-modal"
+        class="fixed inset-0 bg-black/80 backdrop-blur-sm z-50 flex items-center justify-center p-4 hidden">
         <div class="bg-dark-900 border border-gold-400/30 rounded-2xl max-w-lg w-full p-6 space-y-6 shadow-2xl">
             <div class="flex justify-between items-center border-b border-gold-400/10 pb-4">
-                <h3 id="service-modal-title" class="font-serif text-2xl text-gold-400 tracking-wide">Nuevo Ritual Premium</h3>
-                <button onclick="closeServiceModal()" class="text-stone-400 hover:text-stone-100 transition"><i data-lucide="x" class="w-6 h-6"></i></button>
+                <h3 id="service-modal-title" class="font-serif text-2xl text-gold-400 tracking-wide">Nuevo Ritual
+                    Premium</h3>
+                <button onclick="closeServiceModal()" class="text-stone-400 hover:text-stone-100 transition"><i
+                        data-lucide="x" class="w-6 h-6"></i></button>
             </div>
 
             <form id="service-form" onsubmit="saveService(event)" class="space-y-4">
                 <input type="hidden" id="service-form-id">
-                
+
                 <div>
                     <label class="block text-xs uppercase tracking-widest text-stone-400 mb-2">Nombre del Ritual</label>
-                    <input type="text" id="s-name" required class="w-full bg-white border border-stone-300 rounded-lg px-3 py-2 text-black focus:outline-none focus:border-gold-400 transition" placeholder="P. Ej: Masaje Místico de Rosas">
+                    <input type="text" id="s-name" required
+                        class="w-full bg-white border border-stone-300 rounded-lg px-3 py-2 text-black focus:outline-none focus:border-gold-400 transition"
+                        placeholder="P. Ej: Masaje Místico de Rosas">
                 </div>
 
                 <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
                     <div>
                         <label class="block text-xs uppercase tracking-widest text-stone-400 mb-2">Categoría</label>
-                        <input type="text" id="s-category" required class="w-full bg-white border border-stone-300 rounded-lg px-3 py-2 text-black focus:outline-none focus:border-gold-400 transition" placeholder="P. Ej: Relax, Terapéutico, Premium">
+                        <input type="text" id="s-category" required
+                            class="w-full bg-white border border-stone-300 rounded-lg px-3 py-2 text-black focus:outline-none focus:border-gold-400 transition"
+                            placeholder="P. Ej: Relax, Terapéutico, Premium">
                     </div>
                     <div>
                         <label class="block text-xs uppercase tracking-widest text-stone-400 mb-2">Precio (USD)</label>
-                        <input type="number" id="s-price" required min="1" class="w-full bg-white border border-stone-300 rounded-lg px-3 py-2 text-black focus:outline-none focus:border-gold-400 transition" placeholder="P. Ej: 90">
+                        <input type="number" id="s-price" required min="1"
+                            class="w-full bg-white border border-stone-300 rounded-lg px-3 py-2 text-black focus:outline-none focus:border-gold-400 transition"
+                            placeholder="P. Ej: 90">
                     </div>
                 </div>
 
                 <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
                     <div>
-                        <label class="block text-xs uppercase tracking-widest text-stone-400 mb-2">Duración (Minutos)</label>
-                        <input type="number" id="s-duration" required min="10" step="5" class="w-full bg-white border border-stone-300 rounded-lg px-3 py-2 text-black focus:outline-none focus:border-gold-400 transition" placeholder="P. Ej: 60">
+                        <label class="block text-xs uppercase tracking-widest text-stone-400 mb-2">Duración
+                            (Minutos)</label>
+                        <input type="number" id="s-duration" required min="10" step="5"
+                            class="w-full bg-white border border-stone-300 rounded-lg px-3 py-2 text-black focus:outline-none focus:border-gold-400 transition"
+                            placeholder="P. Ej: 60">
                     </div>
                 </div>
 
                 <div>
                     <label class="block text-xs uppercase tracking-widest text-stone-400 mb-2">Descripción corta</label>
-                    <textarea id="s-desc" rows="3" required class="w-full bg-white border border-stone-300 rounded-lg px-3 py-2 text-black focus:outline-none focus:border-gold-400 transition" placeholder="Descripción sensorial del ritual..."></textarea>
+                    <textarea id="s-desc" rows="3" required
+                        class="w-full bg-white border border-stone-300 rounded-lg px-3 py-2 text-black focus:outline-none focus:border-gold-400 transition"
+                        placeholder="Descripción sensorial del ritual..."></textarea>
                 </div>
 
                 <div class="flex justify-end gap-3 pt-4 border-t border-gold-400/10">
-                    <button type="button" onclick="closeServiceModal()" class="px-5 py-2 rounded-lg bg-dark-800 text-stone-400 hover:text-stone-200 hover:bg-dark-750 transition text-sm font-medium">Cancelar</button>
-                    <button type="submit" class="gold-gradient-bg text-dark-950 px-6 py-2 rounded-lg font-bold text-sm tracking-wider hover:opacity-90 transition">Guardar Ritual</button>
+                    <button type="button" onclick="closeServiceModal()"
+                        class="px-5 py-2 rounded-lg bg-dark-800 text-stone-400 hover:text-stone-200 hover:bg-dark-750 transition text-sm font-medium">Cancelar</button>
+                    <button type="submit"
+                        class="gold-gradient-bg text-dark-950 px-6 py-2 rounded-lg font-bold text-sm tracking-wider hover:opacity-90 transition">Guardar
+                        Ritual</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+
+    <!-- 5. DIRECT BOOKING MODAL (FROM CALENDAR) -->
+    <div id="direct-booking-modal"
+        class="fixed inset-0 bg-black/80 backdrop-blur-sm z-50 flex items-center justify-center p-4 hidden">
+        <div class="bg-dark-900 border border-gold-400/30 rounded-2xl max-w-lg w-full p-6 space-y-6 shadow-2xl">
+            <div class="flex justify-between items-center border-b border-gold-400/10 pb-4">
+                <h3 class="font-serif text-2xl text-gold-400 tracking-wide">Nueva Reserva Directa</h3>
+                <button onclick="closeDirectBookingModal()" class="text-stone-400 hover:text-stone-100 transition"><i
+                        data-lucide="x" class="w-6 h-6"></i></button>
+            </div>
+
+            <form id="direct-booking-form" onsubmit="saveDirectBooking(event)" class="space-y-4">
+                <div>
+                    <label class="block text-xs uppercase tracking-widest text-stone-400 mb-2">Nombre del
+                        Cliente</label>
+                    <input type="text" id="db-client-name" required
+                        class="w-full bg-white border border-stone-300 rounded-lg px-3 py-2 text-black focus:outline-none focus:border-gold-400 transition"
+                        placeholder="Nombre completo">
+                </div>
+
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                    <div>
+                        <label class="block text-xs uppercase tracking-widest text-stone-400 mb-2">Teléfono /
+                            WhatsApp</label>
+                        <input type="text" id="db-client-phone"
+                            class="w-full bg-white border border-stone-300 rounded-lg px-3 py-2 text-black focus:outline-none focus:border-gold-400 transition"
+                            placeholder="WhatsApp (Opcional)">
+                    </div>
+                    <div>
+                        <label class="block text-xs uppercase tracking-widest text-stone-400 mb-2">Correo
+                            (Opcional)</label>
+                        <input type="email" id="db-client-email"
+                            class="w-full bg-white border border-stone-300 rounded-lg px-3 py-2 text-black focus:outline-none focus:border-gold-400 transition"
+                            placeholder="correo@ejemplo.com">
+                    </div>
+                </div>
+
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                    <div>
+                        <label class="block text-xs uppercase tracking-widest text-stone-400 mb-2">Fecha</label>
+                        <input type="date" id="db-date" required
+                            class="w-full bg-white border border-stone-300 rounded-lg px-3 py-2 text-black focus:outline-none focus:border-gold-400 transition">
+                    </div>
+                    <div>
+                        <label class="block text-xs uppercase tracking-widest text-stone-400 mb-2">Hora</label>
+                        <input type="time" id="db-time" required
+                            class="w-full bg-white border border-stone-300 rounded-lg px-3 py-2 text-black focus:outline-none focus:border-gold-400 transition">
+                    </div>
+                </div>
+
+                <div>
+                    <label class="block text-xs uppercase tracking-widest text-stone-400 mb-2">Servicio / Ritual</label>
+                    <select id="db-service-id" onchange="toggleDbCustomServiceInput(this.value)" required
+                        class="w-full bg-white border border-stone-300 rounded-lg px-3 py-2 text-black focus:outline-none focus:border-gold-400 transition">
+                        <!-- Populated via JS -->
+                    </select>
+                </div>
+
+                <div id="db-custom-service-container" class="hidden">
+                    <label class="block text-xs uppercase tracking-widest text-gold-400 mb-2">Nombre del Servicio
+                        Personalizado</label>
+                    <input type="text" id="db-custom-service-name"
+                        class="w-full bg-white border border-stone-300 rounded-lg px-3 py-2 text-black focus:outline-none focus:border-gold-400 transition"
+                        placeholder="Ej: Depilación, Masaje express, etc.">
+                </div>
+
+                <div>
+                    <label class="block text-xs uppercase tracking-widest text-stone-400 mb-2">Terapeuta</label>
+                    <select id="db-therapist-id" required
+                        class="w-full bg-white border border-stone-300 rounded-lg px-3 py-2 text-black focus:outline-none focus:border-gold-400 transition">
+                        <!-- Populated via JS -->
+                    </select>
+                </div>
+
+                <div class="flex justify-end gap-3 pt-4 border-t border-gold-400/10">
+                    <button type="button" onclick="closeDirectBookingModal()"
+                        class="px-5 py-2 rounded-lg bg-dark-800 text-stone-400 hover:text-stone-200 hover:bg-dark-750 transition text-sm font-medium">Cancelar</button>
+                    <button type="submit"
+                        class="gold-gradient-bg text-dark-950 px-6 py-2 rounded-lg font-bold text-sm tracking-wider hover:opacity-90 transition">Agendar
+                        Cita</button>
                 </div>
             </form>
         </div>
@@ -614,7 +940,7 @@
                     fetch('/api/bookings'),
                     fetch('/api/settings')
                 ]);
-                
+
                 if (!servicesRes.ok || !therapistsRes.ok || !bookingsRes.ok || !settingsRes.ok) {
                     throw new Error("HTTP error fetching state");
                 }
@@ -629,9 +955,19 @@
             }
         }
 
+        let isAdminSession = false;
+
+        function checkAdminAccess() {
+            const urlParams = new URLSearchParams(window.location.search);
+            if (urlParams.get('admin') === 'true' || urlParams.get('access') === 'admin') {
+                isAdminSession = true;
+                document.getElementById('nav-admin').classList.remove('hidden');
+            }
+        }
+
         async function initApp() {
             await loadAppState();
-            
+
             // Set input values for settings in Admin form
             document.getElementById('setting-pre-buffer').value = APP_STATE.settings.pre_buffer || 15;
             document.getElementById('setting-post-buffer').value = APP_STATE.settings.post_buffer || 15;
@@ -642,23 +978,37 @@
             renderAdminTherapists();
             renderAdminExceptions();
             renderAdminBookings();
-            
+
             // Set minimum date input for booking to today
             const today = new Date().toISOString().split('T')[0];
             document.getElementById('booking-date').min = today;
-            
+
             // Generate form day inputs dynamically inside the therapist modal
             generateDefaultScheduleFormInputs();
+
+            // Initialize accordion steps
+            showStep(1);
+
+            // Check URL parameters for admin panel visibility
+            checkAdminAccess();
         }
 
         // ================= GENERAL ROUTING / NAVIGATION =================
         function switchTab(tabId) {
+            // Block unauthorized access to the admin tab
+            if (tabId === 'admin-view' && !isAdminSession) {
+                showToast("Acceso no autorizado al panel administrativo.");
+                return;
+            }
+
             document.getElementById('booking-view').classList.add('hidden');
             document.getElementById('admin-view').classList.add('hidden');
-            
+
             // Update Active buttons
             document.getElementById('nav-booking').className = "px-4 py-2 rounded-full text-xs md:text-sm font-medium tracking-wider transition-all duration-300 border border-transparent text-stone-400 hover:text-gold-400 hover:border-gold-400/20";
-            document.getElementById('nav-admin').className = "px-4 py-2 rounded-full text-xs md:text-sm font-medium tracking-wider transition-all duration-300 border border-transparent text-stone-400 hover:text-gold-400 hover:border-gold-400/20";
+
+            // Reapply hidden state if not an admin session
+            document.getElementById('nav-admin').className = (isAdminSession ? "" : "hidden ") + "px-4 py-2 rounded-full text-xs md:text-sm font-medium tracking-wider transition-all duration-300 border border-transparent text-stone-400 hover:text-gold-400 hover:border-gold-400/20";
 
             document.getElementById(tabId).classList.remove('hidden');
 
@@ -673,13 +1023,13 @@
         function renderServices() {
             const grid = document.getElementById('services-grid');
             grid.innerHTML = '';
-            
+
             APP_STATE.services.forEach(service => {
                 const card = document.createElement('div');
                 card.id = `service-card-${service.id}`;
                 card.onclick = () => selectService(service.id);
                 card.className = "group border border-stone-800 bg-dark-850 p-5 rounded-xl cursor-pointer hover:border-gold-400/40 transition-all duration-300 relative hover:shadow-[0_0_15px_rgba(212,175,55,0.05)]";
-                
+
                 card.innerHTML = `
                     <div class="flex justify-between items-start">
                         <span class="text-[10px] uppercase font-bold tracking-widest text-gold-400/70 border border-gold-400/10 px-2.5 py-0.5 rounded-full bg-gold-400/5">${service.category}</span>
@@ -704,10 +1054,10 @@
 
             APP_STATE.therapists.forEach(therapist => {
                 const specTags = therapist.specialties.map(s => `<span class="bg-dark-800 text-stone-400 text-[10px] px-2 py-0.5 rounded border border-stone-800">${s}</span>`).join('');
-                
+
                 const card = document.createElement('div');
                 card.id = `therapist-card-${therapist.id}`;
-                
+
                 card.onclick = (e) => {
                     if (e.target.closest('.no-select-card')) return;
                     selectTherapist(therapist.id);
@@ -715,12 +1065,12 @@
                 card.className = "group border border-stone-800 bg-dark-850 p-5 rounded-xl cursor-pointer hover:border-gold-400/40 transition-all duration-300 flex flex-col sm:flex-row gap-4 hover:shadow-[0_0_15px_rgba(212,175,55,0.05)] relative";
 
                 let avatarColorClass = "bg-amber-950/40 text-amber-400 border-amber-500/20";
-                if(therapist.color === "rose") avatarColorClass = "bg-rose-950/40 text-rose-400 border-rose-500/20";
-                if(therapist.color === "emerald") avatarColorClass = "bg-emerald-950/40 text-emerald-400 border-emerald-500/20";
-                if(therapist.color === "stone") avatarColorClass = "bg-stone-900/60 text-stone-300 border-stone-700/50";
-                if(therapist.color === "indigo") avatarColorClass = "bg-indigo-950/40 text-indigo-400 border-indigo-500/20";
+                if (therapist.color === "rose") avatarColorClass = "bg-rose-950/40 text-rose-400 border-rose-500/20";
+                if (therapist.color === "emerald") avatarColorClass = "bg-emerald-950/40 text-emerald-400 border-emerald-500/20";
+                if (therapist.color === "stone") avatarColorClass = "bg-stone-900/60 text-stone-300 border-stone-700/50";
+                if (therapist.color === "indigo") avatarColorClass = "bg-indigo-950/40 text-indigo-400 border-indigo-500/20";
 
-                const initials = therapist.name.split(' ').map(n => n[0]).join('').substring(0,2).toUpperCase();
+                const initials = therapist.name.split(' ').map(n => n[0]).join('').substring(0, 2).toUpperCase();
 
                 card.innerHTML = `
                     <div class="w-12 h-12 rounded-full shrink-0 flex items-center justify-center font-serif font-bold text-sm border ${avatarColorClass}">
@@ -752,18 +1102,49 @@
         }
 
         // ================= WIZARD SELECTIONS LOGIC =================
+        let CURRENT_OPEN_STEP = 1;
+
+        function showStep(stepNum) {
+            // Check if step is unlocked before opening
+            if (stepNum === 2 && !WIZARD_STATE.selectedService) return;
+            if (stepNum === 3 && (!WIZARD_STATE.selectedService || !WIZARD_STATE.selectedTherapist)) return;
+
+            CURRENT_OPEN_STEP = stepNum;
+
+            for (let i = 1; i <= 3; i++) {
+                const container = document.getElementById(`step-${i}-container`);
+                const content = document.getElementById(`step-${i}-content`);
+                const chevron = document.getElementById(`step-${i}-chevron`);
+
+                if (i === stepNum) {
+                    // Open this step
+                    content.classList.remove('hidden');
+                    if (chevron) chevron.classList.add('rotate-180');
+                    container.classList.remove('border-gold-400/10');
+                    container.classList.add('border-gold-400/50', 'bg-dark-900/90');
+                } else {
+                    // Collapse other steps
+                    content.classList.add('hidden');
+                    if (chevron) chevron.classList.remove('rotate-180');
+                    container.classList.remove('border-gold-400/50', 'bg-dark-900/90');
+                    container.classList.add('border-gold-400/10');
+                }
+            }
+            lucide.createIcons();
+        }
+
         function selectService(serviceId) {
             WIZARD_STATE.selectedService = APP_STATE.services.find(s => s.id === serviceId);
-            
+
             // Clear previous highlight
             APP_STATE.services.forEach(s => {
                 const el = document.getElementById(`service-card-${s.id}`);
-                if(el) el.className = "group border border-stone-800 bg-dark-850 p-5 rounded-xl cursor-pointer hover:border-gold-400/40 transition-all duration-300 relative hover:shadow-[0_0_15px_rgba(212,175,55,0.05)]";
+                if (el) el.className = "group border border-stone-800 bg-dark-850 p-5 rounded-xl cursor-pointer hover:border-gold-400/40 transition-all duration-300 relative hover:shadow-[0_0_15px_rgba(212,175,55,0.05)]";
             });
 
             // Highlight selected
             const activeCard = document.getElementById(`service-card-${serviceId}`);
-            if(activeCard) {
+            if (activeCard) {
                 activeCard.className = "group border border-gold-400 bg-dark-900 p-5 rounded-xl cursor-pointer transition-all duration-300 relative shadow-gold-glow";
             }
 
@@ -773,13 +1154,16 @@
             badge.classList.remove('hidden');
 
             // Unlock Step 2: Therapist Container
-            const step2 = document.getElementById('step-therapist-container');
+            const step2 = document.getElementById('step-2-container');
             step2.classList.remove('opacity-50', 'pointer-events-none');
             const step2Num = document.getElementById('step-therapist-num');
             step2Num.classList.add('border-gold-400', 'text-gold-400');
             step2Num.classList.remove('border-stone-600', 'text-stone-400');
 
             updateBookingSummary();
+
+            // Auto expand next step
+            showStep(2);
         }
 
         function selectTherapist(therapistId) {
@@ -788,12 +1172,12 @@
             // Clear previous highlights
             APP_STATE.therapists.forEach(t => {
                 const el = document.getElementById(`therapist-card-${t.id}`);
-                if(el) el.className = "group border border-stone-800 bg-dark-850 p-5 rounded-xl cursor-pointer hover:border-gold-400/40 transition-all duration-300 flex flex-col sm:flex-row gap-4 hover:shadow-[0_0_15px_rgba(212,175,55,0.05)] relative";
+                if (el) el.className = "group border border-stone-800 bg-dark-850 p-5 rounded-xl cursor-pointer hover:border-gold-400/40 transition-all duration-300 flex flex-col sm:flex-row gap-4 hover:shadow-[0_0_15px_rgba(212,175,55,0.05)] relative";
             });
 
             // Highlight selected
             const activeCard = document.getElementById(`therapist-card-${therapistId}`);
-            if(activeCard) {
+            if (activeCard) {
                 activeCard.className = "group border border-gold-400 bg-dark-900 p-5 rounded-xl cursor-pointer transition-all duration-300 flex flex-col sm:flex-row gap-4 shadow-gold-glow relative";
             }
 
@@ -803,18 +1187,21 @@
             badge.classList.remove('hidden');
 
             // Unlock Step 3: Date & Time Selector
-            const step3 = document.getElementById('step-datetime-container');
+            const step3 = document.getElementById('step-3-container');
             step3.classList.remove('opacity-50', 'pointer-events-none');
             const step3Num = document.getElementById('step-datetime-num');
             step3Num.classList.add('border-gold-400', 'text-gold-400');
             step3Num.classList.remove('border-stone-600', 'text-stone-400');
 
             updateBookingSummary();
-            
+
             // Recalculate time slots if date is already picked
-            if(WIZARD_STATE.selectedDate) {
+            if (WIZARD_STATE.selectedDate) {
                 calculateAvailableTimeSlots();
             }
+
+            // Auto expand next step
+            showStep(3);
         }
 
         function onBookingDateChange() {
@@ -855,7 +1242,7 @@
                 const dateObj = new Date(selectedDateStr + 'T00:00:00'); // prevents local timezone shift
                 const dayOfWeekName = WEEKDAYS_MAP[dateObj.getDay()];
                 const regularDay = therapist.defaultSchedule[dayOfWeekName];
-                
+
                 if (regularDay) {
                     isWorking = regularDay.active;
                     startStr = regularDay.start;
@@ -889,7 +1276,7 @@
 
             const availableSlots = slots.filter(slotTime => {
                 const slotMin = parseTimeString(slotTime);
-                
+
                 for (const b of activeBookings) {
                     const bStart = parseTimeString(b.time);
                     const bookedService = APP_STATE.services.find(s => s.id === b.serviceId);
@@ -972,8 +1359,8 @@
             if (WIZARD_STATE.selectedTherapist) {
                 therapistBox.classList.remove('hidden');
                 document.getElementById('summary-therapist-name').innerText = WIZARD_STATE.selectedTherapist.name;
-                
-                const initials = WIZARD_STATE.selectedTherapist.name.split(' ').map(n => n[0]).join('').substring(0,2).toUpperCase();
+
+                const initials = WIZARD_STATE.selectedTherapist.name.split(' ').map(n => n[0]).join('').substring(0, 2).toUpperCase();
                 document.getElementById('summary-therapist-img').innerText = initials;
             } else {
                 therapistBox.classList.add('hidden');
@@ -1023,7 +1410,7 @@
                     headers: { 'Content-Type': 'application/json' },
                     body: JSON.stringify(newBooking)
                 });
-                
+
                 if (!res.ok) {
                     throw new Error("Error backend confirmation");
                 }
@@ -1047,17 +1434,18 @@
                 renderTherapists();
                 document.getElementById('booking-date').value = '';
                 document.getElementById('time-slots-container').innerHTML = '<div class="col-span-3 text-center py-6 text-stone-500 text-sm">Seleccione una fecha para buscar turnos disponibles.</div>';
-                
+
                 // Re-lock Wizard containers
-                document.getElementById('step-therapist-container').classList.add('opacity-50', 'pointer-events-none');
+                document.getElementById('step-2-container').classList.add('opacity-50', 'pointer-events-none');
                 document.getElementById('step-therapist-num').className = "w-8 h-8 rounded-full border border-stone-600 flex items-center justify-center text-stone-400 font-serif font-bold text-sm";
                 document.getElementById('selected-service-badge').classList.add('hidden');
 
-                document.getElementById('step-datetime-container').classList.add('opacity-50', 'pointer-events-none');
+                document.getElementById('step-3-container').classList.add('opacity-50', 'pointer-events-none');
                 document.getElementById('step-datetime-num').className = "w-8 h-8 rounded-full border border-stone-600 flex items-center justify-center text-stone-400 font-serif font-bold text-sm";
                 document.getElementById('selected-therapist-badge').classList.add('hidden');
 
                 updateBookingSummary();
+                showStep(1);
 
                 // Refresh admin logs
                 renderAdminBookings();
@@ -1083,7 +1471,7 @@
             CAROUSEL_STATE.currentIndex = 0;
 
             document.getElementById('portfolio-therapist-name').innerText = `Galería de ${therapist.name}`;
-            
+
             renderCarousel();
 
             document.getElementById('portfolio-modal').classList.remove('hidden');
@@ -1098,7 +1486,7 @@
 
             const imgEl = document.getElementById('portfolio-image');
             imgEl.style.opacity = '0';
-            
+
             setTimeout(() => {
                 imgEl.src = gallery[idx];
                 imgEl.style.opacity = '1';
@@ -1110,7 +1498,7 @@
             // Create indicator dots
             const indContainer = document.getElementById('portfolio-indicators');
             indContainer.innerHTML = '';
-            
+
             gallery.forEach((_, gIdx) => {
                 const dot = document.createElement('button');
                 dot.onclick = () => {
@@ -1120,14 +1508,6 @@
                 dot.className = `w-2 h-2 rounded-full transition-all duration-300 ${gIdx === idx ? 'bg-gold-400 w-5 shadow-gold-glow' : 'bg-stone-600 hover:bg-stone-500'}`;
                 indContainer.appendChild(dot);
             });
-
-            const descriptions = [
-                "Entorno terapéutico del spa. Una ambientación premium con iluminación sutil para desconectarse del ruido.",
-                "Aceites esenciales y ungüentos orgánicos que nutren la piel durante cada fricción.",
-                "Piedras volcánicas calientes pulidas a mano para armonizar la energía física y aliviar tensiones profundas.",
-                "Toallas de algodón egipcio y detalles florales para una inmersión completa en el confort."
-            ];
-            document.getElementById('portfolio-photo-description').innerText = descriptions[idx % descriptions.length];
         }
 
         function nextSlide() {
@@ -1161,7 +1541,7 @@
                     headers: { 'Content-Type': 'application/json' },
                     body: JSON.stringify({ pre_buffer, post_buffer })
                 });
-                
+
                 if (!res.ok) throw new Error("Error saving settings");
 
                 await loadAppState();
@@ -1179,7 +1559,7 @@
             APP_STATE.services.forEach(service => {
                 const div = document.createElement('div');
                 div.className = "flex flex-col md:flex-row justify-between items-start md:items-center bg-dark-850 border border-stone-800 p-4 rounded-xl gap-4";
-                
+
                 div.innerHTML = `
                     <div class="space-y-1 flex-1">
                         <div class="flex items-center gap-2">
@@ -1210,10 +1590,10 @@
             APP_STATE.therapists.forEach(therapist => {
                 const div = document.createElement('div');
                 div.className = "flex flex-col md:flex-row justify-between items-start md:items-center bg-dark-850 border border-stone-800 p-4 rounded-xl gap-4";
-                
+
                 const activeDays = Object.keys(therapist.defaultSchedule)
                     .filter(day => therapist.defaultSchedule[day].active)
-                    .map(day => `${WEEKDAYS_ES[day].substring(0,2)}: ${therapist.defaultSchedule[day].start}-${therapist.defaultSchedule[day].end}`)
+                    .map(day => `${WEEKDAYS_ES[day].substring(0, 2)}: ${therapist.defaultSchedule[day].start}-${therapist.defaultSchedule[day].end}`)
                     .join(' | ');
 
                 const photoCount = therapist.gallery ? therapist.gallery.length : 0;
@@ -1251,14 +1631,14 @@
 
             APP_STATE.therapists.forEach(therapist => {
                 if (!therapist.exceptions) return;
-                
+
                 Object.keys(therapist.exceptions).forEach(dateStr => {
                     totalExc++;
                     const item = therapist.exceptions[dateStr];
                     const div = document.createElement('div');
                     div.className = "flex justify-between items-center bg-dark-850/60 border border-stone-800/60 px-4 py-3 rounded-lg text-sm";
-                    
-                    const statusText = item.active 
+
+                    const statusText = item.active
                         ? `<span class="text-xs font-semibold text-gold-400 bg-gold-400/5 px-2 py-0.5 rounded border border-gold-400/20">Horario Modificado (${item.start} a ${item.end})</span>`
                         : `<span class="text-xs font-semibold text-rose-400 bg-rose-950/20 px-2 py-0.5 rounded border border-rose-900/20">No Disponible / Descanso</span>`;
 
@@ -1283,50 +1663,230 @@
             }
         }
 
-        // Active Bookings in Admin
-        function renderAdminBookings() {
-            const listContainer = document.getElementById('admin-bookings-list');
-            listContainer.innerHTML = '';
+        let CALENDAR_DATE = new Date();
+        let SELECTED_CALENDAR_DAY = null;
 
-            const sortedBookings = [...APP_STATE.bookings].sort((a,b) => b.date.localeCompare(a.date));
+        const MONTH_NAMES_ES = [
+            "Enero", "Febrero", "Marzo", "Abril", "Mayo", "Junio",
+            "Julio", "Agosto", "Septiembre", "Octubre", "Noviembre", "Diciembre"
+        ];
 
-            if (sortedBookings.length === 0) {
-                listContainer.innerHTML = '<div class="text-center py-10 text-stone-600 text-sm">No hay reservas registradas en el sistema.</div>';
+        function changeCalendarMonth(offset) {
+            CALENDAR_DATE.setMonth(CALENDAR_DATE.getMonth() + offset);
+            renderCalendar();
+        }
+
+        function selectCalendarDay(dateStr) {
+            SELECTED_CALENDAR_DAY = dateStr;
+            renderCalendar();
+            renderSelectedDayBookings();
+        }
+
+        function renderCalendar() {
+            const year = CALENDAR_DATE.getFullYear();
+            const month = CALENDAR_DATE.getMonth();
+
+            // Set Title
+            const monthTitleEl = document.getElementById('calendar-month-title');
+            if (monthTitleEl) {
+                monthTitleEl.innerText = `${MONTH_NAMES_ES[month]} ${year}`;
+            }
+
+            const grid = document.getElementById('calendar-grid');
+            if (!grid) return;
+            grid.innerHTML = '';
+
+            // First day of current month (0: Sun, 1: Mon, etc.)
+            const firstDayIdx = new Date(year, month, 1).getDay();
+            // Total days in current month
+            const totalDays = new Date(year, month + 1, 0).getDate();
+            // Total days in previous month
+            const prevMonthTotalDays = new Date(year, month, 0).getDate();
+
+            // Render previous month's trailing days
+            for (let i = firstDayIdx - 1; i >= 0; i--) {
+                const dayNum = prevMonthTotalDays - i;
+                const prevMonth = month === 0 ? 11 : month - 1;
+                const prevYear = month === 0 ? year - 1 : year;
+                const dateStr = `${prevYear}-${String(prevMonth + 1).padStart(2, '0')}-${String(dayNum).padStart(2, '0')}`;
+
+                grid.appendChild(createCalendarCell(dayNum, dateStr, true));
+            }
+
+            // Render current month's days
+            for (let day = 1; day <= totalDays; day++) {
+                const dateStr = `${year}-${String(month + 1).padStart(2, '0')}-${String(day).padStart(2, '0')}`;
+
+                grid.appendChild(createCalendarCell(day, dateStr, false));
+            }
+
+            // Pad the grid to complete the last row
+            const totalCellsSoFar = firstDayIdx + totalDays;
+            const remainingCells = (7 - (totalCellsSoFar % 7)) % 7;
+            for (let day = 1; day <= remainingCells; day++) {
+                const nextMonth = month === 11 ? 0 : month + 1;
+                const nextYear = month === 11 ? year + 1 : year;
+                const dateStr = `${nextYear}-${String(nextMonth + 1).padStart(2, '0')}-${String(day).padStart(2, '0')}`;
+
+                grid.appendChild(createCalendarCell(day, dateStr, true));
+            }
+
+            lucide.createIcons();
+
+            // Auto-refresh selected day details list if it's open
+            if (SELECTED_CALENDAR_DAY) {
+                renderSelectedDayBookings();
+            }
+        }
+
+        function createCalendarCell(dayNum, dateStr, isOtherMonth) {
+            const cell = document.createElement('div');
+
+            // Base styles
+            let classes = "aspect-square bg-dark-850 border rounded-xl p-2 cursor-pointer hover:border-gold-400/50 transition flex flex-col justify-between items-start min-h-[90px] md:min-h-[100px] relative overflow-hidden";
+
+            if (isOtherMonth) {
+                classes += " border-stone-900 opacity-30 hover:opacity-50";
+            } else {
+                classes += " border-stone-800";
+            }
+
+            // Check if this day is today
+            const todayStr = new Date().toISOString().split('T')[0];
+            const isToday = dateStr === todayStr;
+
+            if (isToday) {
+                classes += " bg-gold-400/5 border-gold-400/50 shadow-gold-glow";
+            }
+
+            // Check if this cell is the selected cell
+            if (SELECTED_CALENDAR_DAY === dateStr) {
+                classes += " border-gold-400/90 ring-1 ring-gold-400/50 bg-gold-400/10";
+            }
+
+            cell.className = classes;
+            cell.onclick = () => selectCalendarDay(dateStr);
+
+            // Filter bookings for this day
+            const dayBookings = APP_STATE.bookings.filter(b => b.date === dateStr);
+
+            // Build inner HTML
+            let bookingsHtml = '';
+            if (dayBookings.length > 0) {
+                bookingsHtml = '<div class="flex flex-col gap-1 w-full mt-1.5 overflow-hidden">';
+                // Show up to 2 bookings, then a badge +X
+                const visibleBookings = dayBookings.slice(0, 2);
+                visibleBookings.forEach(b => {
+                    const s = APP_STATE.services.find(serv => serv.id === b.serviceId);
+                    const sName = s ? s.name : "Servicio";
+                    const isCustom = s && s.category === "Personalizado";
+                    const badgeClass = isCustom
+                        ? "bg-[#F8F2E4] text-dark-950 font-bold border-[#F8F2E4]"
+                        : "bg-gold-400/10 text-gold-300 border-gold-400/10";
+                    const dotClass = isCustom
+                        ? "bg-dark-950"
+                        : "bg-gold-400";
+                    bookingsHtml += `
+                        <div class="text-[9px] md:text-[10px] ${badgeClass} px-1 py-0.5 rounded truncate font-medium flex items-center gap-1 border" title="${b.time} - ${b.clientName} (${sName})">
+                            <span class="w-1.5 h-1.5 rounded-full ${dotClass} shrink-0"></span>
+                            <span class="font-mono font-semibold">${b.time}</span> ${b.clientName}
+                        </div>
+                    `;
+                });
+                if (dayBookings.length > 2) {
+                    bookingsHtml += `
+                        <div class="text-[9px] text-stone-500 font-bold pl-1.5">
+                            +${dayBookings.length - 2} más
+                        </div>
+                    `;
+                }
+                bookingsHtml += '</div>';
+            }
+
+            const todayLabel = isToday ? '<span class="text-[9px] uppercase tracking-widest text-gold-400 font-bold border border-gold-400/20 px-1 py-0.5 rounded bg-gold-400/5">Hoy</span>' : '';
+
+            cell.innerHTML = `
+                <div class="flex justify-between items-center w-full">
+                    <span class="text-xs font-semibold ${isToday ? 'text-gold-400 font-bold' : 'text-stone-400'} font-mono">${dayNum}</span>
+                    ${todayLabel}
+                </div>
+                ${bookingsHtml}
+            `;
+
+            return cell;
+        }
+
+        function renderSelectedDayBookings() {
+            const detailsSection = document.getElementById('calendar-day-details');
+            const bookingsList = document.getElementById('selected-day-bookings-list');
+            const dayTitle = document.getElementById('selected-day-title');
+            const addBtn = document.getElementById('add-booking-for-day-btn');
+
+            if (!detailsSection || !bookingsList || !dayTitle || !addBtn) return;
+
+            if (!SELECTED_CALENDAR_DAY) {
+                detailsSection.classList.add('hidden');
                 return;
             }
 
-            sortedBookings.forEach(booking => {
+            detailsSection.classList.remove('hidden');
+            dayTitle.innerText = `Reservas para el ${SELECTED_CALENDAR_DAY}`;
+
+            // Configure quick-add button for this day
+            addBtn.onclick = () => openDirectBookingModal(SELECTED_CALENDAR_DAY);
+
+            const dayBookings = APP_STATE.bookings.filter(b => b.date === SELECTED_CALENDAR_DAY)
+                .sort((a, b) => a.time.localeCompare(b.time));
+
+            bookingsList.innerHTML = '';
+
+            if (dayBookings.length === 0) {
+                bookingsList.innerHTML = `
+                    <div class="col-span-full py-8 text-center text-stone-500 text-sm italic">
+                        No hay citas confirmadas para esta fecha.
+                    </div>
+                `;
+                return;
+            }
+
+            dayBookings.forEach(booking => {
                 const service = APP_STATE.services.find(s => s.id === booking.serviceId);
                 const therapist = APP_STATE.therapists.find(t => t.id === booking.therapistId);
                 const therapistName = therapist ? therapist.name : 'Desconocido';
+                const isCustom = service && service.category === "Personalizado";
 
                 const div = document.createElement('div');
-                div.className = "bg-dark-850 border border-stone-800 p-4 rounded-xl space-y-3 relative overflow-hidden";
+                div.className = `${isCustom ? 'bg-[#F8F2E4] text-dark-950 border border-gold-400/20' : 'bg-dark-850 border border-stone-800 text-stone-300'} p-4 rounded-xl space-y-3 relative overflow-hidden`;
                 div.innerHTML = `
                     <div class="flex justify-between items-start">
                         <div>
-                            <span class="text-[10px] uppercase font-mono bg-stone-800 text-stone-300 px-2 py-0.5 rounded">${booking.id}</span>
-                            <h4 class="text-stone-200 font-medium mt-1.5">${booking.clientName}</h4>
+                            <span class="text-[10px] uppercase font-mono ${isCustom ? 'bg-dark-950/10 text-dark-950' : 'bg-stone-800 text-stone-300'} px-2 py-0.5 rounded">${booking.id}</span>
+                            <h4 class="${isCustom ? 'text-dark-950 font-bold' : 'text-stone-200 font-medium'} mt-1.5">${booking.clientName}</h4>
                         </div>
-                        <span class="text-gold-400 font-bold text-sm">$${service ? service.price.toLocaleString('es-CO') : '0'} COP</span>
+                        <span class="${isCustom ? 'text-dark-950' : 'text-gold-400'} font-bold text-sm">$${service ? service.price.toLocaleString('es-CO') : '0'} COP</span>
                     </div>
 
-                    <div class="space-y-1 text-xs text-stone-400">
-                        <p class="flex items-center gap-1.5"><i data-lucide="tag" class="w-3.5 h-3.5"></i>${service ? service.name : 'Servicio Eliminado'}</p>
-                        <p class="flex items-center gap-1.5"><i data-lucide="user" class="w-3.5 h-3.5"></i>Terapeuta: ${therapistName}</p>
-                        <p class="flex items-center gap-1.5 text-gold-400/90 font-semibold"><i data-lucide="calendar" class="w-3.5 h-3.5"></i>Fecha: ${booking.date} a las ${booking.time}</p>
-                        <p class="flex items-center gap-1.5"><i data-lucide="phone" class="w-3.5 h-3.5"></i>Teléfono: ${booking.clientPhone}</p>
+                    <div class="space-y-1 text-xs ${isCustom ? 'text-dark-950/80' : 'text-stone-400'}">
+                        <p class="flex items-center gap-1.5"><i data-lucide="tag" class="w-3.5 h-3.5 text-current"></i>${service ? service.name : 'Servicio Eliminado'} ${isCustom ? '<span class="text-[9px] bg-dark-950 text-[#F8F2E4] px-1.5 py-0.5 rounded-full font-bold ml-1">Personalizado</span>' : ''}</p>
+                        <p class="flex items-center gap-1.5"><i data-lucide="user" class="w-3.5 h-3.5 text-current"></i>Terapeuta: ${therapistName}</p>
+                        <p class="flex items-center gap-1.5 ${isCustom ? 'text-dark-950 font-bold' : 'text-gold-400/90 font-semibold'}"><i data-lucide="calendar" class="w-3.5 h-3.5 text-current"></i>Hora: ${booking.time}</p>
+                        <p class="flex items-center gap-1.5"><i data-lucide="phone" class="w-3.5 h-3.5 text-current"></i>Teléfono: ${booking.clientPhone}</p>
                     </div>
 
-                    <div class="flex justify-end border-t border-stone-800 pt-3">
-                        <button onclick="cancelBooking('${booking.id}')" class="text-[11px] uppercase tracking-wider text-rose-400 hover:text-rose-300 transition flex items-center gap-1 font-semibold">
-                            <i data-lucide="calendar-x" class="w-3.5 h-3.5"></i> Cancelar Cita
+                    <div class="flex justify-end border-t ${isCustom ? 'border-dark-950/10' : 'border-stone-800'} pt-3">
+                        <button onclick="cancelBooking('${booking.id}')" class="text-[11px] uppercase tracking-wider ${isCustom ? 'text-rose-700 hover:text-rose-900' : 'text-rose-400 hover:text-rose-300'} transition flex items-center gap-1 font-semibold">
+                            <i data-lucide="calendar-x" class="w-3.5 h-3.5 text-current"></i> Cancelar Cita
                         </button>
                     </div>
                 `;
-                listContainer.appendChild(div);
+                bookingsList.appendChild(div);
             });
+
             lucide.createIcons();
+        }
+
+        function renderAdminBookings() {
+            renderCalendar();
         }
 
         async function cancelBooking(bookingId) {
@@ -1334,7 +1894,7 @@
                 const res = await fetch(`/api/bookings/${bookingId}`, {
                     method: 'DELETE'
                 });
-                
+
                 if (!res.ok) throw new Error("Error deleting booking on server");
 
                 await loadAppState();
@@ -1343,6 +1903,145 @@
             } catch (err) {
                 console.error(err);
                 showToast("Hubo un error al cancelar la cita.");
+            }
+        }
+
+        // ================= DIRECT BOOKING CREATION FROM CALENDAR =================
+        function openDirectBookingModal(dateStr) {
+            // Reset fields
+            document.getElementById('direct-booking-form').reset();
+
+            // Set date if provided
+            const dateInput = document.getElementById('db-date');
+            if (dateStr) {
+                dateInput.value = dateStr;
+            } else {
+                dateInput.value = new Date().toISOString().split('T')[0];
+            }
+
+            // Populate Services dropdown
+            const serviceSelect = document.getElementById('db-service-id');
+            serviceSelect.innerHTML = '<option value="" disabled selected>Seleccione un ritual o servicio...</option>';
+            APP_STATE.services.forEach(s => {
+                serviceSelect.innerHTML += `<option value="${s.id}">${s.name} ($${s.price.toLocaleString('es-CO')} COP | ${s.duration} min)</option>`;
+            });
+            serviceSelect.innerHTML += `<option value="custom">Otro servicio (especificar)...</option>`;
+
+            // Populate Therapists dropdown
+            const therapistSelect = document.getElementById('db-therapist-id');
+            therapistSelect.innerHTML = '<option value="" disabled selected>Seleccione un terapeuta...</option>';
+            APP_STATE.therapists.forEach(t => {
+                therapistSelect.innerHTML += `<option value="${t.id}">${t.name}</option>`;
+            });
+
+            // Hide custom service input container
+            document.getElementById('db-custom-service-container').classList.add('hidden');
+            document.getElementById('db-custom-service-name').removeAttribute('required');
+
+            // Open Modal
+            document.getElementById('direct-booking-modal').classList.remove('hidden');
+        }
+
+        function closeDirectBookingModal() {
+            document.getElementById('direct-booking-modal').classList.add('hidden');
+        }
+
+        function toggleDbCustomServiceInput(value) {
+            const container = document.getElementById('db-custom-service-container');
+            const input = document.getElementById('db-custom-service-name');
+            if (value === 'custom') {
+                container.classList.remove('hidden');
+                input.setAttribute('required', 'true');
+            } else {
+                container.classList.add('hidden');
+                input.removeAttribute('required');
+            }
+        }
+
+        async function saveDirectBooking(event) {
+            event.preventDefault();
+
+            const clientName = document.getElementById('db-client-name').value.trim();
+            const clientPhone = document.getElementById('db-client-phone').value.trim() || 'Directo';
+            const clientEmail = document.getElementById('db-client-email').value.trim() || 'No indicado';
+            const date = document.getElementById('db-date').value;
+            const time = document.getElementById('db-time').value;
+            let serviceId = document.getElementById('db-service-id').value;
+            const customServiceName = document.getElementById('db-custom-service-name').value.trim();
+            const therapistId = document.getElementById('db-therapist-id').value;
+
+            if (!clientName || !date || !time || !serviceId || !therapistId) {
+                showToast("Por favor complete todos los campos obligatorios.");
+                return;
+            }
+
+            try {
+                // If they selected a custom service name, we create a new service first
+                if (serviceId === 'custom') {
+                    if (!customServiceName) {
+                        showToast("Por favor ingrese el nombre del servicio personalizado.");
+                        return;
+                    }
+
+                    const newService = {
+                        name: customServiceName,
+                        duration: 60,
+                        price: 0,
+                        desc: "Servicio personalizado creado directamente desde agenda",
+                        category: "Personalizado"
+                    };
+
+                    const serviceRes = await fetch('/api/services', {
+                        method: 'POST',
+                        headers: { 'Content-Type': 'application/json' },
+                        body: JSON.stringify(newService)
+                    });
+
+                    if (!serviceRes.ok) {
+                        throw new Error("No se pudo registrar el servicio personalizado.");
+                    }
+
+                    const serviceData = await serviceRes.json();
+                    serviceId = serviceData.id;
+                }
+
+                // Prepare the booking payload
+                const newBooking = {
+                    id: `b-${Math.floor(Math.random() * 90000) + 10000}`,
+                    clientName,
+                    clientPhone,
+                    clientEmail,
+                    serviceId,
+                    therapistId,
+                    date,
+                    time
+                };
+
+                const bookingRes = await fetch('/api/bookings', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify(newBooking)
+                });
+
+                if (!bookingRes.ok) {
+                    throw new Error("No se pudo registrar la reserva.");
+                }
+
+                await loadAppState();
+                closeDirectBookingModal();
+                renderAdminBookings();
+
+                // If a specific day was selected, refresh details view for that day
+                if (SELECTED_CALENDAR_DAY === date) {
+                    renderSelectedDayBookings();
+                } else {
+                    selectCalendarDay(date);
+                }
+
+                showToast(`Reserva directa agendada exitosamente para ${clientName}. ID: ${newBooking.id}`);
+            } catch (err) {
+                console.error(err);
+                showToast("Error al registrar la reserva directa en la base de datos.");
             }
         }
 
@@ -1404,7 +2103,7 @@
                 closeServiceModal();
                 renderServices();
                 renderAdminServices();
-                
+
                 showToast(serviceId ? `Ritual "${name}" actualizado.` : `Ritual "${name}" creado.`);
             } catch (err) {
                 console.error(err);
@@ -1434,10 +2133,10 @@
         function generateDefaultScheduleFormInputs() {
             const container = document.getElementById('default-schedule-inputs');
             container.innerHTML = '';
-            
+
             Object.keys(WEEKDAYS_ES).forEach(dayKey => {
                 const dayName = WEEKDAYS_ES[dayKey];
-                
+
                 const div = document.createElement('div');
                 div.className = "grid grid-cols-12 gap-2 items-center bg-white p-2.5 rounded-lg border border-stone-300 text-black";
                 div.innerHTML = `
@@ -1458,13 +2157,37 @@
             });
         }
 
+        function handleFileSelectionPreview(input) {
+            const previewContainer = document.getElementById('t-gallery-preview');
+            previewContainer.innerHTML = '';
+
+            if (input.files && input.files.length > 0) {
+                const filesArray = Array.from(input.files).slice(0, 4); // Limit to 4
+                filesArray.forEach((file, index) => {
+                    const reader = new FileReader();
+                    reader.onload = function (e) {
+                        const div = document.createElement('div');
+                        div.className = "relative aspect-video rounded-lg overflow-hidden border border-stone-800 bg-dark-950";
+                        div.innerHTML = `
+                            <img src="${e.target.result}" class="w-full h-full object-cover">
+                            <span class="absolute top-1 left-1 text-[8px] bg-black/60 text-stone-350 px-1 py-0.5 rounded font-mono">NUEVO ${index + 1}</span>
+                        `;
+                        previewContainer.appendChild(div);
+                    }
+                    reader.readAsDataURL(file);
+                });
+            }
+        }
+
         function openTherapistModal() {
             document.getElementById('therapist-form-id').value = '';
             document.getElementById('t-name').value = '';
             document.getElementById('t-rating').value = '4.8';
             document.getElementById('t-specialties').value = '';
             document.getElementById('t-bio').value = '';
-            document.getElementById('t-gallery').value = '';
+            document.getElementById('t-gallery-files').value = '';
+            document.getElementById('t-gallery-preview').innerHTML = '';
+            document.getElementById('t-gallery-urls').value = '';
             document.getElementById('t-color').value = 'amber';
             document.getElementById('therapist-modal-title').innerText = "Nuevo Terapeuta de Élite";
 
@@ -1486,7 +2209,29 @@
             document.getElementById('t-rating').value = therapist.rating;
             document.getElementById('t-specialties').value = therapist.specialties.join(', ');
             document.getElementById('t-bio').value = therapist.bio;
-            document.getElementById('t-gallery').value = therapist.gallery ? therapist.gallery.join(', ') : '';
+
+            // Reset file picker
+            document.getElementById('t-gallery-files').value = '';
+
+            // Store and show existing photos
+            const galleryUrls = therapist.gallery || [];
+            document.getElementById('t-gallery-urls').value = galleryUrls.join(', ');
+
+            const previewContainer = document.getElementById('t-gallery-preview');
+            previewContainer.innerHTML = '';
+            galleryUrls.forEach((url, index) => {
+                const div = document.createElement('div');
+                div.className = "relative aspect-video rounded-lg overflow-hidden border border-stone-850 bg-dark-950 group";
+                div.innerHTML = `
+                    <img src="${url}" class="w-full h-full object-cover">
+                    <span class="absolute top-1 left-1 text-[8px] bg-gold-400 text-dark-950 px-1 py-0.5 rounded font-bold uppercase tracking-wider font-mono">Guardada</span>
+                    <button type="button" onclick="removeExistingGalleryPhoto(this, '${url}')" class="absolute inset-0 bg-black/80 opacity-0 group-hover:opacity-100 flex items-center justify-center text-xs text-rose-400 transition font-bold font-mono">
+                        Eliminar
+                    </button>
+                `;
+                previewContainer.appendChild(div);
+            });
+
             document.getElementById('t-color').value = therapist.color || 'amber';
             document.getElementById('therapist-modal-title').innerText = `Editar Perfil: ${therapist.name}`;
 
@@ -1504,6 +2249,14 @@
             document.getElementById('therapist-modal').classList.remove('hidden');
         }
 
+        function removeExistingGalleryPhoto(btn, url) {
+            const urlsInput = document.getElementById('t-gallery-urls');
+            let currentUrls = urlsInput.value.split(',').map(u => u.trim()).filter(u => u.length > 0);
+            currentUrls = currentUrls.filter(u => u !== url);
+            urlsInput.value = currentUrls.join(', ');
+            btn.parentElement.remove();
+        }
+
         function closeTherapistModal() {
             document.getElementById('therapist-modal').classList.add('hidden');
         }
@@ -1516,11 +2269,41 @@
             const rating = parseFloat(document.getElementById('t-rating').value);
             const specialties = document.getElementById('t-specialties').value.split(',').map(s => s.trim()).filter(s => s.length > 0);
             const bio = document.getElementById('t-bio').value.trim();
-            
-            const galleryVal = document.getElementById('t-gallery').value.trim();
-            const gallery = galleryVal ? galleryVal.split(',').map(u => u.trim()).filter(u => u.length > 0) : [];
-            
             const color = document.getElementById('t-color').value;
+
+            // Handle photos list
+            const existingUrlsVal = document.getElementById('t-gallery-urls').value.trim();
+            let gallery = existingUrlsVal ? existingUrlsVal.split(',').map(u => u.trim()).filter(u => u.length > 0) : [];
+
+            // Check if there are new files to upload
+            const fileInput = document.getElementById('t-gallery-files');
+            if (fileInput.files && fileInput.files.length > 0) {
+                const formData = new FormData();
+                Array.from(fileInput.files).slice(0, 4).forEach(file => {
+                    formData.append('photos', file);
+                });
+
+                try {
+                    showToast("Subiendo imágenes de portafolio...");
+                    const uploadRes = await fetch('/api/upload', {
+                        method: 'POST',
+                        body: formData
+                    });
+
+                    if (!uploadRes.ok) {
+                        throw new Error("No se pudieron subir las imágenes.");
+                    }
+
+                    const uploadData = await uploadRes.json();
+                    if (uploadData.urls) {
+                        gallery = [...gallery, ...uploadData.urls];
+                    }
+                } catch (err) {
+                    console.error(err);
+                    showToast("Error al subir los archivos al servidor.");
+                    return;
+                }
+            }
 
             const defaultSchedule = {};
             Object.keys(WEEKDAYS_ES).forEach(dayKey => {
@@ -1553,7 +2336,7 @@
                 renderTherapists();
                 renderAdminTherapists();
                 renderAdminExceptions();
-                
+
                 showToast(therapistId ? `Perfil de ${name} actualizado.` : `Especialista ${name} registrado.`);
             } catch (err) {
                 console.error(err);
@@ -1628,7 +2411,7 @@
             const therapistId = document.getElementById('exc-therapist-id').value;
             const excDate = document.getElementById('exc-date').value;
             const excStatus = document.querySelector('input[name="exc-status"]:checked').value;
-            
+
             const start = document.getElementById('exc-start-time').value;
             const end = document.getElementById('exc-end-time').value;
 
@@ -1682,10 +2465,10 @@
         function showToast(message) {
             const toast = document.getElementById('toast');
             const msgEl = document.getElementById('toast-message');
-            
+
             msgEl.innerText = message;
             toast.className = "fixed bottom-6 right-6 bg-dark-900 border border-gold-400 text-gold-400 p-4 rounded-xl shadow-2xl z-50 transform translate-y-0 opacity-100 transition-all duration-300 max-w-sm flex items-center gap-3";
-            
+
             setTimeout(() => {
                 toast.className = "fixed bottom-6 right-6 bg-dark-900 border border-gold-400 text-gold-400 p-4 rounded-xl shadow-2xl z-50 transform translate-y-20 opacity-0 transition-all duration-300 max-w-sm flex items-center gap-3";
             }, 5000);
@@ -1693,4 +2476,5 @@
 
     </script>
 </body>
+
 </html>

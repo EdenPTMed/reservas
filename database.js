@@ -85,9 +85,21 @@ export async function initDb() {
         await db.run('UPDATE services SET price = price * 1000 WHERE price < 1000');
     }
 
-    // If the database did not exist, seed it for the first time
-    if (!dbExists) {
-        console.log("Database file not found. Creating and seeding a new database...");
+    // Check if database needs seeding (if file is new or tables are empty)
+    let needsSeeding = !dbExists;
+    if (dbExists) {
+        try {
+            const countRes = await db.get("SELECT COUNT(*) as count FROM services");
+            if (!countRes || countRes.count === 0) {
+                needsSeeding = true;
+            }
+        } catch (e) {
+            needsSeeding = true;
+        }
+    }
+
+    if (needsSeeding) {
+        console.log("Database empty or not found. Seeding database...");
 
         // Seed Settings
         await db.run("INSERT INTO settings (key, value) VALUES ('pre_buffer', '15')");

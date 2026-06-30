@@ -6,10 +6,10 @@
     <title>EDEN Spa - Sistema de Reservas Premium</title>
     <!-- Tailwind CSS CDN -->
     <script src="https://cdn.tailwindcss.com"></script>
-    <!-- Google Fonts for Premium Look -->
+    <!-- Google Fonts for Premium Look and High Legibility -->
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@400;600;700&family=Montserrat:wght@300;400;500;600&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@400;600;700&family=Plus+Jakarta+Sans:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
     <!-- Lucide Icons for elegant icons -->
     <script src="https://unpkg.com/lucide@latest"></script>
     <script>
@@ -18,7 +18,7 @@
                 extend: {
                     fontFamily: {
                         serif: ['Cinzel', 'serif'],
-                        sans: ['Montserrat', 'sans-serif'],
+                        sans: ['Plus Jakarta Sans', 'sans-serif'],
                     },
                     colors: {
                         gold: {
@@ -50,6 +50,21 @@
         }
     </script>
     <style>
+        /* Globally increase font size and scale proportionally based on viewport */
+        html {
+            font-size: 16.5px;
+        }
+        @media (min-width: 640px) {
+            html {
+                font-size: 17.5px;
+            }
+        }
+        @media (min-width: 1024px) {
+            html {
+                font-size: 18.5px;
+            }
+        }
+
         /* Smooth transitions & custom scrollbar for luxury feel */
         ::-webkit-scrollbar {
             width: 6px;
@@ -77,16 +92,15 @@
     <!-- MAIN NAVBAR -->
     <nav class="border-b border-gold-400/10 bg-dark-950/90 backdrop-blur-md sticky top-0 z-50">
         <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 h-20 flex items-center justify-between">
-            <div class="flex flex-col">
-                <span class="font-serif text-2xl lg:text-3xl tracking-[0.2em] text-gold-400 font-bold">EDEN</span>
-                <span class="text-[9px] uppercase tracking-[0.4em] text-stone-400 -mt-1">Luxury Wellness</span>
+            <div class="flex items-center">
+                <img src="logo.png" alt="EDEN Bienestar Masculino" class="h-16 w-auto object-contain">
             </div>
             
             <div class="flex items-center space-x-2 md:space-x-4">
                 <button onclick="switchTab('booking-view')" id="nav-booking" class="px-4 py-2 rounded-full text-xs md:text-sm font-medium tracking-wider transition-all duration-300 border border-gold-400/30 bg-gold-400/10 text-gold-400 shadow-gold-glow">
                     <i data-lucide="calendar" class="inline w-4 h-4 mr-2 mb-0.5"></i>Reservar
                 </button>
-                <button onclick="switchTab('admin-view')" id="nav-admin" class="px-4 py-2 rounded-full text-xs md:text-sm font-medium tracking-wider transition-all duration-300 border border-transparent text-stone-400 hover:text-gold-400 hover:border-gold-400/20">
+                <button onclick="switchTab('admin-view')" id="nav-admin" class="hidden px-4 py-2 rounded-full text-xs md:text-sm font-medium tracking-wider transition-all duration-300 border border-transparent text-stone-400 hover:text-gold-400 hover:border-gold-400/20">
                     <i data-lucide="shield-alert" class="inline w-4 h-4 mr-2 mb-0.5"></i>Administrador
                 </button>
             </div>
@@ -224,7 +238,7 @@
                                 <div class="space-y-2">
                                     <input type="text" id="client-name" placeholder="Nombre completo" class="w-full bg-dark-850 border border-stone-800 rounded-lg px-3 py-2 text-sm text-stone-200 focus:outline-none focus:border-gold-400 transition placeholder:text-stone-600">
                                     <input type="tel" id="client-phone" placeholder="WhatsApp / Teléfono" class="w-full bg-dark-850 border border-stone-800 rounded-lg px-3 py-2 text-sm text-stone-200 focus:outline-none focus:border-gold-400 transition placeholder:text-stone-600">
-                                    <input type="email" id="client-email" placeholder="Correo electrónico" class="w-full bg-dark-850 border border-stone-800 rounded-lg px-3 py-2 text-sm text-stone-200 focus:outline-none focus:border-gold-400 transition placeholder:text-stone-600">
+                                    <input type="email" id="client-email" placeholder="Correo electrónico (opcional)" class="w-full bg-dark-850 border border-stone-800 rounded-lg px-3 py-2 text-sm text-stone-200 focus:outline-none focus:border-gold-400 transition placeholder:text-stone-600">
                                 </div>
                             </div>
 
