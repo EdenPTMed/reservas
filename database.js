@@ -104,6 +104,7 @@ export async function initDb() {
         // Seed Settings
         await db.run("INSERT INTO settings (key, value) VALUES ('pre_buffer', '15')");
         await db.run("INSERT INTO settings (key, value) VALUES ('post_buffer', '15')");
+        await db.run("INSERT INTO settings (key, value) VALUES ('whatsapp_number', '573246895931')");
 
         // Seed Services (Prices in COP)
         const services = [

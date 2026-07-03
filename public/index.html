@@ -91,6 +91,107 @@
         .gold-border-gradient {
             border-image: linear-gradient(to right, #D4AF37, #7B5E15) 1;
         }
+
+        /* Global Light Mode overrides */
+        body.light-mode {
+            background-color: #FAF9F6;
+            color: #2D2A26;
+        }
+        body.light-mode nav {
+            background-color: rgba(255, 255, 255, 0.9);
+            border-color: rgba(0, 0, 0, 0.06);
+        }
+        body.light-mode nav button#nav-booking:not(.bg-gold-400\/10) {
+            color: #57534e;
+        }
+        body.light-mode nav button#nav-admin:not(.bg-gold-400\/10) {
+            color: #57534e;
+        }
+        body.light-mode nav button:hover {
+            color: #C29B2E !important;
+        }
+        body.light-mode .bg-dark-900 {
+            background-color: #FFFFFF;
+            border-color: rgba(212, 175, 55, 0.15);
+            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.03);
+        }
+        body.light-mode .bg-dark-850 {
+            background-color: #FDFCF7;
+            border-color: rgba(0, 0, 0, 0.05);
+        }
+        body.light-mode .bg-dark-850\/60 {
+            background-color: rgba(253, 252, 247, 0.6);
+            border-color: rgba(0, 0, 0, 0.05);
+        }
+        body.light-mode .text-stone-100, 
+        body.light-mode .text-stone-200, 
+        body.light-mode h1, 
+        body.light-mode h2, 
+        body.light-mode h3, 
+        body.light-mode h4 {
+            color: #1C1A17;
+        }
+        body.light-mode .text-stone-300 {
+            color: #3C3835;
+        }
+        body.light-mode .text-stone-400 {
+            color: #6B6661;
+        }
+        body.light-mode .text-stone-500 {
+            color: #8C8681;
+        }
+        body.light-mode .border-gold-400\/10 {
+            border-color: rgba(212, 175, 55, 0.25);
+        }
+        body.light-mode .border-stone-800 {
+            border-color: #E6E4DF;
+        }
+        body.light-mode .bg-dark-750 {
+            background-color: #F4F2EC;
+            border-color: #DCD9D0;
+        }
+        body.light-mode .bg-dark-800 {
+            background-color: #EAE8E0;
+            border-color: #D5D2C8;
+        }
+        body.light-mode .hover\:border-gold-400:hover {
+            border-color: #C29B2E;
+        }
+        body.light-mode .bg-gold-400\/5 {
+            background-color: rgba(212, 175, 55, 0.08);
+        }
+        body.light-mode .bg-gold-400\/10 {
+            background-color: rgba(212, 175, 55, 0.12);
+        }
+        body.light-mode .text-gold-300 {
+            color: #7B5E15;
+        }
+        body.light-mode input, body.light-mode select, body.light-mode textarea {
+            border-color: #D2CFC7;
+            background-color: #FFFFFF;
+            color: #1C1A17;
+        }
+        body.light-mode input:focus, body.light-mode select:focus, body.light-mode textarea:focus {
+            border-color: #D4AF37;
+        }
+        body.light-mode .border-stone-900 {
+            border-color: #F0EDE6;
+        }
+        body.light-mode .text-rose-400 {
+            color: #B91C1C;
+        }
+        body.light-mode .bg-rose-950\/20 {
+            background-color: rgba(239, 68, 68, 0.1);
+            border-color: rgba(239, 68, 68, 0.15);
+        }
+        body.light-mode #step-therapist-num:not(.border-gold-400) {
+            border-color: #D2CFC7;
+            color: #8C8681;
+        }
+        body.light-mode #step-datetime-num:not(.border-gold-400) {
+            border-color: #D2CFC7;
+            color: #8C8681;
+        }
     </style>
 </head>
 
@@ -105,12 +206,13 @@
     <nav class="border-b border-gold-400/10 bg-dark-950/90 backdrop-blur-md sticky top-0 z-50">
         <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 h-20 flex items-center justify-between">
             <div class="flex items-center">
-                <img src="logo.png" alt="EDEN Bienestar Masculino" class="h-16 w-auto object-contain">
+                <img src="https://assets.cdn.filesafe.space/WP2PEse3iQRjgf0tgHAR/media/6a47d70f989afcfcc91d4f36.webp"
+                    alt="EDEN Bienestar Masculino" class="h-16 w-auto object-contain">
             </div>
 
             <div class="flex items-center space-x-2 md:space-x-4">
                 <button onclick="switchTab('booking-view')" id="nav-booking"
-                    class="px-4 py-2 rounded-full text-xs md:text-sm font-medium tracking-wider transition-all duration-300 border border-gold-400/30 bg-gold-400/10 text-gold-400 shadow-gold-glow">
+                    class="hidden px-4 py-2 rounded-full text-xs md:text-sm font-medium tracking-wider transition-all duration-300 border border-gold-400/30 bg-gold-400/10 text-gold-400 shadow-gold-glow">
                     <i data-lucide="calendar" class="inline w-4 h-4 mr-2 mb-0.5"></i>Reservar
                 </button>
                 <button onclick="switchTab('admin-view')" id="nav-admin"
@@ -173,7 +275,7 @@
 
                         <!-- Services grid -->
                         <div id="step-1-content" class="mt-6 p-4">
-                            <div id="services-grid" class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                            <div id="services-grid" class="grid grid-cols-1 gap-4">
                                 <!-- Dynamic Content Loaded by JS -->
                             </div>
                         </div>
@@ -265,7 +367,7 @@
                     <div
                         class="bg-dark-900 border border-gold-400/20 rounded-2xl p-6 sticky top-28 space-y-6 shadow-gold-glow">
                         <h3 class="font-serif text-lg tracking-wide text-stone-100 border-b border-gold-400/10 pb-4">
-                            Resumen del Ritual</h3>
+                            Resumen de la Experiencia</h3>
 
                         <div id="summary-empty" class="text-center py-8 text-stone-500 text-sm space-y-2">
                             <i data-lucide="sparkles" class="w-8 h-8 mx-auto text-gold-400/20"></i>
@@ -338,14 +440,20 @@
             <div
                 class="flex flex-col md:flex-row justify-between items-start md:items-center gap-4 border-b border-gold-400/10 pb-6">
                 <div>
-                    <h1 class="font-serif text-3xl tracking-wide text-stone-100">Panel Administrativo</h1>
-                    <p class="text-sm text-stone-400">Administre el catálogo de terapeutas y rituales, defina horarios
+                    <div class="flex items-center gap-4">
+                        <h1 class="font-serif text-3xl tracking-wide text-stone-100">Panel Administrativo</h1>
+                        <button onclick="toggleAdminTheme()" id="theme-toggle-btn"
+                            class="px-3 py-1.5 rounded-full border border-gold-400/30 bg-gold-400/10 text-gold-400 hover:bg-gold-400/20 text-xs font-semibold flex items-center gap-1.5 transition">
+                            <i data-lucide="moon" class="w-3.5 h-3.5"></i> <span>Modo Oscuro</span>
+                        </button>
+                    </div>
+                    <p class="text-sm text-stone-400">Administre el catálogo de terapeutas y experiencias, defina horarios
                         de trabajo fijos y configure excepciones de fechas específicas.</p>
                 </div>
                 <div class="flex flex-wrap gap-2">
                     <button onclick="openServiceModal()"
                         class="gold-gradient-bg text-dark-950 px-4 py-2 rounded-xl text-xs uppercase tracking-widest font-semibold hover:opacity-90 transition flex items-center gap-1">
-                        <i data-lucide="sparkles" class="w-4 h-4"></i> Nuevo Ritual
+                        <i data-lucide="sparkles" class="w-4 h-4"></i> Nueva Experiencia
                     </button>
                     <button onclick="openTherapistModal()"
                         class="bg-dark-800 border border-gold-400/30 text-gold-400 px-4 py-2 rounded-xl text-xs uppercase tracking-widest font-semibold hover:bg-gold-400/10 transition flex items-center gap-1">
@@ -423,9 +531,10 @@
 
                 <!-- COLUMN 1 & 2: List of Services, Therapists & Exceptions -->
                 <div class="lg:col-span-2 space-y-6">
-                    <!-- Rituals (Services) Admin List -->
+                    <!-- Experiences (Services) Admin List -->
                     <div class="bg-dark-900 border border-gold-400/10 p-6 rounded-2xl">
-                        <h2 class="font-serif text-xl text-stone-100 tracking-wide mb-4">Nuestros Rituales (Servicios)
+                        <h2 class="font-serif text-xl text-stone-100 tracking-wide mb-4">Nuestras Experiencias
+                            (Servicios)
                         </h2>
                         <div id="admin-services-list" class="space-y-4">
                             <!-- Dynamic Services List for Admin -->
@@ -467,10 +576,15 @@
                                     class="w-full bg-white border border-stone-300 rounded-lg px-3 py-2 text-black text-sm focus:outline-none focus:border-gold-400 transition">
                             </div>
                             <div>
-                                <label class="block text-xs uppercase tracking-widest text-stone-400 mb-2">Buffer
-                                    Posterior (Minutos)</label>
+                                <label class="block text-xs uppercase tracking-widest text-stone-400 mb-2">Buffer Posterior (Minutos)</label>
                                 <input type="number" id="setting-post-buffer" min="0" required
                                     class="w-full bg-white border border-stone-300 rounded-lg px-3 py-2 text-black text-sm focus:outline-none focus:border-gold-400 transition">
+                            </div>
+                            <div>
+                                <label class="block text-xs uppercase tracking-widest text-stone-400 mb-2">WhatsApp de Reservas</label>
+                                <input type="text" id="setting-whatsapp-number" required
+                                    class="w-full bg-white border border-stone-300 rounded-lg px-3 py-2 text-black text-sm focus:outline-none focus:border-gold-400 transition"
+                                    placeholder="Ej: 573246895931">
                             </div>
                             <button type="submit"
                                 class="w-full gold-gradient-bg hover:opacity-90 text-dark-950 font-bold uppercase tracking-wider py-2 px-4 rounded-lg transition duration-300 flex items-center justify-center gap-1.5 shadow-gold-glow text-xs">
@@ -734,12 +848,12 @@
     </div>
 
 
-    <!-- 4. ADD / EDIT RITUAL MODAL -->
+    <!-- 4. ADD / EDIT EXPERIENCE MODAL -->
     <div id="service-modal"
         class="fixed inset-0 bg-black/80 backdrop-blur-sm z-50 flex items-center justify-center p-4 hidden">
         <div class="bg-dark-900 border border-gold-400/30 rounded-2xl max-w-lg w-full p-6 space-y-6 shadow-2xl">
             <div class="flex justify-between items-center border-b border-gold-400/10 pb-4">
-                <h3 id="service-modal-title" class="font-serif text-2xl text-gold-400 tracking-wide">Nuevo Ritual
+                <h3 id="service-modal-title" class="font-serif text-2xl text-gold-400 tracking-wide">Nueva Experiencia
                     Premium</h3>
                 <button onclick="closeServiceModal()" class="text-stone-400 hover:text-stone-100 transition"><i
                         data-lucide="x" class="w-6 h-6"></i></button>
@@ -749,7 +863,8 @@
                 <input type="hidden" id="service-form-id">
 
                 <div>
-                    <label class="block text-xs uppercase tracking-widest text-stone-400 mb-2">Nombre del Ritual</label>
+                    <label class="block text-xs uppercase tracking-widest text-stone-400 mb-2">Nombre de la
+                        Experiencia</label>
                     <input type="text" id="s-name" required
                         class="w-full bg-white border border-stone-300 rounded-lg px-3 py-2 text-black focus:outline-none focus:border-gold-400 transition"
                         placeholder="P. Ej: Masaje Místico de Rosas">
@@ -784,7 +899,7 @@
                     <label class="block text-xs uppercase tracking-widest text-stone-400 mb-2">Descripción corta</label>
                     <textarea id="s-desc" rows="3" required
                         class="w-full bg-white border border-stone-300 rounded-lg px-3 py-2 text-black focus:outline-none focus:border-gold-400 transition"
-                        placeholder="Descripción sensorial del ritual..."></textarea>
+                        placeholder="Descripción sensorial de la experiencia..."></textarea>
                 </div>
 
                 <div class="flex justify-end gap-3 pt-4 border-t border-gold-400/10">
@@ -792,7 +907,7 @@
                         class="px-5 py-2 rounded-lg bg-dark-800 text-stone-400 hover:text-stone-200 hover:bg-dark-750 transition text-sm font-medium">Cancelar</button>
                     <button type="submit"
                         class="gold-gradient-bg text-dark-950 px-6 py-2 rounded-lg font-bold text-sm tracking-wider hover:opacity-90 transition">Guardar
-                        Ritual</button>
+                        Experiencia</button>
                 </div>
             </form>
         </div>
@@ -884,10 +999,8 @@
     </div>
 
 
-    <!-- ======================================================= -->
-    <!--                      JAVASCRIPT                         -->
-    <!-- ======================================================= -->
     <script>
+        let adminTheme = 'light';
         // Data Store (Dynamic from Express REST API)
         const APP_STATE = {
             services: [],
@@ -962,6 +1075,7 @@
             if (urlParams.get('admin') === 'true' || urlParams.get('access') === 'admin') {
                 isAdminSession = true;
                 document.getElementById('nav-admin').classList.remove('hidden');
+                document.getElementById('nav-booking').classList.remove('hidden');
             }
         }
 
@@ -971,6 +1085,7 @@
             // Set input values for settings in Admin form
             document.getElementById('setting-pre-buffer').value = APP_STATE.settings.pre_buffer || 15;
             document.getElementById('setting-post-buffer').value = APP_STATE.settings.post_buffer || 15;
+            document.getElementById('setting-whatsapp-number').value = APP_STATE.settings.whatsapp_number || "573246895931";
 
             renderServices();
             renderTherapists();
@@ -1005,7 +1120,7 @@
             document.getElementById('admin-view').classList.add('hidden');
 
             // Update Active buttons
-            document.getElementById('nav-booking').className = "px-4 py-2 rounded-full text-xs md:text-sm font-medium tracking-wider transition-all duration-300 border border-transparent text-stone-400 hover:text-gold-400 hover:border-gold-400/20";
+            document.getElementById('nav-booking').className = (isAdminSession ? "" : "hidden ") + "px-4 py-2 rounded-full text-xs md:text-sm font-medium tracking-wider transition-all duration-300 border border-transparent text-stone-400 hover:text-gold-400 hover:border-gold-400/20";
 
             // Reapply hidden state if not an admin session
             document.getElementById('nav-admin').className = (isAdminSession ? "" : "hidden ") + "px-4 py-2 rounded-full text-xs md:text-sm font-medium tracking-wider transition-all duration-300 border border-transparent text-stone-400 hover:text-gold-400 hover:border-gold-400/20";
@@ -1013,9 +1128,15 @@
             document.getElementById(tabId).classList.remove('hidden');
 
             if (tabId === 'booking-view') {
-                document.getElementById('nav-booking').className = "px-4 py-2 rounded-full text-xs md:text-sm font-medium tracking-wider transition-all duration-300 border border-gold-400/30 bg-gold-400/10 text-gold-400 shadow-gold-glow";
+                document.getElementById('nav-booking').className = (isAdminSession ? "" : "hidden ") + "px-4 py-2 rounded-full text-xs md:text-sm font-medium tracking-wider transition-all duration-300 border border-gold-400/30 bg-gold-400/10 text-gold-400 shadow-gold-glow";
+                document.body.classList.remove('light-mode');
             } else if (tabId === 'admin-view') {
-                document.getElementById('nav-admin').className = "px-4 py-2 rounded-full text-xs md:text-sm font-medium tracking-wider transition-all duration-300 border border-gold-400/30 bg-gold-400/10 text-gold-400 shadow-gold-glow";
+                document.getElementById('nav-admin').className = (isAdminSession ? "" : "hidden ") + "px-4 py-2 rounded-full text-xs md:text-sm font-medium tracking-wider transition-all duration-300 border border-gold-400/30 bg-gold-400/10 text-gold-400 shadow-gold-glow";
+                if (adminTheme === 'light') {
+                    document.body.classList.add('light-mode');
+                } else {
+                    document.body.classList.remove('light-mode');
+                }
             }
         }
 
@@ -1031,8 +1152,8 @@
                 card.className = "group border border-stone-800 bg-dark-850 p-5 rounded-xl cursor-pointer hover:border-gold-400/40 transition-all duration-300 relative hover:shadow-[0_0_15px_rgba(212,175,55,0.05)]";
 
                 card.innerHTML = `
-                    <div class="flex justify-between items-start">
-                        <span class="text-[10px] uppercase font-bold tracking-widest text-gold-400/70 border border-gold-400/10 px-2.5 py-0.5 rounded-full bg-gold-400/5">${service.category}</span>
+                    <div class="flex flex-col gap-2 sm:flex-row sm:justify-between sm:items-start sm:gap-4">
+                        <span class="text-[10px] uppercase font-bold tracking-widest text-gold-400/70 border border-gold-400/10 px-2.5 py-0.5 rounded-full bg-gold-400/5 self-start">${service.category}</span>
                         <span class="text-gold-400 font-serif font-bold group-hover:scale-110 transition-transform duration-300">$${service.price.toLocaleString('es-CO')} COP</span>
                     </div>
                     <h3 class="font-serif text-lg tracking-wide text-stone-100 mt-3 group-hover:text-gold-400 transition-colors">${service.name}</h3>
@@ -1071,11 +1192,13 @@
                 if (therapist.color === "indigo") avatarColorClass = "bg-indigo-950/40 text-indigo-400 border-indigo-500/20";
 
                 const initials = therapist.name.split(' ').map(n => n[0]).join('').substring(0, 2).toUpperCase();
+                const firstPhoto = (therapist.gallery && therapist.gallery.length > 0) ? therapist.gallery[0] : null;
+                const avatarHtml = firstPhoto
+                    ? `<img src="${firstPhoto}" class="w-12 h-12 rounded-full shrink-0 object-cover border border-gold-400/20 shadow-md">`
+                    : `<div class="w-12 h-12 rounded-full shrink-0 flex items-center justify-center font-serif font-bold text-sm border ${avatarColorClass}">${initials}</div>`;
 
                 card.innerHTML = `
-                    <div class="w-12 h-12 rounded-full shrink-0 flex items-center justify-center font-serif font-bold text-sm border ${avatarColorClass}">
-                        ${initials}
-                    </div>
+                    ${avatarHtml}
                     <div class="space-y-2 flex-1">
                         <div class="flex justify-between items-start">
                             <div>
@@ -1360,8 +1483,13 @@
                 therapistBox.classList.remove('hidden');
                 document.getElementById('summary-therapist-name').innerText = WIZARD_STATE.selectedTherapist.name;
 
-                const initials = WIZARD_STATE.selectedTherapist.name.split(' ').map(n => n[0]).join('').substring(0, 2).toUpperCase();
-                document.getElementById('summary-therapist-img').innerText = initials;
+                const firstPhoto = (WIZARD_STATE.selectedTherapist.gallery && WIZARD_STATE.selectedTherapist.gallery.length > 0) ? WIZARD_STATE.selectedTherapist.gallery[0] : null;
+                if (firstPhoto) {
+                    document.getElementById('summary-therapist-img').innerHTML = `<img src="${firstPhoto}" class="w-full h-full object-cover">`;
+                } else {
+                    const initials = WIZARD_STATE.selectedTherapist.name.split(' ').map(n => n[0]).join('').substring(0, 2).toUpperCase();
+                    document.getElementById('summary-therapist-img').innerText = initials;
+                }
             } else {
                 therapistBox.classList.add('hidden');
             }
@@ -1415,6 +1543,21 @@
                     throw new Error("Error backend confirmation");
                 }
 
+                // Prepare WhatsApp message before clearing state
+                const whatsappMsg = `¡Hola EDEN Spa! Acabo de confirmar una reserva:\n\n` +
+                    `*ID de Reserva:* ${newBooking.id}\n` +
+                    `*Cliente:* ${newBooking.clientName}\n` +
+                    `*Teléfono:* ${newBooking.clientPhone}\n` +
+                    `*Experiencia:* ${WIZARD_STATE.selectedService.name} (${WIZARD_STATE.selectedService.duration} min)\n` +
+                    `*Precio:* $${WIZARD_STATE.selectedService.price.toLocaleString('es-CO')} COP\n` +
+                    `*Especialista:* ${WIZARD_STATE.selectedTherapist.name}\n` +
+                    `*Fecha:* ${newBooking.date}\n` +
+                    `*Hora:* ${newBooking.time}\n\n` +
+                    `¡Muchas gracias!`;
+
+                const whatsappNumber = APP_STATE.settings.whatsapp_number || "573246895931";
+                const whatsappUrl = `https://wa.me/${whatsappNumber}?text=${encodeURIComponent(whatsappMsg)}`;
+
                 // Refresh app state
                 await loadAppState();
 
@@ -1451,6 +1594,9 @@
                 renderAdminBookings();
 
                 showToast(`¡Excelente! Su reserva ha sido agendada con éxito. ID: ${newBooking.id}`);
+
+                // Open WhatsApp redirection
+                window.open(whatsappUrl, '_blank');
             } catch (err) {
                 console.error(err);
                 showToast("Hubo un error al registrar la reserva en la base de datos.");
@@ -1534,12 +1680,13 @@
             event.preventDefault();
             const pre_buffer = document.getElementById('setting-pre-buffer').value;
             const post_buffer = document.getElementById('setting-post-buffer').value;
+            const whatsapp_number = document.getElementById('setting-whatsapp-number').value.trim();
 
             try {
                 const res = await fetch('/api/settings', {
                     method: 'POST',
                     headers: { 'Content-Type': 'application/json' },
-                    body: JSON.stringify({ pre_buffer, post_buffer })
+                    body: JSON.stringify({ pre_buffer, post_buffer, whatsapp_number })
                 });
 
                 if (!res.ok) throw new Error("Error saving settings");
@@ -1571,7 +1718,7 @@
                     </div>
                     <div class="flex gap-2 self-end md:self-center">
                         <button onclick="editService('${service.id}')" class="text-xs bg-dark-750 border border-stone-700 hover:border-gold-400 hover:text-gold-400 text-stone-300 px-3.5 py-2 rounded-lg transition">
-                            Editar Ritual
+                            Editar Experiencia
                         </button>
                         <button onclick="deleteService('${service.id}')" class="text-xs text-rose-400 bg-rose-950/20 hover:bg-rose-900/30 border border-rose-900/30 px-3.5 py-2 rounded-lg transition">
                             Eliminar
@@ -1739,6 +1886,43 @@
             }
         }
 
+        function getTherapistTheme(therapistColor, isCustom) {
+            const isLight = document.body.classList.contains('light-mode');
+            if (isCustom) {
+                return isLight 
+                    ? { bg: "bg-stone-100 text-stone-900 border-stone-200 font-bold shadow-sm", dot: "bg-stone-700", card: "bg-stone-50 text-stone-900 border-stone-300/80 shadow-sm" }
+                    : { bg: "bg-[#F8F2E4] text-dark-950 font-bold border-[#F8F2E4]", dot: "bg-dark-950", card: "bg-[#F8F2E4] text-dark-950 border border-gold-400/20 shadow-md" };
+            }
+
+            if (isLight) {
+                switch(therapistColor) {
+                    case 'rose':
+                        return { bg: "bg-pink-100 text-pink-700 border-pink-200 font-semibold", dot: "bg-pink-600", card: "bg-pink-50 text-stone-900 border-pink-200/80" };
+                    case 'amber':
+                        return { bg: "bg-amber-100 text-amber-800 border-amber-200 font-semibold", dot: "bg-amber-600", card: "bg-amber-50/60 text-stone-900 border-amber-200/80" };
+                    case 'emerald':
+                        return { bg: "bg-emerald-100 text-emerald-700 border-emerald-200 font-semibold", dot: "bg-emerald-600", card: "bg-emerald-50/60 text-stone-900 border-emerald-200/80" };
+                    case 'indigo':
+                        return { bg: "bg-blue-100 text-blue-700 border-blue-200 font-semibold", dot: "bg-blue-600", card: "bg-blue-50/60 text-stone-900 border-blue-200/80" };
+                    default:
+                        return { bg: "bg-purple-100 text-purple-700 border-purple-200 font-semibold", dot: "bg-purple-600", card: "bg-purple-50/60 text-stone-900 border-purple-200/80" };
+                }
+            } else {
+                switch(therapistColor) {
+                    case 'rose':
+                        return { bg: "bg-rose-950/60 text-rose-300 border-rose-500/20 font-medium", dot: "bg-rose-400", card: "bg-rose-950/20 text-stone-300 border-rose-900/30" };
+                    case 'amber':
+                        return { bg: "bg-amber-950/60 text-amber-300 border-amber-500/20 font-medium", dot: "bg-amber-400", card: "bg-amber-950/20 text-stone-300 border-amber-900/30" };
+                    case 'emerald':
+                        return { bg: "bg-emerald-950/60 text-emerald-300 border-emerald-500/20 font-medium", dot: "bg-emerald-400", card: "bg-emerald-950/20 text-stone-300 border-emerald-900/30" };
+                    case 'indigo':
+                        return { bg: "bg-indigo-950/60 text-indigo-300 border-indigo-500/20 font-medium", dot: "bg-indigo-400", card: "bg-indigo-950/20 text-stone-300 border-indigo-900/30" };
+                    default:
+                        return { bg: "bg-purple-950/60 text-purple-300 border-purple-500/20 font-medium", dot: "bg-purple-400", card: "bg-purple-950/20 text-stone-300 border-purple-900/30" };
+                }
+            }
+        }
+
         function createCalendarCell(dayNum, dateStr, isOtherMonth) {
             const cell = document.createElement('div');
 
@@ -1780,15 +1964,14 @@
                     const s = APP_STATE.services.find(serv => serv.id === b.serviceId);
                     const sName = s ? s.name : "Servicio";
                     const isCustom = s && s.category === "Personalizado";
-                    const badgeClass = isCustom
-                        ? "bg-[#F8F2E4] text-dark-950 font-bold border-[#F8F2E4]"
-                        : "bg-gold-400/10 text-gold-300 border-gold-400/10";
-                    const dotClass = isCustom
-                        ? "bg-dark-950"
-                        : "bg-gold-400";
+                    const t = APP_STATE.therapists.find(ther => ther.id === b.therapistId);
+                    const tColor = t ? t.color : 'stone';
+
+                    const theme = getTherapistTheme(tColor, isCustom);
+                    
                     bookingsHtml += `
-                        <div class="text-[9px] md:text-[10px] ${badgeClass} px-1 py-0.5 rounded truncate font-medium flex items-center gap-1 border" title="${b.time} - ${b.clientName} (${sName})">
-                            <span class="w-1.5 h-1.5 rounded-full ${dotClass} shrink-0"></span>
+                        <div class="text-[9px] md:text-[10px] ${theme.bg} px-1 py-0.5 rounded truncate font-medium flex items-center gap-1 border" title="${b.time} - ${b.clientName} (${sName})">
+                            <span class="w-1.5 h-1.5 rounded-full ${theme.dot} shrink-0"></span>
                             <span class="font-mono font-semibold">${b.time}</span> ${b.clientName}
                         </div>
                     `;
@@ -1853,28 +2036,31 @@
                 const service = APP_STATE.services.find(s => s.id === booking.serviceId);
                 const therapist = APP_STATE.therapists.find(t => t.id === booking.therapistId);
                 const therapistName = therapist ? therapist.name : 'Desconocido';
+                const therapistColor = therapist ? therapist.color : 'stone';
                 const isCustom = service && service.category === "Personalizado";
 
+                const theme = getTherapistTheme(therapistColor, isCustom);
+
                 const div = document.createElement('div');
-                div.className = `${isCustom ? 'bg-[#F8F2E4] text-dark-950 border border-gold-400/20' : 'bg-dark-850 border border-stone-800 text-stone-300'} p-4 rounded-xl space-y-3 relative overflow-hidden`;
+                div.className = `${theme.card} p-4 rounded-xl space-y-3 relative overflow-hidden border`;
                 div.innerHTML = `
                     <div class="flex justify-between items-start">
                         <div>
-                            <span class="text-[10px] uppercase font-mono ${isCustom ? 'bg-dark-950/10 text-dark-950' : 'bg-stone-800 text-stone-300'} px-2 py-0.5 rounded">${booking.id}</span>
-                            <h4 class="${isCustom ? 'text-dark-950 font-bold' : 'text-stone-200 font-medium'} mt-1.5">${booking.clientName}</h4>
+                            <span class="text-[10px] uppercase font-mono ${isCustom ? (document.body.classList.contains('light-mode') ? 'bg-stone-200 text-stone-900' : 'bg-dark-950/10 text-dark-950') : (document.body.classList.contains('light-mode') ? 'bg-stone-200 text-stone-700' : 'bg-stone-800 text-stone-300')} px-2 py-0.5 rounded">${booking.id}</span>
+                            <h4 class="${isCustom ? 'text-dark-950 font-bold' : 'font-bold'} mt-1.5">${booking.clientName}</h4>
                         </div>
-                        <span class="${isCustom ? 'text-dark-950' : 'text-gold-400'} font-bold text-sm">$${service ? service.price.toLocaleString('es-CO') : '0'} COP</span>
+                        <span class="${isCustom ? 'text-dark-950' : 'text-gold-600 dark:text-gold-400'} font-bold text-sm">$${service ? service.price.toLocaleString('es-CO') : '0'} COP</span>
                     </div>
 
-                    <div class="space-y-1 text-xs ${isCustom ? 'text-dark-950/80' : 'text-stone-400'}">
+                    <div class="space-y-1 text-xs ${isCustom ? 'text-dark-950/80' : 'text-stone-600 dark:text-stone-400'}">
                         <p class="flex items-center gap-1.5"><i data-lucide="tag" class="w-3.5 h-3.5 text-current"></i>${service ? service.name : 'Servicio Eliminado'} ${isCustom ? '<span class="text-[9px] bg-dark-950 text-[#F8F2E4] px-1.5 py-0.5 rounded-full font-bold ml-1">Personalizado</span>' : ''}</p>
                         <p class="flex items-center gap-1.5"><i data-lucide="user" class="w-3.5 h-3.5 text-current"></i>Terapeuta: ${therapistName}</p>
-                        <p class="flex items-center gap-1.5 ${isCustom ? 'text-dark-950 font-bold' : 'text-gold-400/90 font-semibold'}"><i data-lucide="calendar" class="w-3.5 h-3.5 text-current"></i>Hora: ${booking.time}</p>
+                        <p class="flex items-center gap-1.5 ${isCustom ? 'text-dark-950 font-bold' : 'text-gold-600 dark:text-gold-400 font-semibold'}"><i data-lucide="calendar" class="w-3.5 h-3.5 text-current"></i>Hora: ${booking.time}</p>
                         <p class="flex items-center gap-1.5"><i data-lucide="phone" class="w-3.5 h-3.5 text-current"></i>Teléfono: ${booking.clientPhone}</p>
                     </div>
 
-                    <div class="flex justify-end border-t ${isCustom ? 'border-dark-950/10' : 'border-stone-800'} pt-3">
-                        <button onclick="cancelBooking('${booking.id}')" class="text-[11px] uppercase tracking-wider ${isCustom ? 'text-rose-700 hover:text-rose-900' : 'text-rose-400 hover:text-rose-300'} transition flex items-center gap-1 font-semibold">
+                    <div class="flex justify-end border-t ${isCustom ? 'border-dark-950/10' : 'border-stone-200/60 dark:border-stone-850'} pt-3">
+                        <button onclick="cancelBooking('${booking.id}')" class="text-[11px] uppercase tracking-wider ${isCustom ? 'text-rose-700 hover:text-rose-900' : 'text-rose-600 hover:text-rose-500 dark:text-rose-400 dark:hover:text-rose-300'} transition flex items-center gap-1 font-semibold">
                             <i data-lucide="calendar-x" class="w-3.5 h-3.5 text-current"></i> Cancelar Cita
                         </button>
                     </div>
@@ -1921,7 +2107,7 @@
 
             // Populate Services dropdown
             const serviceSelect = document.getElementById('db-service-id');
-            serviceSelect.innerHTML = '<option value="" disabled selected>Seleccione un ritual o servicio...</option>';
+            serviceSelect.innerHTML = '<option value="" disabled selected>Seleccione una experiencia o servicio...</option>';
             APP_STATE.services.forEach(s => {
                 serviceSelect.innerHTML += `<option value="${s.id}">${s.name} ($${s.price.toLocaleString('es-CO')} COP | ${s.duration} min)</option>`;
             });
@@ -2045,7 +2231,7 @@
             }
         }
 
-        // ================= RITUALS (SERVICES) CREATION & EDITS MODAL =================
+        // ================= EXPERIENCES (SERVICES) CREATION & EDITS MODAL =================
         function openServiceModal() {
             document.getElementById('service-form-id').value = '';
             document.getElementById('s-name').value = '';
@@ -2053,7 +2239,7 @@
             document.getElementById('s-price').value = '90';
             document.getElementById('s-duration').value = '60';
             document.getElementById('s-desc').value = '';
-            document.getElementById('service-modal-title').innerText = "Nuevo Ritual Premium";
+            document.getElementById('service-modal-title').innerText = "Nueva Experiencia Premium";
             document.getElementById('service-modal').classList.remove('hidden');
         }
 
@@ -2067,7 +2253,7 @@
             document.getElementById('s-price').value = service.price;
             document.getElementById('s-duration').value = service.duration;
             document.getElementById('s-desc').value = service.desc || '';
-            document.getElementById('service-modal-title').innerText = `Editar Ritual: ${service.name}`;
+            document.getElementById('service-modal-title').innerText = `Editar Experiencia: ${service.name}`;
             document.getElementById('service-modal').classList.remove('hidden');
         }
 
@@ -2104,10 +2290,10 @@
                 renderServices();
                 renderAdminServices();
 
-                showToast(serviceId ? `Ritual "${name}" actualizado.` : `Ritual "${name}" creado.`);
+                showToast(serviceId ? `Experiencia "${name}" actualizada.` : `Experiencia "${name}" creada.`);
             } catch (err) {
                 console.error(err);
-                showToast("Error al guardar el ritual.");
+                showToast("Error al guardar la experiencia.");
             }
         }
 
@@ -2122,10 +2308,10 @@
                 await loadAppState();
                 renderServices();
                 renderAdminServices();
-                showToast("Se ha removido el ritual del catálogo.");
+                showToast("Se ha removido la experiencia del catálogo.");
             } catch (err) {
                 console.error(err);
-                showToast("Error al eliminar el ritual.");
+                showToast("Error al eliminar la experiencia.");
             }
         }
 
@@ -2472,6 +2658,22 @@
             setTimeout(() => {
                 toast.className = "fixed bottom-6 right-6 bg-dark-900 border border-gold-400 text-gold-400 p-4 rounded-xl shadow-2xl z-50 transform translate-y-20 opacity-0 transition-all duration-300 max-w-sm flex items-center gap-3";
             }, 5000);
+        }
+
+        function toggleAdminTheme() {
+            const body = document.body;
+            const btn = document.getElementById('theme-toggle-btn');
+            
+            if (adminTheme === 'light') {
+                adminTheme = 'dark';
+                body.classList.remove('light-mode');
+                btn.innerHTML = `<i data-lucide="sun" class="w-3.5 h-3.5"></i> <span>Modo Claro</span>`;
+            } else {
+                adminTheme = 'light';
+                body.classList.add('light-mode');
+                btn.innerHTML = `<i data-lucide="moon" class="w-3.5 h-3.5"></i> <span>Modo Oscuro</span>`;
+            }
+            lucide.createIcons();
         }
 
     </script>
