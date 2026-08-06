@@ -2,7 +2,7 @@
 <html lang="es">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
     <title>EDEN Spa - Sistema de Reservas Premium</title>
     <!-- Tailwind CSS CDN -->
     <script src="https://cdn.tailwindcss.com"></script>
@@ -52,7 +52,9 @@
     <style>
         /* Globally increase font size and scale proportionally based on viewport */
         html {
-            font-size: 16.5px;
+            font-size: 16px;
+            -webkit-text-size-adjust: 100%;
+            -webkit-tap-highlight-color: transparent;
         }
         @media (min-width: 640px) {
             html {
@@ -63,6 +65,36 @@
             html {
                 font-size: 18.5px;
             }
+        }
+
+        /* Prevent auto-zoom on iOS Safari when focusing form controls */
+        input[type="text"],
+        input[type="tel"],
+        input[type="email"],
+        input[type="number"],
+        input[type="date"],
+        input[type="time"],
+        select,
+        textarea {
+            font-size: 16px !important;
+            -webkit-appearance: none;
+        }
+
+        /* Enable smooth momentum scrolling on iOS */
+        .overflow-y-auto, .overflow-x-auto, #calendar-grid {
+            -webkit-overflow-scrolling: touch;
+        }
+
+        /* Ensure interactive elements feel responsive on iOS */
+        button, a, input, select, [role="button"] {
+            touch-action: manipulation;
+        }
+
+        /* Custom date picker styling for Webkit / Safari iOS */
+        input[type="date"]::-webkit-calendar-picker-indicator,
+        input[type="time"]::-webkit-calendar-picker-indicator {
+            cursor: pointer;
+            filter: invert(0.5);
         }
 
         /* Smooth transitions & custom scrollbar for luxury feel */
