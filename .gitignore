@@ -2,3 +2,6 @@ node_modules/
 eden_spa.db
 .env
 .DS_Store
+dataIA.txt
+test_service_booking.js
+create_services.js

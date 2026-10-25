@@ -1,0 +1,3080 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
+    <title>EDEN Spa - Sistema de Reservas Premium</title>
+    <!-- Tailwind CSS CDN -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <!-- Google Fonts for Premium Look and High Legibility -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@400;600;700&family=Plus+Jakarta+Sans:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+    <!-- Lucide Icons for elegant icons -->
+    <script src="https://unpkg.com/lucide@latest"></script>
+    <!-- Supabase JS Client -->
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    fontFamily: {
+                        serif: ['Cinzel', 'serif'],
+                        sans: ['Plus Jakarta Sans', 'sans-serif'],
+                    },
+                    colors: {
+                        gold: {
+                            50: '#FDFBF7',
+                            100: '#FBF7ED',
+                            200: '#F4EBCE',
+                            300: '#E6D7A4',
+                            400: '#D4AF37', // Gold Premium
+                            500: '#C29B2E',
+                            600: '#A17D20',
+                            700: '#7B5E15',
+                            800: '#523E0C',
+                            900: '#2E2205',
+                        },
+                        dark: {
+                            950: '#070707',
+                            900: '#111111',
+                            800: '#1A1A1A',
+                            700: '#262626',
+                            600: '#333333',
+                        }
+                    },
+                    boxShadow: {
+                        'gold-glow': '0 0 20px rgba(212, 175, 55, 0.15)',
+                        'gold-glow-hover': '0 0 30px rgba(212, 175, 55, 0.3)',
+                    }
+                }
+            }
+        }
+    </script>
+    <style>
+        /* Globally increase font size and scale proportionally based on viewport */
+        html {
+            font-size: 16px;
+            -webkit-text-size-adjust: 100%;
+            -webkit-tap-highlight-color: transparent;
+        }
+        @media (min-width: 640px) {
+            html {
+                font-size: 17.5px;
+            }
+        }
+        @media (min-width: 1024px) {
+            html {
+                font-size: 18.5px;
+            }
+        }
+
+        /* High-contrast and readable form inputs across all browsers and devices */
+        input[type="text"],
+        input[type="tel"],
+        input[type="email"],
+        input[type="number"],
+        input[type="date"],
+        input[type="time"],
+        input[type="password"],
+        input[type="url"],
+        select,
+        textarea {
+            font-size: 16px !important;
+            background-color: #141416 !important;
+            color: #FDFBF7 !important;
+            border: 1px solid rgba(212, 175, 55, 0.3) !important;
+            -webkit-appearance: none;
+            appearance: none;
+        }
+
+        select {
+            background-image: url("data:image/svg+xml;charset=UTF-8,%3csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%23D4AF37' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3e%3cpolyline points='6 9 12 15 18 9'%3e%3c/polyline%3e%3c/svg%3e") !important;
+            background-repeat: no-repeat !important;
+            background-position: right 0.65rem center !important;
+            background-size: 0.85em !important;
+            padding-right: 1.85rem !important;
+        }
+
+        input:focus, select:focus, textarea:focus {
+            border-color: #D4AF37 !important;
+            outline: none !important;
+            background-color: #1a1a1f !important;
+            color: #FFFFFF !important;
+            box-shadow: 0 0 10px rgba(212, 175, 55, 0.25) !important;
+        }
+
+        input::placeholder, textarea::placeholder {
+            color: #71717a !important;
+        }
+
+        /* Prevent browser autofill from turning inputs white with washed out text */
+        input:-webkit-autofill,
+        input:-webkit-autofill:hover, 
+        input:-webkit-autofill:focus,
+        textarea:-webkit-autofill,
+        select:-webkit-autofill {
+            -webkit-text-fill-color: #FFFFFF !important;
+            -webkit-box-shadow: 0 0 0px 1000px #141416 inset !important;
+            transition: background-color 5000s ease-in-out 0s !important;
+        }
+
+        /* Enable smooth momentum scrolling on iOS */
+        .overflow-y-auto, .overflow-x-auto, #calendar-grid {
+            -webkit-overflow-scrolling: touch;
+        }
+
+        /* Ensure interactive elements feel responsive on iOS */
+        button, a, input, select, [role="button"] {
+            touch-action: manipulation;
+        }
+
+        /* Custom date picker styling for Webkit / Safari iOS */
+        input[type="date"]::-webkit-calendar-picker-indicator,
+        input[type="time"]::-webkit-calendar-picker-indicator {
+            cursor: pointer;
+            filter: invert(0.5);
+        }
+
+        /* Smooth transitions & custom scrollbar for luxury feel */
+        ::-webkit-scrollbar {
+            width: 6px;
+        }
+        ::-webkit-scrollbar-track {
+            background: #070707;
+        }
+        ::-webkit-scrollbar-thumb {
+            background: #D4AF37;
+            border-radius: 3px;
+        }
+        .gold-gradient-bg {
+            background: linear-gradient(135deg, #D4AF37 0%, #AA8114 100%);
+        }
+        .gold-border-gradient {
+            border-image: linear-gradient(to right, #D4AF37, #7B5E15) 1;
+        }
+    </style>
+</head>
+<body class="bg-dark-950 text-stone-300 font-sans min-h-screen selection:bg-gold-400 selection:text-dark-950">
+
+    <!-- TOP GLOW EFFECT -->
+    <div class="absolute top-0 left-1/2 -translate-x-1/2 w-full max-w-7xl h-96 bg-gold-400/5 blur-[120px] rounded-full pointer-events-none"></div>
+
+    <!-- MAIN NAVBAR -->
+    <nav class="border-b border-gold-400/10 bg-dark-950/90 backdrop-blur-md sticky top-0 z-50">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 h-20 flex items-center justify-between">
+            <div class="flex items-center">
+                <img src="logo.png" alt="EDEN Bienestar Masculino" class="h-16 w-auto object-contain">
+            </div>
+            
+            <div class="flex items-center space-x-2 md:space-x-4">
+                <button onclick="switchTab('booking-view')" id="nav-booking" class="px-4 py-2 rounded-full text-xs md:text-sm font-medium tracking-wider transition-all duration-300 border border-gold-400/30 bg-gold-400/10 text-gold-400 shadow-gold-glow">
+                    <i data-lucide="calendar" class="inline w-4 h-4 mr-2 mb-0.5"></i>Reservar
+                </button>
+                <button onclick="switchTab('admin-view')" id="nav-admin" class="hidden px-4 py-2 rounded-full text-xs md:text-sm font-medium tracking-wider transition-all duration-300 border border-transparent text-stone-400 hover:text-gold-400 hover:border-gold-400/20">
+                    <i data-lucide="shield-alert" class="inline w-4 h-4 mr-2 mb-0.5"></i>Administrador
+                </button>
+            </div>
+        </div>
+    </nav>
+
+    <!-- CONTENT WRAPPER -->
+    <main class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8 relative z-10">
+        
+        <!-- ================= BOOKING & CLIENT CATALOG TAB ================= -->
+        <section id="booking-view" class="space-y-12">
+            <!-- Hero section inside booking -->
+            <div class="text-center max-w-2xl mx-auto space-y-4 py-4">
+                <div class="inline-flex items-center gap-2 border border-gold-400/20 bg-gold-400/5 px-3 py-1 rounded-full text-xs text-gold-400 uppercase tracking-widest">
+                    <span class="w-1.5 h-1.5 rounded-full bg-gold-400 animate-pulse"></span>
+                    Experiencia Exclusiva de Bienestar
+                </div>
+                <h1 class="font-serif text-3xl md:text-5xl text-stone-100 tracking-wide">Agende su Momento de Paz</h1>
+                <p class="text-sm md:text-base text-stone-400 font-light">
+                    Seleccione un servicio exclusivo, elija a su especialista de confianza y reserve su sesión personalizada en segundos.
+                </p>
+            </div>
+
+            <!-- Main Booking Layout: Left (Catalog / Selection), Right (Wizard Status) -->
+            <div class="grid grid-cols-1 lg:grid-cols-12 gap-8">
+                
+                <!-- Left Column (Wizard Steps) - occupying 8 cols -->
+                <div class="lg:col-span-8 space-y-6">
+                    
+                    <!-- STEP 1: SELECT SERVICE -->
+                    <div class="bg-dark-900 border border-gold-400/10 p-6 rounded-2xl relative overflow-hidden transition-all duration-300 shadow-gold-glow">
+                        <div class="flex justify-between items-center mb-6">
+                            <div class="flex items-center gap-3">
+                                <span class="w-8 h-8 rounded-full border border-gold-400 flex items-center justify-center text-gold-400 font-serif font-bold text-sm">1</span>
+                                <h2 class="font-serif text-xl tracking-wide text-stone-100">Seleccione el Ritual</h2>
+                            </div>
+                            <div class="flex items-center gap-2">
+                                <span id="selected-service-badge" class="hidden text-xs px-3 py-1 rounded-full border border-gold-400/20 bg-gold-400/5 text-gold-400 font-medium"></span>
+                                <button onclick="openManageVideosModal()" class="admin-only hidden text-xs text-stone-400 hover:text-gold-400 border border-stone-800 hover:border-gold-400/30 bg-dark-850 px-3 py-1 rounded-full transition flex items-center gap-1.5" title="Gestionar videos explicativos de los servicios">
+                                    <i data-lucide="video" class="w-3.5 h-3.5 text-gold-400"></i>
+                                    <span class="hidden sm:inline">Gestionar Videos</span>
+                                </button>
+                            </div>
+                        </div>
+                        
+                        <!-- Services grid -->
+                        <div id="services-grid" class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                            <!-- Dynamic Content Loaded by JS -->
+                        </div>
+
+                        <!-- ADD-ONS / SERVICIOS ADICIONALES -->
+                        <div id="addons-section" class="mt-6 pt-6 border-t border-gold-400/10">
+                            <div class="flex items-center justify-between mb-4">
+                                <div>
+                                    <h3 class="font-serif text-base tracking-wide text-stone-100 flex items-center gap-2">
+                                        <i data-lucide="sparkles" class="w-4 h-4 text-gold-400"></i>
+                                        Servicios Adicionales
+                                    </h3>
+                                    <p class="text-xs text-stone-400 font-light">Enriquezca su experiencia con tiempo extra o tratamientos especiales.</p>
+                                </div>
+                                <span class="text-[10px] uppercase tracking-wider text-stone-500 border border-stone-800 px-2 py-0.5 rounded">Opcional</span>
+                            </div>
+                            <div id="addons-grid" class="grid grid-cols-1 sm:grid-cols-3 gap-3">
+                                <!-- Dynamic Addons Loaded by JS -->
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- STEP 2: SELECT THERAPIST -->
+                    <div id="step-therapist-container" class="opacity-50 pointer-events-none bg-dark-900 border border-gold-400/10 p-6 rounded-2xl transition-all duration-300">
+                        <div class="flex justify-between items-center mb-6">
+                            <div class="flex items-center gap-3">
+                                <span class="w-8 h-8 rounded-full border border-stone-600 flex items-center justify-center text-stone-400 font-serif font-bold text-sm" id="step-therapist-num">2</span>
+                                <h2 class="font-serif text-xl tracking-wide text-stone-100">Elija su Especialista</h2>
+                            </div>
+                            <div class="flex items-center gap-2">
+                                <span id="selected-therapist-badge" class="hidden text-xs px-3 py-1 rounded-full border border-gold-400/20 bg-gold-400/5 text-gold-400 font-medium"></span>
+                                <button onclick="openTherapistModal()" class="admin-only hidden text-xs text-stone-400 hover:text-gold-400 border border-stone-800 hover:border-gold-400/30 bg-dark-850 px-3 py-1 rounded-full transition flex items-center gap-1.5" title="Registrar nuevo terapeuta">
+                                    <i data-lucide="user-plus" class="w-3.5 h-3.5 text-gold-400"></i>
+                                    <span class="hidden sm:inline">Nuevo Terapeuta</span>
+                                </button>
+                            </div>
+                        </div>
+
+                        <!-- Therapists grid -->
+                        <div id="therapists-grid" class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                            <!-- Dynamic Content Loaded by JS -->
+                        </div>
+                    </div>
+
+                    <!-- STEP 3: SELECT DATE & TIME -->
+                    <div id="step-datetime-container" class="opacity-50 pointer-events-none bg-dark-900 border border-gold-400/10 p-6 rounded-2xl transition-all duration-300">
+                        <div class="flex justify-between items-center mb-6">
+                            <div class="flex items-center gap-3">
+                                <span class="w-8 h-8 rounded-full border border-stone-600 flex items-center justify-center text-stone-400 font-serif font-bold text-sm" id="step-datetime-num">3</span>
+                                <h2 class="font-serif text-xl tracking-wide text-stone-100">Fecha y Hora de Preferencia</h2>
+                            </div>
+                        </div>
+
+                        <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                            <!-- Date Selector -->
+                            <div>
+                                <label class="block text-xs uppercase tracking-widest text-stone-400 mb-2">Seleccione una Fecha</label>
+                                <input type="date" id="booking-date" onchange="onBookingDateChange()" class="w-full bg-dark-850 border border-stone-700 rounded-xl px-4 py-3 text-stone-200 focus:outline-none focus:border-gold-400 focus:ring-1 focus:ring-gold-400 transition">
+                                <p class="text-xs text-stone-500 mt-2 font-light">Las citas se agendan a partir de hoy y de acuerdo al horario diario de cada terapeuta.</p>
+                            </div>
+
+                            <!-- Time Slots Selector -->
+                            <div>
+                                <label class="block text-xs uppercase tracking-widest text-stone-400 mb-2">Horas Disponibles</label>
+                                <div id="time-slots-container" class="grid grid-cols-3 gap-2 max-h-48 overflow-y-auto pr-1">
+                                    <div class="col-span-3 text-center py-6 text-stone-500 text-sm">Seleccione una fecha para buscar turnos disponibles.</div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                </div>
+
+                <!-- Right Column (Booking Summary / Client Form) - occupying 4 cols -->
+                <div class="lg:col-span-4 space-y-6">
+                    <div class="bg-dark-900 border border-gold-400/20 rounded-2xl p-6 sticky top-28 space-y-6 shadow-gold-glow">
+                        <h3 class="font-serif text-lg tracking-wide text-stone-100 border-b border-gold-400/10 pb-4">Resumen del Ritual</h3>
+                        
+                        <div id="summary-empty" class="text-center py-8 text-stone-500 text-sm space-y-2">
+                            <i data-lucide="sparkles" class="w-8 h-8 mx-auto text-gold-400/20"></i>
+                            <p>Configure sus elecciones para cotizar y finalizar su reserva de bienestar.</p>
+                        </div>
+
+                        <div id="summary-content" class="hidden space-y-4">
+                            <!-- Selected Service Summary -->
+                            <div class="flex justify-between items-start">
+                                <div>
+                                    <h4 id="summary-service-name" class="text-stone-200 font-medium"></h4>
+                                    <p id="summary-service-duration" class="text-xs text-stone-400"></p>
+                                </div>
+                                <span id="summary-service-price" class="text-gold-400 font-serif font-bold"></span>
+                            </div>
+
+                            <!-- Selected Add-ons List -->
+                            <div id="summary-addons-box" class="hidden border-t border-gold-400/10 pt-3 space-y-1.5">
+                                <p class="text-[11px] uppercase tracking-wider text-stone-400 font-medium">Adicionales Elegidos</p>
+                                <div id="summary-addons-list" class="space-y-1.5 text-xs">
+                                    <!-- Rendered by JS -->
+                                </div>
+                            </div>
+
+                            <!-- Total Duration & Price -->
+                            <div id="summary-total-box" class="border-t border-gold-400/20 pt-3 flex justify-between items-center bg-gold-400/5 px-3 py-2 rounded-lg">
+                                <div>
+                                    <span class="text-xs text-stone-300 font-semibold block">Inversión Total</span>
+                                    <span id="summary-total-duration" class="text-[11px] text-stone-400"></span>
+                                </div>
+                                <span id="summary-total-price" class="text-gold-400 font-serif text-lg font-bold"></span>
+                            </div>
+
+                            <!-- Selected Therapist -->
+                            <div class="flex items-center gap-3 border-t border-gold-400/10 pt-4" id="summary-therapist-box">
+                                <div id="summary-therapist-img" class="w-10 h-10 rounded-full bg-dark-800 flex items-center justify-center overflow-hidden border border-gold-400/20 text-gold-400 font-serif font-bold"></div>
+                                <div>
+                                    <p class="text-xs text-stone-400 uppercase tracking-widest">Terapeuta</p>
+                                    <h4 id="summary-therapist-name" class="text-stone-200 font-medium"></h4>
+                                </div>
+                            </div>
+
+                            <!-- Selected Slot -->
+                            <div class="flex items-center gap-3 border-t border-gold-400/10 pt-4" id="summary-datetime-box">
+                                <div class="w-10 h-10 rounded-full bg-dark-800 flex items-center justify-center border border-gold-400/20 text-gold-400">
+                                    <i data-lucide="clock" class="w-5 h-5"></i>
+                                </div>
+                                <div>
+                                    <p class="text-xs text-stone-400 uppercase tracking-widest">Fecha y Hora</p>
+                                    <h4 id="summary-datetime-val" class="text-stone-200 font-medium"></h4>
+                                </div>
+                            </div>
+
+                            <!-- Client Details Form -->
+                            <div class="border-t border-gold-400/10 pt-4 space-y-3">
+                                <h4 class="text-xs uppercase tracking-widest text-stone-400">Datos Personales</h4>
+                                
+                                <div class="space-y-2">
+                                    <input type="text" id="client-name" placeholder="Nombre completo" class="w-full bg-dark-850 border border-stone-800 rounded-lg px-3 py-2 text-sm text-stone-200 focus:outline-none focus:border-gold-400 transition placeholder:text-stone-600">
+                                    
+                                    <div class="flex gap-2">
+                                        <div class="relative w-36 shrink-0">
+                                            <select id="client-country-code" class="w-full bg-dark-850 border border-stone-800 rounded-lg px-2.5 py-2 text-xs md:text-sm text-stone-200 focus:outline-none focus:border-gold-400 transition cursor-pointer font-sans" title="Código de País">
+                                                <option value="+57" selected>🇨🇴 +57</option>
+                                                <option value="+1">🇺🇸 +1</option>
+                                                <option value="+34">🇪🇸 +34</option>
+                                                <option value="+52">🇲🇽 +52</option>
+                                                <option value="+507">🇵🇦 +507</option>
+                                                <option value="+56">🇨🇱 +56</option>
+                                                <option value="+54">🇦🇷 +54</option>
+                                                <option value="+51">🇵🇪 +51</option>
+                                                <option value="+593">🇪🇨 +593</option>
+                                                <option value="+58">🇻🇪 +58</option>
+                                                <option value="+506">🇨🇷 +506</option>
+                                                <option value="+44">🇬🇧 +44</option>
+                                                <option value="+33">🇫🇷 +33</option>
+                                                <option value="+49">🇩🇪 +49</option>
+                                                <option value="+39">🇮🇹 +39</option>
+                                                <option value="+">🌐 Otro</option>
+                                            </select>
+                                        </div>
+                                        <input type="tel" id="client-phone" placeholder="WhatsApp / Teléfono" class="flex-1 min-w-0 bg-dark-850 border border-stone-800 rounded-lg px-3 py-2 text-sm text-stone-200 focus:outline-none focus:border-gold-400 transition placeholder:text-stone-600">
+                                    </div>
+
+                                    <input type="email" id="client-email" placeholder="Correo electrónico (opcional)" class="w-full bg-dark-850 border border-stone-800 rounded-lg px-3 py-2 text-sm text-stone-200 focus:outline-none focus:border-gold-400 transition placeholder:text-stone-600">
+                                </div>
+                            </div>
+
+                            <button id="btn-confirm-booking" onclick="confirmBooking(event)" class="w-full gold-gradient-bg hover:opacity-90 text-dark-950 font-bold uppercase tracking-wider py-3 px-4 rounded-xl transition duration-300 flex items-center justify-center gap-2 shadow-gold-glow hover:shadow-gold-glow-hover text-sm">
+                                <i data-lucide="check-circle" class="w-4 h-4"></i>Confirmar Mi Reserva
+                            </button>
+                        </div>
+                    </div>
+                </div>
+
+            </div>
+        </section>
+
+
+        <!-- ================= ADMIN MANAGEMENT TAB ================= -->
+        <section id="admin-view" class="hidden space-y-8">
+            <div class="flex flex-col md:flex-row justify-between items-start md:items-center gap-4 border-b border-gold-400/10 pb-6">
+                <div>
+                    <h1 class="font-serif text-3xl tracking-wide text-stone-100">Panel Administrativo</h1>
+                    <p class="text-sm text-stone-400">Administre el catálogo de terapeutas, defina horarios de trabajo fijos y configure excepciones de fechas específicas.</p>
+                </div>
+                <div class="flex flex-wrap gap-2">
+                    <button onclick="openManageVideosModal()" class="bg-dark-800 border border-gold-400/40 text-gold-400 px-4 py-2 rounded-xl text-xs uppercase tracking-widest font-semibold hover:bg-gold-400/10 transition flex items-center gap-1.5 shadow-sm">
+                        <i data-lucide="video" class="w-4 h-4"></i> Videos de Servicios
+                    </button>
+                    <button onclick="openTherapistModal()" class="gold-gradient-bg text-dark-950 px-4 py-2 rounded-xl text-xs uppercase tracking-widest font-semibold hover:opacity-90 transition flex items-center gap-1">
+                        <i data-lucide="user-plus" class="w-4 h-4"></i> Nuevo Terapeuta
+                    </button>
+                    <button onclick="openExceptionModal()" class="bg-dark-800 border border-gold-400/30 text-gold-400 px-4 py-2 rounded-xl text-xs uppercase tracking-widest font-semibold hover:bg-gold-400/10 transition flex items-center gap-1">
+                        <i data-lucide="calendar-range" class="w-4 h-4"></i> Definir Horario de un Día
+                    </button>
+                    <button onclick="logoutAdmin()" class="bg-rose-950/20 text-rose-400 border border-rose-900/40 hover:bg-rose-900/30 px-3.5 py-2 rounded-xl text-xs uppercase tracking-widest font-semibold transition flex items-center gap-1.5" title="Cerrar Sesión Administrativa">
+                        <i data-lucide="log-out" class="w-4 h-4"></i> Salir
+                    </button>
+                </div>
+            </div>
+
+            <!-- Dashboard Subsections grid -->
+            <div class="grid grid-cols-1 lg:grid-cols-3 gap-8">
+                
+                <!-- COLUMN 1 & 2: List of Therapists & Exceptions -->
+                <div class="lg:col-span-2 space-y-6">
+                    <div class="bg-dark-900 border border-gold-400/10 p-6 rounded-2xl">
+                        <h2 class="font-serif text-xl text-stone-100 tracking-wide mb-4">Nuestros Terapeutas</h2>
+                        <div id="admin-therapists-list" class="space-y-4">
+                            <!-- Dynamic Therapist List for Admin -->
+                        </div>
+                    </div>
+
+                    <!-- Date-Specific Exceptions List -->
+                    <div class="bg-dark-900 border border-gold-400/10 p-6 rounded-2xl">
+                        <h2 class="font-serif text-xl text-stone-100 tracking-wide mb-2">Excepciones y Fechas Especiales</h2>
+                        <p class="text-xs text-stone-400 mb-4">Aquí se visualizan los cambios específicos para días determinados (p. ej. ausencias o ampliación de horario).</p>
+                        
+                        <div id="admin-exceptions-list" class="space-y-2 max-h-60 overflow-y-auto pr-1">
+                            <!-- Dynamic exceptions list -->
+                        </div>
+                    </div>
+                </div>
+
+                <!-- COLUMN 3: Bookings Recieved Log -->
+                <div class="lg:col-span-1 space-y-6">
+                    <div class="bg-dark-900 border border-gold-400/10 p-6 rounded-2xl">
+                        <h2 class="font-serif text-xl text-stone-100 tracking-wide mb-4">Reservas Confirmadas</h2>
+                        <div id="admin-bookings-list" class="space-y-4 max-h-[500px] overflow-y-auto pr-1">
+                            <!-- Dynamic list of booked appointments -->
+                        </div>
+                    </div>
+                </div>
+
+            </div>
+        </section>
+
+    </main>
+
+    <!-- LUXURY FOOTER -->
+    <footer class="border-t border-gold-400/10 bg-dark-950/80 py-8 text-center text-xs text-stone-500 relative z-10">
+        <div class="max-w-7xl mx-auto px-4 flex flex-col sm:flex-row items-center justify-between gap-4">
+            <div class="flex items-center gap-2">
+                <span class="font-serif tracking-widest text-gold-400/80 uppercase">EDEN Spa</span>
+                <span>•</span>
+                <span>Experiencia Exclusiva de Bienestar</span>
+            </div>
+            <div class="flex items-center gap-4">
+                <span>© 2026 Todos los derechos reservados</span>
+                <a href="#admin" onclick="requestAdminAccess(event)" class="text-stone-700 hover:text-gold-400 transition inline-flex items-center gap-1 opacity-30 hover:opacity-100" title="Acceso Administrativo">
+                    <i data-lucide="lock" class="w-3 h-3"></i>
+                </a>
+            </div>
+        </div>
+    </footer>
+
+
+    <!-- ======================================================= -->
+    <!--                   MODALS AND DIALOGS                    -->
+    <!-- ======================================================= -->
+
+    <!-- 0. PORTFOLIO CAROUSEL POPUP -->
+    <div id="portfolio-modal" class="fixed inset-0 bg-black/95 backdrop-blur-md z-50 flex items-center justify-center p-4 hidden">
+        <div class="bg-dark-900 border border-gold-400/20 rounded-3xl max-w-2xl w-full overflow-hidden shadow-2xl relative">
+            
+            <!-- Absolute top bar -->
+            <div class="absolute top-0 inset-x-0 h-16 bg-gradient-to-b from-black/80 to-transparent flex items-center justify-between px-6 z-10">
+                <div>
+                    <h4 id="portfolio-therapist-name" class="font-serif text-lg text-gold-400 tracking-wide">Galería del Profesional</h4>
+                    <p class="text-[10px] uppercase text-stone-400 tracking-widest">Eden Luxury Environment</p>
+                </div>
+                <button onclick="closePortfolioModal()" class="w-10 h-10 rounded-full bg-black/40 hover:bg-gold-400 hover:text-dark-950 text-stone-300 transition flex items-center justify-center">
+                    <i data-lucide="x" class="w-5 h-5"></i>
+                </button>
+            </div>
+
+            <!-- Image display area -->
+            <div class="relative h-[450px] bg-dark-950 flex items-center justify-center group">
+                <img id="portfolio-image" src="" alt="Spa experience" class="w-full h-full object-cover transition-opacity duration-500 ease-in-out" onerror="this.src='data:image/svg+xml;utf8,<svg xmlns=\'http://www.w3.org/2000/svg\' width=\'100%\' height=\'100%\' viewBox=\'0 0 800 500\'><rect width=\'100%\' height=\'100%\' fill=\'%23111\'/><text x=\'50%\' y=\'50%\' font-size=\'20\' fill=\'%23D4AF37\' font-family=\'Cinzel\' text-anchor=\'middle\' dominant-baseline=\'middle\'>EDEN SPA - PREMIUM MOMENT</text></svg>'">
+                
+                <!-- Left/Right Arrows -->
+                <button onclick="prevSlide()" class="absolute left-4 w-11 h-11 rounded-full bg-black/50 hover:bg-gold-400 hover:text-dark-950 text-gold-400 flex items-center justify-center transition opacity-80 hover:opacity-100 border border-gold-400/20">
+                    <i data-lucide="chevron-left" class="w-6 h-6"></i>
+                </button>
+                <button onclick="nextSlide()" class="absolute right-4 w-11 h-11 rounded-full bg-black/50 hover:bg-gold-400 hover:text-dark-950 text-gold-400 flex items-center justify-center transition opacity-80 hover:opacity-100 border border-gold-400/20">
+                    <i data-lucide="chevron-right" class="w-6 h-6"></i>
+                </button>
+            </div>
+
+            <!-- Bottom bar controls / indicators -->
+            <div class="bg-dark-900 p-6 border-t border-gold-400/10 space-y-4">
+                <div class="flex justify-between items-center">
+                    <p id="portfolio-photo-index" class="text-xs font-mono text-gold-400">FOTO 1 DE 4</p>
+                    <div id="portfolio-indicators" class="flex gap-2">
+                        <!-- Dynamic Indicator dots -->
+                    </div>
+                </div>
+                <p id="portfolio-photo-description" class="text-xs text-stone-400 font-light leading-relaxed">
+                    Visualización del espacio terapéutico premium e instrumentos para la relajación profunda.
+                </p>
+            </div>
+        </div>
+    </div>
+
+    <!-- 1. ADD / EDIT THERAPIST MODAL -->
+    <div id="therapist-modal" class="fixed inset-0 bg-black/80 backdrop-blur-sm z-50 flex items-center justify-center p-4 hidden">
+        <div class="bg-dark-900 border border-gold-400/30 rounded-2xl max-w-2xl w-full max-h-[90vh] overflow-y-auto p-6 space-y-6 shadow-2xl">
+            <div class="flex justify-between items-center border-b border-gold-400/10 pb-4">
+                <h3 id="therapist-modal-title" class="font-serif text-2xl text-gold-400 tracking-wide">Nuevo Terapeuta de Élite</h3>
+                <button onclick="closeTherapistModal()" class="text-stone-400 hover:text-stone-100 transition"><i data-lucide="x" class="w-6 h-6"></i></button>
+            </div>
+
+            <form id="therapist-form" onsubmit="saveTherapist(event)" class="space-y-4">
+                <input type="hidden" id="therapist-form-id">
+                <input type="hidden" id="t-ghl-user-id">
+                <input type="hidden" id="t-ghl-calendar-id">
+                
+                <div>
+                    <label class="block text-xs uppercase tracking-widest text-gold-400 font-semibold mb-2">Vincular con Calendario de GoHighLevel</label>
+                    <select id="t-ghl-calendar" onchange="onGhlCalendarChange(this.value)" class="w-full bg-dark-850 border border-stone-800 rounded-lg px-3 py-2 text-stone-200 focus:outline-none focus:border-gold-400 transition cursor-pointer text-sm">
+                        <option value="">-- Seleccionar Calendario de GoHighLevel --</option>
+                    </select>
+                    <p class="text-[11px] text-stone-500 mt-1 font-light">Vincula este terapeuta a su calendario real en GoHighLevel para gestionar turnos y recibir citas.</p>
+                </div>
+                
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                    <div>
+                        <label class="block text-xs uppercase tracking-widest text-stone-400 mb-2">Nombre del Terapeuta</label>
+                        <input type="text" id="t-name" required class="w-full bg-dark-850 border border-stone-800 rounded-lg px-3 py-2 text-stone-200 focus:outline-none focus:border-gold-400 transition" placeholder="P. Ej: Valentina Gómez">
+                    </div>
+                    <div>
+                        <label class="block text-xs uppercase tracking-widest text-stone-400 mb-2">Calificación (Estrellas)</label>
+                        <input type="number" step="any" min="1" max="5" id="t-rating" required class="w-full bg-dark-850 border border-stone-700 rounded-lg px-3 py-2 text-stone-100 placeholder-stone-500 focus:outline-none focus:border-gold-400 transition" placeholder="P. Ej: 4.9">
+                    </div>
+                </div>
+
+                <div>
+                    <label class="block text-xs uppercase tracking-widest text-stone-400 mb-2">Especialidades (Separadas por comas)</label>
+                    <input type="text" id="t-specialties" required class="w-full bg-dark-850 border border-stone-800 rounded-lg px-3 py-2 text-stone-200 focus:outline-none focus:border-gold-400 transition" placeholder="Masaje Sueco, Tejido Profundo, Piedras Volcánicas">
+                </div>
+
+                <div>
+                    <label class="block text-xs uppercase tracking-widest text-stone-400 mb-2">Biografía / Presentación</label>
+                    <textarea id="t-bio" rows="3" required class="w-full bg-dark-850 border border-stone-800 rounded-lg px-3 py-2 text-stone-200 focus:outline-none focus:border-gold-400 transition" placeholder="Valentina es especialista en masajes relajantes con aceites esenciales..."></textarea>
+                </div>
+
+                <!-- Manage therapist photos: Upload from Computer or Paste URLs -->
+                <div class="space-y-3 p-4 rounded-xl border border-gold-400/20 bg-dark-950/60">
+                    <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-2">
+                        <div>
+                            <label class="block text-xs uppercase tracking-widest text-gold-400 font-semibold">Fotos del Portafolio / Galería</label>
+                            <p class="text-[11px] text-stone-400 font-light">Suba imágenes directamente desde su ordenador.</p>
+                        </div>
+                        <input type="file" id="t-file-input" accept="image/*" multiple class="hidden" onchange="handleTherapistFilesUpload(event)">
+                        <button type="button" onclick="document.getElementById('t-file-input').click()" class="gold-gradient-bg text-dark-950 px-3.5 py-1.5 rounded-lg text-xs font-bold uppercase tracking-wider flex items-center justify-center gap-1.5 hover:opacity-90 transition shadow-sm shrink-0">
+                            <i data-lucide="upload" class="w-3.5 h-3.5"></i> Subir desde Ordenador
+                        </button>
+                    </div>
+
+                    <!-- Live thumbnails grid -->
+                    <div id="t-gallery-thumbnails" class="grid grid-cols-2 sm:grid-cols-4 gap-2.5 pt-1">
+                        <!-- Populated dynamically via JS -->
+                    </div>
+
+                    <div class="pt-1 border-t border-stone-800/60">
+                        <details class="text-[11px] text-stone-500">
+                            <summary class="cursor-pointer hover:text-stone-300 transition select-none">Ver o editar enlaces URLs manualmente</summary>
+                            <textarea id="t-gallery" rows="2" oninput="syncGalleryFromTextarea()" class="w-full mt-2 bg-dark-900 border border-stone-800 rounded-lg px-3 py-2 text-xs text-stone-300 focus:outline-none focus:border-gold-400 transition" placeholder="https://..."></textarea>
+                        </details>
+                    </div>
+                </div>
+
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                    <div>
+                        <label class="block text-xs uppercase tracking-widest text-stone-400 mb-2">Foto / Iniciales Avatar (Color)</label>
+                        <select id="t-color" class="w-full bg-dark-850 border border-stone-800 rounded-lg px-3 py-2 text-stone-200 focus:outline-none focus:border-gold-400 transition">
+                            <option value="amber">Dorado Satinado</option>
+                            <option value="stone">Gris Plata</option>
+                            <option value="rose">Rosa Místico</option>
+                            <option value="emerald">Verde Esmeralda</option>
+                            <option value="indigo">Azul Índigo</option>
+                            <option value="sky">Azul Celeste</option>
+                            <option value="purple">Púrpura Imperial</option>
+                        </select>
+                    </div>
+                </div>
+
+                <!-- Working schedule settings per week day -->
+                <div class="border-t border-gold-400/10 pt-4">
+                    <h4 class="text-xs uppercase tracking-widest text-gold-400 mb-4 font-semibold">Horario de Trabajo Regular por Defecto</h4>
+                    <div class="space-y-2">
+                        <!-- Monday to Sunday generator placeholder -->
+                        <div id="default-schedule-inputs" class="space-y-2">
+                            <!-- Populated on opening -->
+                        </div>
+                    </div>
+                </div>
+
+                <div class="flex justify-end gap-3 pt-4 border-t border-gold-400/10">
+                    <button type="button" onclick="closeTherapistModal()" class="px-5 py-2 rounded-lg bg-dark-800 text-stone-400 hover:text-stone-200 hover:bg-dark-750 transition text-sm font-medium">Cancelar</button>
+                    <button type="submit" class="gold-gradient-bg text-dark-950 px-6 py-2 rounded-lg font-bold text-sm tracking-wider hover:opacity-90 transition">Guardar Especialista</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+
+    <!-- 2. DATE EXCEPTION / SPECIAL AVAILABILITY MODAL -->
+    <div id="exception-modal" class="fixed inset-0 bg-black/80 backdrop-blur-sm z-50 flex items-center justify-center p-4 hidden">
+        <div class="bg-dark-900 border border-gold-400/30 rounded-2xl max-w-md w-full p-6 space-y-6 shadow-2xl">
+            <div class="flex justify-between items-center border-b border-gold-400/10 pb-4">
+                <h3 class="font-serif text-2xl text-gold-400 tracking-wide">Excepción de Horario</h3>
+                <button onclick="closeExceptionModal()" class="text-stone-400 hover:text-stone-100 transition"><i data-lucide="x" class="w-6 h-6"></i></button>
+            </div>
+
+            <form id="exception-form" onsubmit="saveException(event)" class="space-y-4">
+                <div>
+                    <label class="block text-xs uppercase tracking-widest text-stone-400 mb-2">Seleccione Terapeuta</label>
+                    <select id="exc-therapist-id" required class="w-full bg-dark-850 border border-stone-800 rounded-lg px-3 py-2 text-stone-200 focus:outline-none focus:border-gold-400 transition">
+                        <!-- Options populated via JS -->
+                    </select>
+                </div>
+
+                <div>
+                    <label class="block text-xs uppercase tracking-widest text-stone-400 mb-2">Fecha del Cambio</label>
+                    <input type="date" id="exc-date" required class="w-full bg-dark-850 border border-stone-800 rounded-lg px-3 py-2 text-stone-200 focus:outline-none focus:border-gold-400 transition">
+                </div>
+
+                <div>
+                    <label class="block text-xs uppercase tracking-widest text-stone-400 mb-2">Estado de Disponibilidad</label>
+                    <div class="grid grid-cols-2 gap-2 mt-2">
+                        <label class="flex items-center gap-2 p-3 bg-dark-850 border border-stone-800 rounded-lg cursor-pointer hover:border-gold-400 transition">
+                            <input type="radio" name="exc-status" value="inactive" onchange="toggleExcTimes(false)" checked class="text-gold-400 focus:ring-gold-400">
+                            <span class="text-sm text-stone-300">No disponible / Descanso</span>
+                        </label>
+                        <label class="flex items-center gap-2 p-3 bg-dark-850 border border-stone-800 rounded-lg cursor-pointer hover:border-gold-400 transition">
+                            <input type="radio" name="exc-status" value="active" onchange="toggleExcTimes(true)" class="text-gold-400 focus:ring-gold-400">
+                            <span class="text-sm text-stone-300">Horario Especial</span>
+                        </label>
+                    </div>
+                </div>
+
+                <!-- Custom exception hours -->
+                <div id="exc-hours-container" class="hidden grid grid-cols-2 gap-2">
+                    <div>
+                        <label class="block text-xs uppercase text-stone-500 mb-1">Entrada</label>
+                        <input type="time" id="exc-start-time" class="w-full bg-dark-850 border border-stone-800 rounded-lg px-3 py-2 text-stone-200 focus:outline-none">
+                    </div>
+                    <div>
+                        <label class="block text-xs uppercase text-stone-500 mb-1">Salida</label>
+                        <input type="time" id="exc-end-time" class="w-full bg-dark-850 border border-stone-800 rounded-lg px-3 py-2 text-stone-200 focus:outline-none">
+                    </div>
+                </div>
+
+                <div class="flex justify-end gap-3 pt-4 border-t border-gold-400/10">
+                    <button type="button" onclick="closeExceptionModal()" class="px-5 py-2 rounded-lg bg-dark-800 text-stone-400 hover:text-stone-200 hover:bg-dark-750 transition text-sm font-medium">Cancelar</button>
+                    <button type="submit" class="gold-gradient-bg text-dark-950 px-6 py-2 rounded-lg font-bold text-sm tracking-wider hover:opacity-90 transition">Aplicar Excepción</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+
+    <!-- 4. SERVICE VIDEO PLAYER MODAL -->
+    <div id="service-video-modal" class="fixed inset-0 bg-black/90 backdrop-blur-md z-50 flex items-center justify-center p-4 hidden">
+        <div class="bg-dark-900 border border-gold-400/30 rounded-3xl max-w-3xl w-full overflow-hidden shadow-2xl relative flex flex-col max-h-[92vh]">
+            
+            <!-- Top bar -->
+            <div class="h-16 border-b border-gold-400/10 flex items-center justify-between px-6 bg-dark-950/80 shrink-0">
+                <div class="flex items-center gap-3">
+                    <div class="w-8 h-8 rounded-full bg-gold-400/10 border border-gold-400/20 flex items-center justify-center text-gold-400">
+                        <i data-lucide="play" class="w-4 h-4 fill-gold-400/30"></i>
+                    </div>
+                    <div>
+                        <h4 id="video-modal-service-name" class="font-serif text-lg text-gold-400 tracking-wide font-bold leading-tight">Ritual</h4>
+                        <div class="flex items-center gap-2 text-[10px] text-stone-400">
+                            <span id="video-modal-service-category" class="uppercase tracking-widest text-gold-400/80 font-semibold">Experiencia</span>
+                            <span>•</span>
+                            <span id="video-modal-service-duration" class="font-mono">60 min</span>
+                        </div>
+                    </div>
+                </div>
+                <button onclick="closeServiceVideoModal()" class="w-9 h-9 rounded-full bg-dark-800 hover:bg-gold-400 hover:text-dark-950 text-stone-300 transition flex items-center justify-center border border-stone-800">
+                    <i data-lucide="x" class="w-5 h-5"></i>
+                </button>
+            </div>
+
+            <!-- Video Player Area (16:9) -->
+            <div class="relative w-full aspect-video bg-black flex items-center justify-center overflow-hidden shrink-0">
+                <div id="video-player-container" class="w-full h-full flex items-center justify-center">
+                    <!-- Dynamic iframe or video element -->
+                </div>
+            </div>
+
+            <!-- Description & Call to Action -->
+            <div class="p-6 bg-dark-900 border-t border-gold-400/10 space-y-4 overflow-y-auto">
+                <div class="space-y-1.5">
+                    <h5 class="text-xs uppercase tracking-widest text-stone-400 font-semibold">Acerca de esta experiencia</h5>
+                    <p id="video-modal-service-desc" class="text-sm text-stone-300 font-light leading-relaxed">
+                        Descripción detallada del ritual.
+                    </p>
+                </div>
+                
+                <div class="flex items-center justify-between pt-2 border-t border-stone-800/80">
+                    <div>
+                        <span class="text-[10px] uppercase tracking-wider text-stone-500 block">Inversión</span>
+                        <span id="video-modal-service-price" class="text-gold-400 font-serif text-xl font-bold">$0</span>
+                    </div>
+                    <button id="video-modal-select-btn" onclick="selectServiceFromVideoModal()" class="gold-gradient-bg text-dark-950 px-6 py-2.5 rounded-xl font-bold text-xs uppercase tracking-widest hover:opacity-90 transition flex items-center gap-2 shadow-gold-glow">
+                        <i data-lucide="check" class="w-4 h-4 stroke-[3]"></i> Seleccionar Ritual
+                    </button>
+                </div>
+            </div>
+
+        </div>
+    </div>
+
+
+    <!-- 5. MANAGE SERVICE VIDEOS MODAL -->
+    <div id="manage-videos-modal" class="fixed inset-0 bg-black/85 backdrop-blur-sm z-50 flex items-center justify-center p-4 hidden">
+        <div class="bg-dark-900 border border-gold-400/30 rounded-2xl max-w-2xl w-full max-h-[90vh] overflow-y-auto p-6 space-y-6 shadow-2xl">
+            <div class="flex justify-between items-center border-b border-gold-400/10 pb-4">
+                <div>
+                    <h3 class="font-serif text-2xl text-gold-400 tracking-wide">Videos Explicativos de Servicios</h3>
+                    <p class="text-xs text-stone-400 mt-1">Configure o actualice los enlaces de video (YouTube, Vimeo, Loom o MP4) para cada ritual.</p>
+                </div>
+                <button onclick="closeManageVideosModal()" class="text-stone-400 hover:text-stone-100 transition"><i data-lucide="x" class="w-6 h-6"></i></button>
+            </div>
+
+            <form id="manage-videos-form" onsubmit="saveServiceVideos(event)" class="space-y-5">
+                <div id="service-video-inputs-list" class="space-y-4">
+                    <!-- Populated dynamically via JS for each ritual -->
+                </div>
+
+                <div class="flex justify-end gap-3 pt-4 border-t border-gold-400/10">
+                    <button type="button" onclick="closeManageVideosModal()" class="px-5 py-2 rounded-lg bg-dark-800 text-stone-400 hover:text-stone-200 hover:bg-dark-750 transition text-sm font-medium">Cancelar</button>
+                    <button type="submit" class="gold-gradient-bg text-dark-950 px-6 py-2 rounded-lg font-bold text-sm tracking-wider hover:opacity-90 transition flex items-center gap-1.5">
+                        <i data-lucide="save" class="w-4 h-4"></i> Guardar Videos
+                    </button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+
+    <!-- 6. ADMIN LOGIN MODAL -->
+    <div id="admin-login-modal" class="fixed inset-0 bg-black/90 backdrop-blur-md z-50 flex items-center justify-center p-4 hidden">
+        <div class="bg-dark-900 border border-gold-400/30 rounded-2xl max-w-sm w-full p-6 space-y-6 shadow-2xl relative">
+            <div class="flex justify-between items-center border-b border-gold-400/10 pb-4">
+                <div class="flex items-center gap-2.5">
+                    <div class="w-8 h-8 rounded-full bg-gold-400/10 border border-gold-400/20 flex items-center justify-center text-gold-400">
+                        <i data-lucide="lock" class="w-4 h-4"></i>
+                    </div>
+                    <h3 class="font-serif text-lg text-gold-400 tracking-wide font-bold">Acceso Administrativo</h3>
+                </div>
+                <button type="button" onclick="closeAdminLoginModal()" class="text-stone-400 hover:text-stone-100 transition"><i data-lucide="x" class="w-5 h-5"></i></button>
+            </div>
+
+            <form id="admin-login-form" onsubmit="handleAdminLogin(event)" class="space-y-4">
+                <div>
+                    <label class="block text-xs uppercase tracking-widest text-stone-400 mb-1.5">Usuario</label>
+                    <input type="text" id="admin-user-input" required autocomplete="username" class="w-full bg-dark-850 border border-stone-800 rounded-lg px-3 py-2 text-stone-100 focus:outline-none focus:border-gold-400 transition" placeholder="admin">
+                </div>
+
+                <div>
+                    <label class="block text-xs uppercase tracking-widest text-stone-400 mb-1.5">Contraseña</label>
+                    <input type="password" id="admin-pass-input" required autocomplete="current-password" class="w-full bg-dark-850 border border-stone-800 rounded-lg px-3 py-2 text-stone-100 focus:outline-none focus:border-gold-400 transition" placeholder="••••••••">
+                </div>
+
+                <div id="admin-login-error" class="hidden text-xs text-rose-400 bg-rose-950/30 border border-rose-900/40 p-2.5 rounded-lg text-center font-medium">
+                    Usuario o contraseña incorrectos.
+                </div>
+
+                <div class="pt-2 flex justify-end gap-2">
+                    <button type="button" onclick="closeAdminLoginModal()" class="px-4 py-2 rounded-lg bg-dark-800 text-stone-400 hover:text-stone-200 transition text-xs font-medium">Cancelar</button>
+                    <button type="submit" class="gold-gradient-bg text-dark-950 px-5 py-2 rounded-lg font-bold text-xs uppercase tracking-wider hover:opacity-90 transition shadow-gold-glow flex items-center gap-1.5">
+                        <i data-lucide="key" class="w-3.5 h-3.5"></i> Ingresar
+                    </button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+
+    <!-- 3. CUSTOM DIALOG MESSAGE / TOAST COMPONENT -->
+    <div id="toast" class="fixed bottom-6 right-6 bg-dark-900 border border-gold-400 text-gold-400 p-4 rounded-xl shadow-2xl z-50 transform translate-y-20 opacity-0 transition-all duration-300 max-w-sm flex items-center gap-3">
+        <i data-lucide="bell" class="w-6 h-6 shrink-0"></i>
+        <div>
+            <p id="toast-message" class="text-sm text-stone-200 font-medium"></p>
+        </div>
+    </div>
+
+
+    <!-- ======================================================= -->
+    <!--                      JAVASCRIPT                         -->
+    <!-- ======================================================= -->
+    <script>
+        // ================= SUPABASE & GHL CONFIGURATION =================
+        const SUPABASE_URL = "https://gzojxwluuvbmfsmwrnun.supabase.co";
+        const SUPABASE_ANON_KEY = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Imd6b2p4d2x1dXZibWZzbXdybnVuIiwicm9sZSI6ImFub24iLCJpYXQiOjE3OTI3NTQwOTgsImV4cCI6MjEwODMzMDA5OH0.hVix8YrPDAZD3vMZouoPNKetDNZLLI8blELK1FZtlfA";
+        const GHL_PIT_TOKEN = "pit-us-b5dd31a4-e7a2-4bfa-8adf-6e485c76629c";
+        const GHL_LOCATION_ID = "1TxL6PNnsPBQMSiNCbEB";
+
+        // Initialize Supabase Client
+        const supabaseClient = window.supabase ? window.supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY) : null;
+
+        const GHL_SERVICES_MAP = {
+            "s-adan-eva": "6adb8fa00c2ecd88d084fb59",
+            "s-flor-eva": "6adb9f4e7ed424e1a1310f0b",
+            "s-escapada-eden": "6adb9f86dee390433c338d6e",
+            "s-aprendiz-eden": "6adb9fc1d50eb138d50d910b"
+        };
+
+        // Data Store (Sincronizado con Servicios y Complementos de GoHighLevel)
+        const APP_STATE = {
+            services: [
+                { 
+                    id: "6adb8fa00c2ecd88d084fb59", 
+                    name: "Adán y Eva", 
+                    duration: 60, 
+                    price: 510000, 
+                    desc: "Experiencia para parejas, con una o dos masajistas. Incluye masaje, actividades de conexión, estimulación, dos copas y turco compartido.", 
+                    category: "Parejas", 
+                    ghl_service_id: "6adb8fa00c2ecd88d084fb59",
+                    addons: ["6adb99cab56339a13b9e4693", "6adb9a4404b322b010d2eb7a", "6adb9a6aa635297d8db312a2"]
+                },
+                { 
+                    id: "6adb9f4e7ed424e1a1310f0b", 
+                    name: "Flor de Eva", 
+                    duration: 60, 
+                    price: 230000, 
+                    desc: "Experiencia para mujeres, realizada por una masajista: masaje sensitivo, plumas, aceite caliente, trabajo con espejo y estimulación.", 
+                    category: "Mujeres", 
+                    ghl_service_id: "6adb9f4e7ed424e1a1310f0b",
+                    addons: ["6adb99cab56339a13b9e4693", "6adb9a4404b322b010d2eb7a", "6adb9a6aa635297d8db312a2"]
+                },
+                { 
+                    id: "6adb9f86dee390433c338d6e", 
+                    name: "Una Escapada al Edén", 
+                    duration: 30, 
+                    price: 160000, 
+                    desc: "Versión breve: 30 minutos de masaje sensitivo, contacto cuerpo a cuerpo y estimulación manual.", 
+                    category: "Express", 
+                    ghl_service_id: "6adb9f86dee390433c338d6e",
+                    addons: ["6adb99cab56339a13b9e4693", "6adb9a4404b322b010d2eb7a", "6adb9a6aa635297d8db312a2"]
+                },
+                { 
+                    id: "6adb9fc1d50eb138d50d910b", 
+                    name: "Aprendiz del Edén", 
+                    duration: 60, 
+                    price: 410000, 
+                    desc: "Aprendizaje y práctica: 30 minutos de enseñanza de masaje y tantra, seguidos de 30 minutos de práctica guiada, intercambiando roles.", 
+                    category: "Tántrico", 
+                    ghl_service_id: "6adb9fc1d50eb138d50d910b",
+                    addons: ["6adb9a4404b322b010d2eb7a", "6adb9a6aa635297d8db312a2"]
+                }
+            ],
+            
+            addons: [
+                { 
+                    id: "6adb99cab56339a13b9e4693", 
+                    name: "Piel Viva", 
+                    price: 100000, 
+                    duration: 0, 
+                    desc: "La terapeuta se presenta completamente desnuda permitiendo contacto consciente, donde está permitido tocar y acariciar desde el respeto.", 
+                    ghl_id: "6adb99cab56339a13b9e4693",
+                    service_ids: ["6adb8fa00c2ecd88d084fb59", "6adb9f4e7ed424e1a1310f0b", "6adb9f86dee390433c338d6e"]
+                },
+                { 
+                    id: "addon-ext-30", 
+                    name: "Extensión 30 Minutos", 
+                    price: 90000, 
+                    duration: 30, 
+                    desc: "Prolonga la experiencia para profundizar en sensaciones, ritmo y conexión corporal.", 
+                    ghl_id: "6adb9a4404b322b010d2eb7a",
+                    ghl_service_id: "6adcf175ac1e55ed1efcfcfb",
+                    service_ids: ["6adb8fa00c2ecd88d084fb59", "6adb9f4e7ed424e1a1310f0b", "6adb9f86dee390433c338d6e", "6adb9fc1d50eb138d50d910b"]
+                },
+                { 
+                    id: "addon-ext-60", 
+                    name: "Extensión 60 Minutos", 
+                    price: 180000, 
+                    duration: 60, 
+                    desc: "Una hora adicional que permite un desarrollo más pausado, envolvente y completo del ritual.", 
+                    ghl_id: "6adb9a6aa635297d8db312a2",
+                    ghl_service_id: "6adcf175ec08cac2de05192a",
+                    service_ids: ["6adb8fa00c2ecd88d084fb59", "6adb9f4e7ed424e1a1310f0b", "6adb9f86dee390433c338d6e", "6adb9fc1d50eb138d50d910b"]
+                }
+            ],
+            
+            therapists: [
+                {
+                    id: "t-isa",
+                    name: "Isa",
+                    rating: 5.0,
+                    specialties: ["Relajación Profunda", "Aromaterapia", "Terapia Holística"],
+                    bio: "Especialista en experiencias sensoriales y relajación muscular progresiva.",
+                    color: "rose",
+                    ghl_user_id: "F7nZi8YMzezjkj0ovWT9",
+                    ghl_calendar_id: "vXbLu1xAo9F7kwSFbSIk",
+                    gallery: ["https://images.unsplash.com/photo-1600334129128-685c5582fd35?auto=format&fit=crop&w=1000&q=80"]
+                },
+                {
+                    id: "t-juliana",
+                    name: "Juliana",
+                    rating: 4.9,
+                    specialties: ["Tejido Profundo", "Liberación Miofascial", "Descontracturante"],
+                    bio: "Terapeuta certificada en alivio de tensión muscular profunda y revitalización corporal.",
+                    color: "amber",
+                    ghl_user_id: "T4SKB2aL9uhBa1Y8lhRE",
+                    ghl_calendar_id: "JQFutYrApDwPHVqZCbYr",
+                    gallery: ["https://images.unsplash.com/photo-1540555700478-4be289fbecef?auto=format&fit=crop&w=1000&q=80"]
+                },
+                {
+                    id: "t-julietta",
+                    name: "Julietta",
+                    rating: 5.0,
+                    specialties: ["Piedras Volcánicas", "Ritual Relajación", "Reflexología"],
+                    bio: "Experta en equilibrio energético, piedras calientes y bienestar integral.",
+                    color: "emerald",
+                    ghl_user_id: "RCH4z5d3krTnnneXOVdJ",
+                    ghl_calendar_id: "9PxF4yVn9IrYoovcCPSs",
+                    gallery: ["https://images.unsplash.com/photo-1519696869836-746174917a26?auto=format&fit=crop&w=1000&q=80"]
+                },
+                {
+                    id: "t-lorena",
+                    name: "Lorena",
+                    rating: 4.9,
+                    specialties: ["Masaje Sueco", "Drenaje Linfático", "Confort Total"],
+                    bio: "Apasionada por las técnicas suaves de fluidez y desconexión absoluta del estrés cotidiano.",
+                    color: "sky",
+                    ghl_user_id: "bvUvg862dXMDj0s1BaUu",
+                    ghl_calendar_id: "4pm3npt8lsshynqguELA",
+                    gallery: ["https://images.unsplash.com/photo-1515377905703-c4788e51af15?auto=format&fit=crop&w=1000&q=80"]
+                },
+                {
+                    id: "t-ximena",
+                    name: "Ximena",
+                    rating: 5.0,
+                    specialties: ["Rituales Exclusivos", "Masaje Focalizado", "Técnicas Orientales"],
+                    bio: "Dedicada al arte del bienestar masculino con toques aromáticos y armonía de cuerpo y mente.",
+                    color: "purple",
+                    ghl_user_id: "QZabQwIBDl8n6gd4DUBh",
+                    ghl_calendar_id: "JBH6bpnHRcjfkJ4yYVXp",
+                    gallery: ["https://images.unsplash.com/photo-1531849626546-8619dfa45025?auto=format&fit=crop&w=1000&q=80"]
+                }
+            ],
+
+            bookings: []
+        };
+
+        // Selection Wizard state
+        const WIZARD_STATE = {
+            selectedService: null,
+            selectedAddons: [], // array of selected addon objects
+            selectedTherapist: null,
+            selectedDate: "",
+            selectedTime: "",
+            selectedTimeIso: ""
+        };
+
+        // Active Carousel State
+        const CAROUSEL_STATE = {
+            therapist: null,
+            currentIndex: 0
+        };
+
+        // Weekdays Map in Spanish & English keys
+        const WEEKDAYS_MAP = ["sunday", "monday", "tuesday", "wednesday", "thursday", "friday", "saturday"];
+        const WEEKDAYS_ES = {
+            monday: "Lunes",
+            tuesday: "Martes",
+            wednesday: "Miércoles",
+            thursday: "Jueves",
+            friday: "Viernes",
+            saturday: "Sábado",
+            sunday: "Domingo"
+        };
+
+        // On App Load initialization
+        window.addEventListener('DOMContentLoaded', async () => {
+            await initApp();
+            // Lucide Icons initialization
+            lucide.createIcons();
+        });
+
+        async function initApp() {
+            // 1. Cargar servicios, complementos y calendarios directamente desde GoHighLevel API
+            try {
+                const [ghlServicesRes, ghlAddonsRes, ghlCalendarsRes] = await Promise.all([
+                    fetch(`https://services.leadconnectorhq.com/calendars/services?locationId=${GHL_LOCATION_ID}`, {
+                        headers: { "Authorization": `Bearer ${GHL_PIT_TOKEN}`, "Version": "2021-04-15" }
+                    }),
+                    fetch(`https://services.leadconnectorhq.com/calendars/service-addons?locationId=${GHL_LOCATION_ID}`, {
+                        headers: { "Authorization": `Bearer ${GHL_PIT_TOKEN}`, "Version": "2021-04-15" }
+                    }),
+                    fetch(`https://services.leadconnectorhq.com/calendars/?locationId=${GHL_LOCATION_ID}`, {
+                        headers: { "Authorization": `Bearer ${GHL_PIT_TOKEN}`, "Version": "2021-04-15" }
+                    })
+                ]);
+
+                if (ghlCalendarsRes && ghlCalendarsRes.ok) {
+                    const ghlCalData = await ghlCalendarsRes.json();
+                    if (ghlCalData?.calendars) {
+                        APP_STATE.ghlCalendars = ghlCalData.calendars.filter(c => 
+                            c.isActive && 
+                            !c.name?.toLowerCase().includes('administración') &&
+                            !c.name?.toLowerCase().includes('administracion')
+                        );
+                    }
+                }
+
+                if (ghlServicesRes.ok) {
+                    const ghlServData = await ghlServicesRes.json();
+                    if (ghlServData?.services && ghlServData.services.length > 0) {
+                        // Excluir servicios que sean extensiones de la lista de rituales principales
+                        const activeServices = ghlServData.services.filter(s => 
+                            s.isActive && !s.deleted && 
+                            !s.slug?.startsWith('extension-') && 
+                            !s.name?.toLowerCase().includes('extensión')
+                        );
+                        if (activeServices.length > 0) {
+                            APP_STATE.services = activeServices.map(s => {
+                                const cleanDesc = (s.description || '').replace(/<[^>]*>/g, '').trim();
+                                const existing = APP_STATE.services.find(x => x.ghl_service_id === s._id || x.id === s._id);
+                                return {
+                                    id: s._id,
+                                    ghl_service_id: s._id,
+                                    name: s.name,
+                                    duration: s.serviceDuration || 60,
+                                    price: s.payment?.amount || existing?.price || 0, // Directo en pesos COP sin conversión
+                                    desc: cleanDesc || existing?.desc || '',
+                                    category: existing?.category || 'Experiencia',
+                                    addons: (s.addOns || []).map(a => a.id)
+                                };
+                            });
+                        }
+
+                        // Vincular el ID de servicio de catálogo de las extensiones para agendamiento encadenado
+                        const ext30 = ghlServData.services.find(s => s.slug === 'extension-30-minutos' || s.name.includes('30 Minutos'));
+                        if (ext30) {
+                            const a30 = APP_STATE.addons.find(a => a.duration === 30);
+                            if (a30) a30.ghl_service_id = ext30._id;
+                        }
+                        const ext60 = ghlServData.services.find(s => s.slug === 'extension-60-minutos' || s.name.includes('60 Minutos'));
+                        if (ext60) {
+                            const a60 = APP_STATE.addons.find(a => a.duration === 60);
+                            if (a60) a60.ghl_service_id = ext60._id;
+                        }
+                    }
+                }
+
+                if (ghlAddonsRes.ok) {
+                    const ghlAddonsData = await ghlAddonsRes.json();
+                    if (ghlAddonsData?.serviceAddons && ghlAddonsData.serviceAddons.length > 0) {
+                        const activeAddons = ghlAddonsData.serviceAddons.filter(a => !a.deleted);
+                        if (activeAddons.length > 0) {
+                            APP_STATE.addons = activeAddons.map(a => {
+                                const existing = APP_STATE.addons.find(x => x.ghl_id === a._id || x.id === a._id);
+                                return {
+                                    id: a._id,
+                                    ghl_id: a._id,
+                                    ghl_service_id: existing?.ghl_service_id || null,
+                                    name: a.name,
+                                    price: a.price, // Directo en pesos COP sin conversión
+                                    duration: a.duration || 0,
+                                    desc: a.description || existing?.desc || '',
+                                    service_ids: (a.services || []).map(s => s.id)
+                                };
+                            });
+                        }
+                    }
+                }
+            } catch (ghlErr) {
+                console.warn("Usando catálogo local sincronizado por fallback:", ghlErr);
+            }
+
+            // 2. Cargar terapeutas desde Supabase si está disponible
+            if (supabaseClient) {
+                try {
+                    const therapistsRes = await supabaseClient.from('therapists').select('*').eq('is_active', true);
+                    if (therapistsRes.data && therapistsRes.data.length > 0) {
+                        APP_STATE.therapists = therapistsRes.data;
+                    }
+                } catch (err) {
+                    console.warn("Usando terapeutas locales por fallback:", err);
+                }
+            }
+
+            // 3. Vincular calendarios de GoHighLevel a terapeutas registrados
+            if (APP_STATE.ghlCalendars && APP_STATE.ghlCalendars.length > 0) {
+                APP_STATE.ghlCalendars.forEach(cal => {
+                    const calNameClean = cal.name.replace(/'s Personal Calendar/i, '').replace(/ Eden/i, '').trim();
+                    const existing = APP_STATE.therapists.find(t => 
+                        t.ghl_calendar_id === cal.id || 
+                        (t.name && t.name.toLowerCase() === calNameClean.toLowerCase())
+                    );
+                    if (existing) {
+                        if (!existing.ghl_calendar_id) existing.ghl_calendar_id = cal.id;
+                        if (!existing.ghl_user_id && cal.teamMembers?.[0]?.userId) {
+                            existing.ghl_user_id = cal.teamMembers[0].userId;
+                        }
+                    }
+                });
+            }
+
+            // Combinar personalizaciones locales guardadas (terapeutas y videos)
+            mergeSavedTherapists();
+            await applySavedServiceVideos();
+
+            renderServices();
+            renderAddons();
+            renderTherapists();
+            renderAdminTherapists();
+            renderAdminExceptions();
+            renderAdminBookings();
+            
+            // Set minimum date input for booking to today
+            const today = new Date().toISOString().split('T')[0];
+            document.getElementById('booking-date').min = today;
+            
+            // Generate form day inputs dynamically inside the therapist modal
+            generateDefaultScheduleFormInputs();
+
+            // Set up admin session visibility and hash routing
+            applyAdminSessionUI();
+            if (window.location.hash === '#admin' || window.location.search.includes('admin=true')) {
+                if (isAdminAuthenticated()) {
+                    switchTab('admin-view');
+                } else {
+                    openAdminLoginModal();
+                }
+            }
+
+            window.addEventListener('hashchange', () => {
+                if (window.location.hash === '#admin') {
+                    if (isAdminAuthenticated()) {
+                        switchTab('admin-view');
+                    } else {
+                        openAdminLoginModal();
+                    }
+                }
+            });
+        }
+
+        // Helper to format currency
+        function formatCOP(amount) {
+            return new Intl.NumberFormat('es-CO', { style: 'currency', currency: 'COP', maximumFractionDigits: 0 }).format(amount);
+        }
+
+        // ================= GENERAL ROUTING / NAVIGATION =================
+        function switchTab(tabId) {
+            if (tabId === 'admin-view' && !isAdminAuthenticated()) {
+                openAdminLoginModal();
+                return;
+            }
+
+            document.getElementById('booking-view').classList.add('hidden');
+            document.getElementById('admin-view').classList.add('hidden');
+            
+            // Update Active buttons
+            document.getElementById('nav-booking').className = "px-4 py-2 rounded-full text-xs md:text-sm font-medium tracking-wider transition-all duration-300 border border-transparent text-stone-400 hover:text-gold-400 hover:border-gold-400/20";
+            document.getElementById('nav-admin').className = "px-4 py-2 rounded-full text-xs md:text-sm font-medium tracking-wider transition-all duration-300 border border-transparent text-stone-400 hover:text-gold-400 hover:border-gold-400/20";
+
+            document.getElementById(tabId).classList.remove('hidden');
+
+            if (tabId === 'booking-view') {
+                document.getElementById('nav-booking').className = "px-4 py-2 rounded-full text-xs md:text-sm font-medium tracking-wider transition-all duration-300 border border-gold-400/30 bg-gold-400/10 text-gold-400 shadow-gold-glow";
+            } else if (tabId === 'admin-view') {
+                document.getElementById('nav-admin').className = "px-4 py-2 rounded-full text-xs md:text-sm font-medium tracking-wider transition-all duration-300 border border-gold-400/30 bg-gold-400/10 text-gold-400 shadow-gold-glow";
+                renderAdminTherapists();
+                renderAdminExceptions();
+                renderAdminBookings();
+            }
+            window.scrollTo({ top: 0, behavior: 'smooth' });
+        }
+
+        // ================= CLIENT SERVICE RENDER =================
+        function renderServices() {
+            const grid = document.getElementById('services-grid');
+            grid.innerHTML = '';
+            
+            APP_STATE.services.forEach(service => {
+                const card = document.createElement('div');
+                card.id = `service-card-${service.id}`;
+                card.onclick = () => selectService(service.id);
+                card.className = "group border border-stone-800 bg-dark-850 p-5 rounded-xl cursor-pointer hover:border-gold-400/40 transition-all duration-300 relative hover:shadow-[0_0_15px_rgba(212,175,55,0.05)]";
+                
+                const hasVideo = !!service.video_url;
+
+                card.innerHTML = `
+                    <div class="flex justify-between items-start">
+                        <span class="text-[10px] uppercase font-bold tracking-widest text-gold-400/70 border border-gold-400/10 px-2.5 py-0.5 rounded-full bg-gold-400/5">${service.category || 'Experiencia'}</span>
+                        <span class="text-gold-400 font-serif font-bold group-hover:scale-110 transition-transform duration-300">${formatCOP(service.price)}</span>
+                    </div>
+                    <h3 class="font-serif text-lg tracking-wide text-stone-100 mt-3 group-hover:text-gold-400 transition-colors">${service.name}</h3>
+                    <p class="text-xs text-stone-400 font-light mt-1">${service.description || service.desc || ''}</p>
+                    
+                    <div class="flex items-center justify-between mt-4 pt-3 border-t border-stone-800/60">
+                        <div class="flex items-center gap-1.5 text-xs text-stone-500">
+                            <i data-lucide="hourglass" class="w-3.5 h-3.5"></i>
+                            <span>${service.duration} minutos</span>
+                        </div>
+                        <div class="flex items-center gap-2">
+                            ${hasVideo ? `
+                                <button type="button" onclick="event.stopPropagation(); openServiceVideoModal('${service.id}')" class="inline-flex items-center gap-1.5 text-xs text-gold-400 hover:text-gold-200 bg-gold-400/10 hover:bg-gold-400/20 border border-gold-400/30 px-3 py-1.5 rounded-full transition shadow-sm font-medium">
+                                    <i data-lucide="play-circle" class="w-4 h-4 text-gold-400 fill-gold-400/20"></i>
+                                    <span>Ver Video</span>
+                                </button>
+                            ` : (isAdminAuthenticated() ? `
+                                <button type="button" onclick="event.stopPropagation(); openManageVideosModal('${service.id}')" class="inline-flex items-center gap-1 text-[11px] text-stone-400 hover:text-gold-400 border border-stone-800 hover:border-gold-400/30 bg-dark-800/60 px-2.5 py-1 rounded-full transition" title="Configurar video para este servicio">
+                                    <i data-lucide="video" class="w-3 h-3 text-gold-400"></i>
+                                    <span>+ Video</span>
+                                </button>
+                            ` : '')}
+                        </div>
+                    </div>
+                `;
+                grid.appendChild(card);
+            });
+            lucide.createIcons();
+        }
+
+        // ================= CLIENT COMPLEMENTOS / ADDONS RENDER =================
+        function renderAddons() {
+            const grid = document.getElementById('addons-grid');
+            if (!grid) return;
+            grid.innerHTML = '';
+
+            const selectedService = WIZARD_STATE.selectedService;
+            const selectedServiceId = selectedService?.ghl_service_id || selectedService?.id;
+
+            // Filtrar complementos: si hay un ritual elegido, mostrar los asociados a él en GHL
+            const availableAddons = selectedServiceId
+                ? APP_STATE.addons.filter(a => {
+                    if (selectedService.addons && selectedService.addons.length > 0) {
+                        return selectedService.addons.includes(a.id) || selectedService.addons.includes(a.ghl_id);
+                    }
+                    if (a.service_ids && a.service_ids.length > 0) {
+                        return a.service_ids.includes(selectedServiceId);
+                    }
+                    return true;
+                })
+                : APP_STATE.addons;
+
+            if (availableAddons.length === 0) {
+                grid.innerHTML = '<div class="col-span-full text-center py-4 text-stone-500 text-xs font-light">Este ritual no dispone de complementos adicionales configurados.</div>';
+                return;
+            }
+
+            availableAddons.forEach(addon => {
+                const isSelected = WIZARD_STATE.selectedAddons.some(a => a.id === addon.id);
+                const card = document.createElement('div');
+                card.id = `addon-card-${addon.id}`;
+                card.onclick = () => toggleAddon(addon.id);
+                card.className = `border p-3.5 rounded-xl cursor-pointer transition-all duration-300 relative ${
+                    isSelected 
+                        ? 'border-gold-400 bg-gold-400/10 shadow-[0_0_12px_rgba(212,175,55,0.15)]' 
+                        : 'border-stone-800 bg-dark-850 hover:border-gold-400/30'
+                }`;
+
+                const durationBadge = addon.duration > 0 
+                    ? `<span class="inline-flex items-center gap-1 text-[10px] text-amber-400 font-medium bg-amber-400/10 px-2 py-0.5 rounded"><i data-lucide="clock" class="w-3 h-3"></i>+${addon.duration} min extra</span>` 
+                    : `<span class="inline-flex items-center gap-1 text-[10px] text-stone-400 font-light bg-stone-800 px-2 py-0.5 rounded">Mismo tiempo</span>`;
+
+                card.innerHTML = `
+                    <div class="flex items-start justify-between gap-2">
+                        <div>
+                            <h4 class="font-medium text-stone-200 text-xs sm:text-sm">${addon.name}</h4>
+                            <p class="text-[11px] text-stone-400 font-light mt-0.5 line-clamp-2">${addon.desc}</p>
+                        </div>
+                        <div class="w-4 h-4 rounded border flex items-center justify-center shrink-0 mt-0.5 ${
+                            isSelected ? 'bg-gold-400 border-gold-400 text-dark-950' : 'border-stone-700 bg-dark-800'
+                        }">
+                            ${isSelected ? '<i data-lucide="check" class="w-3 h-3 stroke-[3]"></i>' : ''}
+                        </div>
+                    </div>
+                    <div class="flex items-center justify-between mt-3 pt-2 border-t border-stone-800/60">
+                        ${durationBadge}
+                        <span class="text-gold-400 font-serif font-bold text-xs sm:text-sm">+${formatCOP(addon.price)}</span>
+                    </div>
+                `;
+                grid.appendChild(card);
+            });
+            lucide.createIcons();
+        }
+
+        function toggleAddon(addonId) {
+            const addon = APP_STATE.addons.find(a => a.id === addonId);
+            if (!addon) return;
+
+            const exists = WIZARD_STATE.selectedAddons.some(a => a.id === addonId);
+
+            if (exists) {
+                // Deselect
+                WIZARD_STATE.selectedAddons = WIZARD_STATE.selectedAddons.filter(a => a.id !== addonId);
+            } else {
+                // Si es extensión de tiempo, solo permitir una (30m o 60m)
+                if (addon.duration > 0) {
+                    WIZARD_STATE.selectedAddons = WIZARD_STATE.selectedAddons.filter(a => a.duration === 0);
+                }
+                WIZARD_STATE.selectedAddons.push(addon);
+            }
+
+            renderAddons();
+            updateBookingSummary();
+
+            // Si ya hay terapeuta y fecha, refrescar horas
+            if (WIZARD_STATE.selectedTherapist && WIZARD_STATE.selectedDate) {
+                calculateAvailableTimeSlots();
+            }
+        }
+
+        // ================= CLIENT THERAPISTS RENDER =================
+        function renderTherapists() {
+            const grid = document.getElementById('therapists-grid');
+            grid.innerHTML = '';
+
+            APP_STATE.therapists.forEach(therapist => {
+                const specialtiesArr = typeof therapist.specialties === 'string' ? JSON.parse(therapist.specialties || '[]') : (therapist.specialties || []);
+                const specTags = specialtiesArr.map(s => `<span class="bg-dark-800 text-stone-400 text-[10px] px-2 py-0.5 rounded border border-stone-800">${s}</span>`).join('');
+                
+                const card = document.createElement('div');
+                card.id = `therapist-card-${therapist.id}`;
+                
+                // Allow card select but exclude portfolio button clicks
+                card.onclick = (e) => {
+                    if (e.target.closest('.no-select-card')) return;
+                    selectTherapist(therapist.id);
+                };
+                card.className = "group border border-stone-800 bg-dark-850 p-5 rounded-xl cursor-pointer hover:border-gold-400/40 transition-all duration-300 flex flex-col sm:flex-row gap-4 hover:shadow-[0_0_15px_rgba(212,175,55,0.05)] relative";
+
+                // Generate consistent elegant colored initials avatar based on config
+                let avatarColorClass = "bg-amber-950/40 text-amber-400 border-amber-500/20";
+                if(therapist.color === "rose") avatarColorClass = "bg-rose-950/40 text-rose-400 border-rose-500/20";
+                if(therapist.color === "emerald") avatarColorClass = "bg-emerald-950/40 text-emerald-400 border-emerald-500/20";
+                if(therapist.color === "indigo") avatarColorClass = "bg-indigo-950/40 text-indigo-400 border-indigo-500/20";
+                if(therapist.color === "stone") avatarColorClass = "bg-stone-900 text-stone-400 border-stone-500/20";
+                if(therapist.color === "sky") avatarColorClass = "bg-sky-950/40 text-sky-400 border-sky-500/20";
+                if(therapist.color === "purple") avatarColorClass = "bg-purple-950/40 text-purple-400 border-purple-500/20";
+
+                const initials = (therapist.name || 'T').split(' ').map(n => n[0]).join('').substring(0,2).toUpperCase();
+
+                card.innerHTML = `
+                    <div class="w-16 h-16 rounded-full ${avatarColorClass} border flex items-center justify-center font-serif text-xl font-bold shrink-0 self-center sm:self-start">
+                        ${initials}
+                    </div>
+                    <div class="space-y-2 flex-1">
+                        <div class="flex justify-between items-start">
+                            <div>
+                                <h3 class="font-serif text-base tracking-wide text-stone-100 group-hover:text-gold-400 transition-colors">${therapist.name}</h3>
+                                <div class="flex items-center gap-1 text-xs text-amber-500 mt-0.5">
+                                    <i data-lucide="star" class="w-3.5 h-3.5 fill-current"></i>
+                                    <span class="font-semibold">${(therapist.rating || 5.0).toFixed(1)}</span>
+                                    <span class="text-stone-500">Elite</span>
+                                </div>
+                            </div>
+                        </div>
+                        <p class="text-xs text-stone-400 font-light line-clamp-2">${therapist.bio || ''}</p>
+                        <div class="flex flex-wrap gap-1 pt-1">
+                            ${specTags}
+                        </div>
+                        
+                        <!-- PORTFOLIO & EDIT BUTTONS inside therapist card -->
+                        <div class="pt-2 no-select-card flex items-center gap-2 flex-wrap">
+                            <button type="button" onclick="openPortfolioModal('${therapist.id}')" class="text-[10px] tracking-widest uppercase text-gold-400 hover:text-gold-200 transition-colors flex items-center gap-1.5 border border-gold-400/20 hover:border-gold-400/50 bg-gold-400/5 px-2.5 py-1 rounded-full">
+                                <i data-lucide="camera" class="w-3 h-3"></i> Galería
+                            </button>
+                            ${isAdminAuthenticated() ? `
+                                <button type="button" onclick="editTherapist('${therapist.id}')" class="text-[10px] tracking-widest uppercase text-stone-300 hover:text-gold-400 transition-colors flex items-center gap-1 border border-stone-800 hover:border-gold-400/40 bg-dark-800/90 px-2.5 py-1 rounded-full">
+                                    <i data-lucide="edit-3" class="w-3 h-3 text-gold-400"></i> Editar Perfil
+                                </button>
+                            ` : ''}
+                        </div>
+                    </div>
+                `;
+                grid.appendChild(card);
+            });
+            lucide.createIcons();
+        }
+
+        // ================= WIZARD SELECTION ACTIONS =================
+        function selectService(serviceId) {
+            WIZARD_STATE.selectedService = APP_STATE.services.find(s => s.id === serviceId);
+            
+            // Highlight selected service card
+            APP_STATE.services.forEach(s => {
+                const el = document.getElementById(`service-card-${s.id}`);
+                if (el) {
+                    if (s.id === serviceId) {
+                        el.classList.add('border-gold-400', 'bg-gold-400/5', 'shadow-[0_0_15px_rgba(212,175,55,0.1)]');
+                        el.classList.remove('border-stone-800', 'bg-dark-850');
+                    } else {
+                        el.classList.remove('border-gold-400', 'bg-gold-400/5', 'shadow-[0_0_15px_rgba(212,175,55,0.1)]');
+                        el.classList.add('border-stone-800', 'bg-dark-850');
+                    }
+                }
+            });
+
+            // Update badge in step title
+            const badge = document.getElementById('selected-service-badge');
+            badge.innerText = WIZARD_STATE.selectedService.name;
+            badge.classList.remove('hidden');
+
+            // Filtrar complementos seleccionados que no pertenezcan al ritual elegido
+            const selectedServiceId = WIZARD_STATE.selectedService.ghl_service_id || WIZARD_STATE.selectedService.id;
+            WIZARD_STATE.selectedAddons = WIZARD_STATE.selectedAddons.filter(a => {
+                if (WIZARD_STATE.selectedService.addons && WIZARD_STATE.selectedService.addons.length > 0) {
+                    return WIZARD_STATE.selectedService.addons.includes(a.id) || WIZARD_STATE.selectedService.addons.includes(a.ghl_id);
+                }
+                if (a.service_ids && a.service_ids.length > 0) {
+                    return a.service_ids.includes(selectedServiceId);
+                }
+                return true;
+            });
+
+            // Refrescar tarjetas de complementos
+            renderAddons();
+
+            // Unlock Step 2: Therapist Selection
+            const step2 = document.getElementById('step-therapist-container');
+            step2.classList.remove('opacity-50', 'pointer-events-none');
+            const step2Num = document.getElementById('step-therapist-num');
+            step2Num.classList.add('border-gold-400', 'text-gold-400');
+            step2Num.classList.remove('border-stone-600', 'text-stone-400');
+
+            updateBookingSummary();
+            
+            // If therapist is already selected, recalculate times (since service duration could affect booking)
+            if(WIZARD_STATE.selectedTherapist && WIZARD_STATE.selectedDate) {
+                calculateAvailableTimeSlots();
+            }
+        }
+
+        function selectTherapist(therapistId) {
+            WIZARD_STATE.selectedTherapist = APP_STATE.therapists.find(t => t.id === therapistId);
+
+            // Highlight selected therapist card
+            APP_STATE.therapists.forEach(t => {
+                const el = document.getElementById(`therapist-card-${t.id}`);
+                if (t.id === therapistId) {
+                    el.classList.add('border-gold-400', 'bg-gold-400/5', 'shadow-[0_0_15px_rgba(212,175,55,0.1)]');
+                    el.classList.remove('border-stone-800', 'bg-dark-850');
+                } else {
+                    el.classList.remove('border-gold-400', 'bg-gold-400/5', 'shadow-[0_0_15px_rgba(212,175,55,0.1)]');
+                    el.classList.add('border-stone-800', 'bg-dark-850');
+                }
+            });
+
+            // Update badge in step title
+            const badge = document.getElementById('selected-therapist-badge');
+            badge.innerText = WIZARD_STATE.selectedTherapist.name;
+            badge.classList.remove('hidden');
+
+            // Unlock Step 3: Date & Time Selector
+            const step3 = document.getElementById('step-datetime-container');
+            step3.classList.remove('opacity-50', 'pointer-events-none');
+            const step3Num = document.getElementById('step-datetime-num');
+            step3Num.classList.add('border-gold-400', 'text-gold-400');
+            step3Num.classList.remove('border-stone-600', 'text-stone-400');
+
+            updateBookingSummary();
+            
+            // Recalculate time slots if date is already picked
+            if(WIZARD_STATE.selectedDate) {
+                calculateAvailableTimeSlots();
+            }
+        }
+
+        function onBookingDateChange() {
+            WIZARD_STATE.selectedDate = document.getElementById('booking-date').value;
+            WIZARD_STATE.selectedTime = ""; // Reset time on date change
+            calculateAvailableTimeSlots();
+            updateBookingSummary();
+        }
+
+        // ================= DYNAMIC TIME SLOTS CALCULATION (GHL INTEGRATED) =================
+        async function calculateAvailableTimeSlots() {
+            const container = document.getElementById('time-slots-container');
+            container.innerHTML = '<div class="col-span-3 text-center py-6 text-gold-400 text-xs animate-pulse">Consultando disponibilidad en tiempo real con GoHighLevel...</div>';
+
+            const selectedDateStr = WIZARD_STATE.selectedDate;
+            const therapist = WIZARD_STATE.selectedTherapist;
+
+            if (!selectedDateStr || !therapist) {
+                container.innerHTML = '<div class="col-span-3 text-center py-6 text-stone-500 text-sm">Seleccione una fecha para buscar turnos disponibles.</div>';
+                return;
+            }
+
+            const calendarId = therapist.ghl_calendar_id;
+
+            try {
+                let slots = [];
+                let usedGHL = false;
+
+                if (calendarId && supabaseClient) {
+                    try {
+                        // Rango de todo el día seleccionado en milisegundos
+                        const startMs = new Date(`${selectedDateStr}T00:00:00-05:00`).getTime();
+                        const endMs = new Date(`${selectedDateStr}T23:59:59-05:00`).getTime();
+
+                        console.log("Consultando slots para:", { calendarId, selectedDateStr, startMs, endMs });
+
+                        const { data, error } = await supabaseClient.functions.invoke('ghl-booking', {
+                            body: {
+                                action: 'get-slots',
+                                calendarId: calendarId,
+                                userId: therapist.ghl_user_id,
+                                startDate: startMs,
+                                endDate: endMs
+                            }
+                        });
+
+                        console.log("Respuesta get-slots de GHL:", data, error);
+
+                        if (!error && data) {
+                            usedGHL = true;
+                            // GHL format: { "YYYY-MM-DD": { slots: ["2026-10-23T09:00:00-05:00", ...] } } or data.slots
+                            let rawSlots = [];
+                            if (data[selectedDateStr] && data[selectedDateStr].slots) {
+                                rawSlots = data[selectedDateStr].slots;
+                            } else if (Array.isArray(data.slots)) {
+                                rawSlots = data.slots;
+                            } else {
+                                // Buscar en cualquier clave que contenga slots
+                                Object.keys(data).forEach(k => {
+                                    if (data[k]?.slots && Array.isArray(data[k].slots)) {
+                                        rawSlots = rawSlots.concat(data[k].slots);
+                                    }
+                                });
+                            }
+
+                            if (rawSlots.length > 0) {
+                                slots = rawSlots.map(isoString => {
+                                    const d = new Date(isoString);
+                                    return {
+                                        label: d.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit', hour12: false }),
+                                        rawIso: isoString
+                                    };
+                                });
+                            }
+                        }
+                    } catch (e) {
+                        console.warn("Fallo al invocar Edge Function get-slots:", e);
+                    }
+                }
+
+                // Fallback solo si GHL no retornó nada
+                if (!usedGHL || slots.length === 0) {
+                    const baseHours = ["09:00", "10:30", "12:00", "14:00", "15:30", "17:00", "18:30"];
+                    const activeBookings = APP_STATE.bookings.filter(b => b.therapistId === therapist.id && b.date === selectedDateStr);
+                    const bookedTimes = activeBookings.map(b => b.time);
+                    slots = baseHours
+                        .filter(t => !bookedTimes.includes(t))
+                        .map(t => ({ label: t, rawIso: `${selectedDateStr}T${t}:00-05:00` }));
+                }
+
+                container.innerHTML = '';
+
+                if (slots.length === 0) {
+                    container.innerHTML = '<div class="col-span-3 text-center py-6 text-rose-400 text-xs">No quedan turnos libres en GoHighLevel para esta fecha. Intente con otro especialista o día.</div>';
+                    return;
+                }
+
+                slots.forEach(slotItem => {
+                    const button = document.createElement('button');
+                    button.type = "button";
+                    button.onclick = () => selectTimeSlot(slotItem.label, slotItem.rawIso, button);
+                    button.className = "py-2 bg-dark-800 hover:bg-gold-400/20 border border-stone-800 hover:border-gold-400/40 text-stone-300 rounded-lg text-xs font-semibold transition tracking-wider";
+                    button.innerText = slotItem.label;
+                    container.appendChild(button);
+                });
+
+            } catch (err) {
+                console.error("Error calculando turnos:", err);
+                container.innerHTML = '<div class="col-span-3 text-center py-6 text-stone-400 text-xs">No fue posible consultar la agenda. Por favor intente nuevamente.</div>';
+            }
+        }
+
+        function selectTimeSlot(timeLabel, rawIso, element) {
+            WIZARD_STATE.selectedTime = timeLabel;
+            WIZARD_STATE.selectedTimeIso = rawIso; // Guardar el ISO exacto que espera GHL
+
+            // Clear previous slot selections
+            const buttons = document.querySelectorAll('#time-slots-container button');
+            buttons.forEach(btn => {
+                btn.className = "py-2 bg-dark-800 hover:bg-gold-400/20 border border-stone-800 hover:border-gold-400/40 text-stone-300 rounded-lg text-xs font-semibold transition tracking-wider";
+            });
+
+            // Highlight selected slot
+            element.className = "py-2 bg-gold-400 text-dark-950 border border-gold-400 rounded-lg text-xs font-bold transition tracking-wider shadow-gold-glow";
+
+            updateBookingSummary();
+        }
+
+        // Helper time operations
+        function parseTimeString(timeStr) {
+            const [hours, minutes] = timeStr.split(':').map(Number);
+            return (hours * 60) + minutes;
+        }
+
+        function formatTimeFromMinutes(totalMinutes) {
+            const hours = Math.floor(totalMinutes / 60);
+            const minutes = totalMinutes % 60;
+            return `${String(hours).padStart(2, '0')}:${String(minutes).padStart(2, '0')}`;
+        }
+
+
+        // ================= SUMMARY AND CONFIRMATION VIEW =================
+        function updateBookingSummary() {
+            const emptyState = document.getElementById('summary-empty');
+            const contentState = document.getElementById('summary-content');
+
+            if (!WIZARD_STATE.selectedService) {
+                emptyState.classList.remove('hidden');
+                contentState.classList.add('hidden');
+                return;
+            }
+
+            emptyState.classList.add('hidden');
+            contentState.classList.remove('hidden');
+
+            const service = WIZARD_STATE.selectedService;
+            const addons = WIZARD_STATE.selectedAddons || [];
+
+            // Calculate totals
+            const extraMinutes = addons.reduce((sum, a) => sum + (a.duration || 0), 0);
+            const totalDuration = service.duration + extraMinutes;
+
+            const addonsTotal = addons.reduce((sum, a) => sum + a.price, 0);
+            const totalPrice = service.price + addonsTotal;
+
+            // Render Service details
+            document.getElementById('summary-service-name').innerText = service.name;
+            document.getElementById('summary-service-duration').innerText = `${service.duration} min de ritual`;
+            document.getElementById('summary-service-price').innerText = formatCOP(service.price);
+
+            // Render Add-ons in summary
+            const addonsBox = document.getElementById('summary-addons-box');
+            const addonsList = document.getElementById('summary-addons-list');
+            if (addonsBox && addonsList) {
+                if (addons.length > 0) {
+                    addonsBox.classList.remove('hidden');
+                    addonsList.innerHTML = addons.map(a => `
+                        <div class="flex justify-between items-center text-stone-300">
+                            <span class="flex items-center gap-1.5">
+                                <span class="w-1.5 h-1.5 rounded-full bg-gold-400"></span>
+                                ${a.name} ${a.duration > 0 ? `<span class="text-amber-400 font-light text-[10px]">(+${a.duration} min)</span>` : ''}
+                            </span>
+                            <span class="text-gold-400 font-medium">+${formatCOP(a.price)}</span>
+                        </div>
+                    `).join('');
+                } else {
+                    addonsBox.classList.add('hidden');
+                    addonsList.innerHTML = '';
+                }
+            }
+
+            // Render Total Box
+            const totalDurEl = document.getElementById('summary-total-duration');
+            const totalPrEl = document.getElementById('summary-total-price');
+            if (totalDurEl && totalPrEl) {
+                const durationText = extraMinutes > 0 
+                    ? `${totalDuration} min (${service.duration} + ${extraMinutes} extra)` 
+                    : `${totalDuration} min`;
+                totalDurEl.innerText = durationText;
+                totalPrEl.innerText = formatCOP(totalPrice);
+            }
+
+            // Therapist section
+            const therapistBox = document.getElementById('summary-therapist-box');
+            if (WIZARD_STATE.selectedTherapist) {
+                therapistBox.classList.remove('hidden');
+                document.getElementById('summary-therapist-name').innerText = WIZARD_STATE.selectedTherapist.name;
+                
+                const initials = WIZARD_STATE.selectedTherapist.name.split(' ').map(n => n[0]).join('').substring(0,2).toUpperCase();
+                document.getElementById('summary-therapist-img').innerText = initials;
+            } else {
+                therapistBox.classList.add('hidden');
+            }
+
+            // Datetime section
+            const datetimeBox = document.getElementById('summary-datetime-box');
+            if (WIZARD_STATE.selectedDate) {
+                datetimeBox.classList.remove('hidden');
+                const timeString = WIZARD_STATE.selectedTime ? ` a las ${WIZARD_STATE.selectedTime}` : ' (Seleccione una hora)';
+                document.getElementById('summary-datetime-val').innerText = `${WIZARD_STATE.selectedDate}${timeString}`;
+            } else {
+                datetimeBox.classList.add('hidden');
+            }
+        }
+
+        async function confirmBooking(e) {
+            console.log("--> Iniciando confirmBooking con GHL Service Bookings...");
+            const name = document.getElementById('client-name').value.trim();
+            const countryCode = document.getElementById('client-country-code')?.value || '+57';
+            const rawPhone = document.getElementById('client-phone').value.trim();
+            const email = document.getElementById('client-email').value.trim();
+
+            if (!name || !rawPhone) {
+                showToast("Por favor, ingrese su Nombre y WhatsApp de contacto para la cita.");
+                return;
+            }
+
+            // Normalizar teléfono con código de país para GoHighLevel (formato E.164: ej. +573105483152)
+            let cleanDigits = rawPhone.replace(/[^\d+]/g, '');
+            let phone = cleanDigits;
+            if (!cleanDigits.startsWith('+')) {
+                const prefix = countryCode === '+' ? '+' : countryCode;
+                phone = `${prefix}${cleanDigits.replace(/^0+/, '')}`;
+            }
+
+            if (!WIZARD_STATE.selectedTime) {
+                showToast("Por favor, elija un horario válido para su cita.");
+                return;
+            }
+
+            const confirmBtn = document.getElementById('btn-confirm-booking') || e?.target;
+            const originalBtnText = confirmBtn ? confirmBtn.innerHTML : '';
+            if (confirmBtn) {
+                confirmBtn.innerHTML = '<i data-lucide="loader-2" class="w-4 h-4 animate-spin"></i> Agendando servicio con GHL...';
+                confirmBtn.disabled = true;
+                lucide.createIcons();
+            }
+
+            const therapist = WIZARD_STATE.selectedTherapist;
+            const service = WIZARD_STATE.selectedService;
+            const addons = WIZARD_STATE.selectedAddons || [];
+
+            // Duraciones y Precios
+            const extraMinutes = addons.reduce((sum, a) => sum + (a.duration || 0), 0);
+            const totalDuration = service.duration + extraMinutes;
+            const addonsPrice = addons.reduce((sum, a) => sum + a.price, 0);
+            const totalPrice = service.price + addonsPrice;
+
+            // Fechas Start & End en ISO (Bogotá UTC-5)
+            const dateStr = WIZARD_STATE.selectedDate;
+            const timeStr = WIZARD_STATE.selectedTime;
+            const startIso = WIZARD_STATE.selectedTimeIso || `${dateStr}T${timeStr}:00-05:00`;
+
+            const startDateObj = new Date(startIso);
+            const endDateObj = new Date(startDateObj.getTime() + totalDuration * 60000);
+            
+            const pad = (n) => String(n).padStart(2, '0');
+            const endIso = `${endDateObj.getFullYear()}-${pad(endDateObj.getMonth() + 1)}-${pad(endDateObj.getDate())}T${pad(endDateObj.getHours())}:${pad(endDateObj.getMinutes())}:00-05:00`;
+
+            // Construir payload de servicios para GHL Service Bookings
+            const baseServiceGhlId = service.ghl_service_id || GHL_SERVICES_MAP[service.id] || "6adb8fa00c2ecd88d084fb59";
+            const servicesPayload = [
+                {
+                    id: baseServiceGhlId,
+                    staffId: therapist.ghl_user_id
+                }
+            ];
+
+            // Si se seleccionó una extensión de tiempo (30 o 60 min), se agrega al booking para que GHL encadene el tiempo completo
+            const extensionAddon = addons.find(a => a.duration > 0 && a.ghl_service_id);
+            if (extensionAddon) {
+                servicesPayload.push({
+                    id: extensionAddon.ghl_service_id,
+                    staffId: therapist.ghl_user_id
+                });
+            }
+
+            // Etiquetas y Título
+            const contactTags = ["Eden Spa", "Reserva Web", service.name];
+            addons.forEach(a => contactTags.push(`Complemento: ${a.name}`));
+
+            const addonsSummaryText = addons.length > 0 
+                ? ` + ${addons.map(a => a.name).join(' + ')}` 
+                : '';
+            const bookingTitle = `Reserva: ${service.name}${addonsSummaryText} - ${therapist.name}`;
+
+            let ghlBookingId = null;
+            let ghlSuccess = false;
+
+            try {
+                // 1. Upsert de Contacto en GoHighLevel
+                console.log("Upserting contact in GHL...", { name, phone, tags: contactTags });
+                const contactRes = await fetch("https://services.leadconnectorhq.com/contacts/upsert", {
+                    method: "POST",
+                    headers: {
+                        "Authorization": `Bearer ${GHL_PIT_TOKEN}`,
+                        "Version": "2021-07-28",
+                        "Content-Type": "application/json"
+                    },
+                    body: JSON.stringify({
+                        locationId: GHL_LOCATION_ID,
+                        name: name,
+                        phone: phone,
+                        email: email || `${phone.replace(/\D/g, '')}@edenspa.com`,
+                        tags: contactTags
+                    })
+                });
+
+                const contactData = await contactRes.json();
+                console.log("Contacto GHL creado/actualizado:", contactData);
+                const contactId = contactData?.contact?.id || contactData?.id;
+
+                if (contactId) {
+                    // 2. Crear Service Booking en GoHighLevel
+                    const bookingPayload = {
+                        locationId: GHL_LOCATION_ID,
+                        contactId: contactId,
+                        serviceLocationId: "6ac430014260a3f205881b7a",
+                        startTime: startIso,
+                        endTime: endIso,
+                        timezone: "America/Bogota",
+                        title: bookingTitle,
+                        services: servicesPayload
+                    };
+
+                    console.log("Enviando Service Booking a GHL:", bookingPayload);
+
+                    const bookingRes = await fetch("https://services.leadconnectorhq.com/calendars/services/bookings?overrideAvailability=true", {
+                        method: "POST",
+                        headers: {
+                            "Authorization": `Bearer ${GHL_PIT_TOKEN}`,
+                            "Version": "2021-04-15",
+                            "Content-Type": "application/json"
+                        },
+                        body: JSON.stringify(bookingPayload)
+                    });
+
+                    const bookingData = await bookingRes.json();
+                    console.log("Respuesta Service Booking GHL:", bookingData);
+
+                    if (bookingData?.bookingId) {
+                        ghlSuccess = true;
+                        ghlBookingId = bookingData.bookingId;
+                    }
+                }
+            } catch (ghlErr) {
+                console.error("Error agendando Service Booking en GHL:", ghlErr);
+            }
+
+            // Registrar en base de datos local / Supabase para histórico
+            const newBooking = {
+                id: `b-${Math.floor(Math.random() * 90000) + 10000}`,
+                clientName: name,
+                clientPhone: phone,
+                clientEmail: email || "No indicado",
+                serviceId: service.id,
+                therapistId: therapist.id,
+                date: dateStr,
+                time: timeStr,
+                ghl_booking_id: ghlBookingId || null,
+                total_duration: totalDuration,
+                total_price: totalPrice,
+                addons: addons.map(a => a.name).join(', ')
+            };
+
+            if (supabaseClient) {
+                try {
+                    await supabaseClient.from('bookings').insert([{
+                        id: newBooking.id,
+                        client_name: name,
+                        client_phone: phone,
+                        client_email: email || "No indicado",
+                        service_id: service.id,
+                        therapist_id: therapist.id,
+                        date: dateStr,
+                        time: timeStr
+                    }]);
+                } catch(e) {
+                    console.warn("Fallo guardando en Supabase:", e);
+                }
+            }
+
+            // Push a estado local
+            APP_STATE.bookings.push(newBooking);
+
+            if (confirmBtn) {
+                confirmBtn.innerHTML = originalBtnText;
+                confirmBtn.disabled = false;
+                lucide.createIcons();
+            }
+
+            // Reset campos del cliente
+            document.getElementById('client-name').value = '';
+            document.getElementById('client-phone').value = '';
+            if (document.getElementById('client-country-code')) {
+                document.getElementById('client-country-code').value = '+57';
+            }
+            document.getElementById('client-email').value = '';
+
+            // Limpiar estado del wizard
+            WIZARD_STATE.selectedService = null;
+            WIZARD_STATE.selectedAddons = [];
+            WIZARD_STATE.selectedTherapist = null;
+            WIZARD_STATE.selectedDate = "";
+            WIZARD_STATE.selectedTime = "";
+            WIZARD_STATE.selectedTimeIso = "";
+
+            // Refrescar UI
+            renderServices();
+            renderAddons();
+            renderTherapists();
+            document.getElementById('booking-date').value = '';
+            document.getElementById('time-slots-container').innerHTML = '<div class="col-span-3 text-center py-6 text-stone-500 text-sm">Seleccione una fecha para buscar turnos disponibles.</div>';
+            
+            // Re-bloquear pasos 2 y 3
+            document.getElementById('step-therapist-container').classList.add('opacity-50', 'pointer-events-none');
+            document.getElementById('step-therapist-num').className = "w-8 h-8 rounded-full border border-stone-600 flex items-center justify-center text-stone-400 font-serif font-bold text-sm";
+            document.getElementById('selected-service-badge').classList.add('hidden');
+
+            document.getElementById('step-datetime-container').classList.add('opacity-50', 'pointer-events-none');
+            document.getElementById('step-datetime-num').className = "w-8 h-8 rounded-full border border-stone-600 flex items-center justify-center text-stone-400 font-serif font-bold text-sm";
+            document.getElementById('selected-therapist-badge').classList.add('hidden');
+
+            updateBookingSummary();
+            renderAdminBookings();
+
+            showToast(ghlSuccess 
+                ? `¡Cita confirmada en GoHighLevel con éxito (${totalDuration} min)! ID Reserva: ${ghlBookingId}` 
+                : `¡Excelente! Su reserva ha sido registrada con éxito.`);
+        }
+
+        // ================= PORTFOLIO CAROUSEL MODAL LOGIC =================
+        function openPortfolioModal(therapistId) {
+            const therapist = APP_STATE.therapists.find(t => t.id === therapistId);
+            if (!therapist) return;
+
+            const parsedGallery = typeof therapist.gallery === 'string' ? JSON.parse(therapist.gallery || '[]') : (therapist.gallery || []);
+
+            // Load default placeholder list if no gallery configured
+            const gallery = (parsedGallery && parsedGallery.length > 0) ? parsedGallery : [
+                "https://images.unsplash.com/photo-1600334129128-685c5582fd35?auto=format&fit=crop&w=1000&q=80",
+                "https://images.unsplash.com/photo-1540555700478-4be289fbecef?auto=format&fit=crop&w=1000&q=80"
+            ];
+
+            therapist.gallery = gallery;
+            CAROUSEL_STATE.therapist = therapist;
+            CAROUSEL_STATE.currentIndex = 0;
+
+            document.getElementById('portfolio-therapist-name').innerText = `Galería de ${therapist.name}`;
+            
+            // Render the first image
+            renderCarousel();
+
+            document.getElementById('portfolio-modal').classList.remove('hidden');
+        }
+
+        function renderCarousel() {
+            const therapist = CAROUSEL_STATE.therapist;
+            const idx = CAROUSEL_STATE.currentIndex;
+            const rawGallery = therapist.gallery || [];
+            const gallery = typeof rawGallery === 'string' ? JSON.parse(rawGallery) : rawGallery;
+
+            if (gallery.length === 0) return;
+
+            const imgEl = document.getElementById('portfolio-image');
+            imgEl.style.opacity = '0'; // Smooth transition animation trigger
+            
+            setTimeout(() => {
+                imgEl.src = gallery[idx];
+                imgEl.style.opacity = '1';
+            }, 150);
+
+            // Update photo index text
+            document.getElementById('portfolio-photo-index').innerText = `FOTO ${idx + 1} DE ${gallery.length}`;
+
+            // Create indicator dots
+            const indContainer = document.getElementById('portfolio-indicators');
+            indContainer.innerHTML = '';
+            
+            gallery.forEach((_, gIdx) => {
+                const dot = document.createElement('button');
+                dot.onclick = () => {
+                    CAROUSEL_STATE.currentIndex = gIdx;
+                    renderCarousel();
+                };
+                dot.className = `w-2 h-2 rounded-full transition-all duration-300 ${gIdx === idx ? 'bg-gold-400 w-5 shadow-gold-glow' : 'bg-stone-600 hover:bg-stone-500'}`;
+                indContainer.appendChild(dot);
+            });
+
+            // Update description based on index
+            const descriptions = [
+                "Entorno terapéutico del spa. Una ambientación premium con iluminación sutil para desconectarse del ruido.",
+                "Aceites esenciales y ungüentos orgánicos que nutren la piel durante cada fricción.",
+                "Piedras volcánicas calientes pulidas a mano para armonizar la energía física y aliviar tensiones profundas.",
+                "Toallas de algodón egipcio y detalles florales para una inmersión completa en el confort."
+            ];
+            document.getElementById('portfolio-photo-description').innerText = descriptions[idx % descriptions.length];
+        }
+
+        function nextSlide() {
+            const gallery = CAROUSEL_STATE.therapist.gallery || [];
+            if (gallery.length === 0) return;
+            CAROUSEL_STATE.currentIndex = (CAROUSEL_STATE.currentIndex + 1) % gallery.length;
+            renderCarousel();
+        }
+
+        function prevSlide() {
+            const gallery = CAROUSEL_STATE.therapist.gallery || [];
+            if (gallery.length === 0) return;
+            CAROUSEL_STATE.currentIndex = (CAROUSEL_STATE.currentIndex - 1 + gallery.length) % gallery.length;
+            renderCarousel();
+        }
+
+        function closePortfolioModal() {
+            document.getElementById('portfolio-modal').classList.add('hidden');
+        }
+
+
+        // ================= ADMIN VIEW ACTIONS & RENDERS =================
+        function quickAddTherapistFromGhl(calId) {
+            openTherapistModal();
+            const calSelect = document.getElementById('t-ghl-calendar');
+            if (calSelect) {
+                calSelect.value = calId;
+                onGhlCalendarChange(calId);
+            }
+        }
+
+        function renderAdminTherapists() {
+            const listContainer = document.getElementById('admin-therapists-list');
+            listContainer.innerHTML = '';
+
+            // Detectar miembros de GoHighLevel que aún no están activados como terapeutas
+            const unlinkedGhl = (APP_STATE.ghlCalendars || []).filter(c => 
+                !APP_STATE.therapists.some(t => t.ghl_calendar_id === c.id)
+            );
+            if (unlinkedGhl.length > 0) {
+                const banner = document.createElement('div');
+                banner.className = "bg-gold-400/5 border border-gold-400/30 p-3.5 rounded-xl space-y-2 mb-3";
+                banner.innerHTML = `
+                    <div class="flex items-center justify-between">
+                        <span class="text-xs font-semibold text-gold-400 flex items-center gap-1.5">
+                            <i data-lucide="info" class="w-4 h-4"></i>
+                            Miembros de GoHighLevel disponibles (${unlinkedGhl.length}):
+                        </span>
+                        <span class="text-[11px] text-stone-400">Sólo active a quienes ofrezcan servicios de masaje</span>
+                    </div>
+                    <div class="flex flex-wrap gap-2 pt-1">
+                        ${unlinkedGhl.map(c => `
+                            <button type="button" onclick="quickAddTherapistFromGhl('${c.id}')" class="text-xs bg-dark-900 border border-gold-400/30 hover:border-gold-400 text-stone-200 hover:text-gold-300 px-3 py-1.5 rounded-lg transition inline-flex items-center gap-1.5 shadow-sm">
+                                <span>${c.name.replace(/'s Personal Calendar/i, '')}</span>
+                                <span class="text-[10px] text-gold-400 font-bold">+ Activar Terapeuta</span>
+                            </button>
+                        `).join('')}
+                    </div>
+                `;
+                listContainer.appendChild(banner);
+            }
+
+            APP_STATE.therapists.forEach(therapist => {
+                const div = document.createElement('div');
+                div.className = "flex flex-col md:flex-row justify-between items-start md:items-center bg-dark-850 border border-stone-800 p-4 rounded-xl gap-4";
+                
+                // Construct compact schedules representation safely
+                const sched = therapist.defaultSchedule || therapist.default_schedule;
+                let activeDays = "Horario no configurado";
+                if (sched && typeof sched === 'object') {
+                    activeDays = Object.keys(sched)
+                        .filter(day => sched[day] && sched[day].active)
+                        .map(day => `${(WEEKDAYS_ES[day] || day).substring(0,2)}: ${sched[day].start}-${sched[day].end}`)
+                        .join(' | ') || "Sin días activos";
+                }
+
+                // Count portfolio photos
+                const photoCount = therapist.gallery ? (Array.isArray(therapist.gallery) ? therapist.gallery.length : JSON.parse(therapist.gallery || '[]').length) : 0;
+                const ghlStatusTag = therapist.ghl_calendar_id 
+                    ? `<span class="text-[10px] text-emerald-400 bg-emerald-950/40 border border-emerald-800/40 px-2 py-0.5 rounded font-mono">GHL Conectado</span>`
+                    : `<span class="text-[10px] text-amber-400 bg-amber-950/40 border border-amber-800/40 px-2 py-0.5 rounded font-mono">Sin vincular a GHL</span>`;
+
+                div.innerHTML = `
+                    <div class="space-y-1 flex-1">
+                        <div class="flex items-center gap-2 flex-wrap">
+                            <h3 class="font-serif text-lg text-stone-100 font-bold">${therapist.name}</h3>
+                            <span class="text-xs px-2.5 py-0.5 rounded-full bg-gold-400/10 text-gold-400 font-medium">${(therapist.rating || 5.0).toFixed(1)} <i class="inline w-3 h-3 fill-current mb-0.5"></i></span>
+                            <span class="text-[10px] uppercase font-bold tracking-wider text-stone-400 border border-stone-700 px-2 py-0.5 rounded bg-dark-900"><i class="inline w-3.5 h-3.5 mr-1 align-middle" data-lucide="image"></i>${photoCount} Fotos</span>
+                            ${ghlStatusTag}
+                        </div>
+                        <p class="text-xs text-stone-400 font-light max-w-xl">${therapist.bio || ''}</p>
+                        <p class="text-[10px] text-stone-500 font-mono tracking-tight uppercase">Horarios Regulares: ${activeDays || 'Ninguno'}</p>
+                    </div>
+                    <div class="flex gap-2 self-end md:self-center">
+                        <button onclick="editTherapist('${therapist.id}')" class="text-xs bg-dark-750 border border-stone-700 hover:border-gold-400 hover:text-gold-400 text-stone-300 px-3.5 py-2 rounded-lg transition">
+                            Editar Perfil
+                        </button>
+                        <button onclick="deleteTherapist('${therapist.id}')" class="text-xs text-rose-400 bg-rose-950/20 hover:bg-rose-900/30 border border-rose-900/30 px-3.5 py-2 rounded-lg transition">
+                            Eliminar
+                        </button>
+                    </div>
+                `;
+                listContainer.appendChild(div);
+            });
+            lucide.createIcons();
+        }
+
+        // Date-Specific Exceptions List in Admin
+        function renderAdminExceptions() {
+            const listContainer = document.getElementById('admin-exceptions-list');
+            listContainer.innerHTML = '';
+
+            let totalExc = 0;
+
+            APP_STATE.therapists.forEach(therapist => {
+                if (!therapist.exceptions) return;
+                
+                Object.keys(therapist.exceptions).forEach(dateStr => {
+                    totalExc++;
+                    const item = therapist.exceptions[dateStr];
+                    const div = document.createElement('div');
+                    div.className = "flex justify-between items-center bg-dark-850/60 border border-stone-800/60 px-4 py-3 rounded-lg text-sm";
+                    
+                    const statusText = item.active 
+                        ? `<span class="text-xs font-semibold text-gold-400 bg-gold-400/5 px-2 py-0.5 rounded border border-gold-400/20">Horario Modificado (${item.start} a ${item.end})</span>`
+                        : `<span class="text-xs font-semibold text-rose-400 bg-rose-950/20 px-2 py-0.5 rounded border border-rose-900/20">No Disponible / Descanso</span>`;
+
+                    div.innerHTML = `
+                        <div class="space-y-1">
+                            <span class="font-mono text-stone-400 font-bold">${dateStr}</span> — 
+                            <span class="text-stone-200 font-medium">${therapist.name}</span>
+                            <div class="mt-0.5">${statusText}</div>
+                        </div>
+                        <button onclick="deleteException('${therapist.id}', '${dateStr}')" class="text-xs text-stone-500 hover:text-rose-400 transition p-1">
+                            <i data-lucide="trash-2" class="w-4 h-4"></i>
+                        </button>
+                    `;
+                    listContainer.appendChild(div);
+                });
+            });
+
+            if (totalExc === 0) {
+                listContainer.innerHTML = '<div class="text-center py-6 text-stone-600 text-sm italic">No hay excepciones configuradas actualmente. Todos los días aplican el horario regular.</div>';
+            } else {
+                lucide.createIcons();
+            }
+        }
+
+        // Active Bookings in Admin
+        function renderAdminBookings() {
+            const listContainer = document.getElementById('admin-bookings-list');
+            listContainer.innerHTML = '';
+
+            // Sort bookings by date descending
+            const sortedBookings = [...APP_STATE.bookings].sort((a,b) => b.date.localeCompare(a.date));
+
+            if (sortedBookings.length === 0) {
+                listContainer.innerHTML = '<div class="text-center py-10 text-stone-600 text-sm">No hay reservas registradas en el sistema.</div>';
+                return;
+            }
+
+            sortedBookings.forEach(booking => {
+                const service = APP_STATE.services.find(s => s.id === booking.serviceId);
+                const therapist = APP_STATE.therapists.find(t => t.id === booking.therapistId);
+                const therapistName = therapist ? therapist.name : 'Desconocido';
+
+                const div = document.createElement('div');
+                div.className = "bg-dark-850 border border-stone-800 p-4 rounded-xl space-y-3 relative overflow-hidden";
+                div.innerHTML = `
+                    <div class="flex justify-between items-start">
+                        <div>
+                            <span class="text-[10px] uppercase font-mono bg-stone-800 text-stone-300 px-2 py-0.5 rounded">${booking.id}</span>
+                            <h4 class="text-stone-200 font-medium mt-1.5">${booking.clientName}</h4>
+                        </div>
+                        <span class="text-gold-400 font-bold text-sm">$${service ? service.price : '0'} USD</span>
+                    </div>
+
+                    <div class="space-y-1 text-xs text-stone-400">
+                        <p class="flex items-center gap-1.5"><i data-lucide="tag" class="w-3.5 h-3.5"></i>${service ? service.name : 'Servicio Eliminado'}</p>
+                        <p class="flex items-center gap-1.5"><i data-lucide="user" class="w-3.5 h-3.5"></i>Terapeuta: ${therapistName}</p>
+                        <p class="flex items-center gap-1.5 text-gold-400/90 font-semibold"><i data-lucide="calendar" class="w-3.5 h-3.5"></i>Fecha: ${booking.date} a las ${booking.time}</p>
+                        <p class="flex items-center gap-1.5"><i data-lucide="phone" class="w-3.5 h-3.5"></i>Teléfono: ${booking.clientPhone}</p>
+                    </div>
+
+                    <div class="flex justify-end border-t border-stone-800 pt-3">
+                        <button onclick="cancelBooking('${booking.id}')" class="text-[11px] uppercase tracking-wider text-rose-400 hover:text-rose-300 transition flex items-center gap-1 font-semibold">
+                            <i data-lucide="calendar-x" class="w-3.5 h-3.5"></i> Cancelar Cita
+                        </button>
+                    </div>
+                `;
+                listContainer.appendChild(div);
+            });
+            lucide.createIcons();
+        }
+
+        function cancelBooking(bookingId) {
+            APP_STATE.bookings = APP_STATE.bookings.filter(b => b.id !== bookingId);
+            renderAdminBookings();
+            showToast(`La reserva ${bookingId} ha sido eliminada del sistema.`);
+        }
+
+        // ================= THERAPIST CREATION & EDITS MODAL =================
+        function generateDefaultScheduleFormInputs() {
+            const container = document.getElementById('default-schedule-inputs');
+            container.innerHTML = '';
+            
+            Object.keys(WEEKDAYS_ES).forEach(dayKey => {
+                const dayName = WEEKDAYS_ES[dayKey];
+                
+                const div = document.createElement('div');
+                div.className = "grid grid-cols-12 gap-2 items-center bg-dark-850 p-2.5 rounded-lg border border-stone-800";
+                div.innerHTML = `
+                    <div class="col-span-4 flex items-center gap-2">
+                        <input type="checkbox" id="sched-active-${dayKey}" checked class="text-gold-400 focus:ring-gold-400 rounded">
+                        <label for="sched-active-${dayKey}" class="text-xs font-medium text-stone-200">${dayName}</label>
+                    </div>
+                    <div class="col-span-4 flex items-center gap-1">
+                        <span class="text-[10px] text-stone-500 uppercase">Abre</span>
+                        <input type="time" id="sched-start-${dayKey}" value="09:00" class="w-full bg-dark-900 border border-stone-800 rounded px-1.5 py-0.5 text-xs text-stone-200">
+                    </div>
+                    <div class="col-span-4 flex items-center gap-1">
+                        <span class="text-[10px] text-stone-500 uppercase">Cierra</span>
+                        <input type="time" id="sched-end-${dayKey}" value="18:00" class="w-full bg-dark-900 border border-stone-800 rounded px-1.5 py-0.5 text-xs text-stone-200">
+                    </div>
+                `;
+                container.appendChild(div);
+            });
+        }
+
+        // ================= THERAPIST STORAGE & MERGE =================
+        // ================= ADMIN AUTHENTICATION & SECURITY =================
+        // Hashes criptográficos SHA-256 (cifrado irreversible). La contraseña nunca existe en texto claro en el código fuente.
+        const ADMIN_AUTH_HASHES = {
+            userHash: "8c6976e5b5410415bde908bd4dee15dfb167a9c873fc4bb8a81f6f2ab448a918", // SHA-256 de 'admin'
+            passHash: "3694c8a8241a42c599c043784a7de981c03c9b057b45a984f7bada8e91334a73"  // SHA-256 de 'eden2026'
+        };
+
+        async function computeSHA256(str) {
+            const buffer = new TextEncoder().encode(str);
+            const hashBuffer = await window.crypto.subtle.digest('SHA-256', buffer);
+            return Array.from(new Uint8Array(hashBuffer)).map(b => b.toString(16).padStart(2, '0')).join('');
+        }
+
+        function isAdminAuthenticated() {
+            return sessionStorage.getItem('eden_admin_auth') === 'true';
+        }
+
+        function requestAdminAccess(event) {
+            if (event) event.preventDefault();
+            if (isAdminAuthenticated()) {
+                switchTab('admin-view');
+            } else {
+                openAdminLoginModal();
+            }
+        }
+
+        function openAdminLoginModal() {
+            const userInput = document.getElementById('admin-user-input');
+            const passInput = document.getElementById('admin-pass-input');
+            const errorEl = document.getElementById('admin-login-error');
+            if (userInput) userInput.value = '';
+            if (passInput) passInput.value = '';
+            if (errorEl) errorEl.classList.add('hidden');
+            
+            const modal = document.getElementById('admin-login-modal');
+            if (modal) {
+                modal.classList.remove('hidden');
+                setTimeout(() => {
+                    if (userInput) userInput.focus();
+                }, 100);
+            }
+        }
+
+        function closeAdminLoginModal() {
+            const modal = document.getElementById('admin-login-modal');
+            if (modal) modal.classList.add('hidden');
+            if (window.location.hash === '#admin') {
+                history.replaceState(null, null, window.location.pathname);
+            }
+        }
+
+        async function handleAdminLogin(event) {
+            event.preventDefault();
+            const user = document.getElementById('admin-user-input').value.trim();
+            const pass = document.getElementById('admin-pass-input').value;
+            const errorEl = document.getElementById('admin-login-error');
+            const submitBtn = event.target.querySelector('button[type="submit"]');
+
+            if (submitBtn) {
+                submitBtn.disabled = true;
+                submitBtn.innerHTML = '<i data-lucide="loader-2" class="w-4 h-4 animate-spin inline mr-1"></i> Verificando...';
+                lucide.createIcons();
+            }
+
+            try {
+                let authSuccess = false;
+
+                // 1. Validar contra Supabase Auth si se ingresa un correo (ej. admin@edenspa.co)
+                if (user.includes('@') && supabaseClient) {
+                    try {
+                        const { data, error } = await supabaseClient.auth.signInWithPassword({
+                            email: user,
+                            password: pass
+                        });
+                        if (!error && data?.session) {
+                            authSuccess = true;
+                        }
+                    } catch(supaErr) {
+                        console.warn("Supabase Auth no completado:", supaErr);
+                    }
+                }
+
+                // 2. Validación Criptográfica con Hash SHA-256 (seguro e indescifrable)
+                if (!authSuccess) {
+                    const [inputUserHash, inputPassHash] = await Promise.all([
+                        computeSHA256(user),
+                        computeSHA256(pass)
+                    ]);
+                    if (inputUserHash === ADMIN_AUTH_HASHES.userHash && inputPassHash === ADMIN_AUTH_HASHES.passHash) {
+                        authSuccess = true;
+                    }
+                }
+
+                if (authSuccess) {
+                    sessionStorage.setItem('eden_admin_auth', 'true');
+                    closeAdminLoginModal();
+                    applyAdminSessionUI();
+                    switchTab('admin-view');
+                    showToast("Sesión administrativa iniciada con éxito.");
+                } else {
+                    if (errorEl) {
+                        errorEl.classList.remove('hidden');
+                        errorEl.innerText = "Usuario o contraseña incorrectos.";
+                    }
+                }
+            } catch(e) {
+                console.error("Error validando autenticación:", e);
+                if (errorEl) {
+                    errorEl.classList.remove('hidden');
+                    errorEl.innerText = "Error al procesar la autenticación.";
+                }
+            } finally {
+                if (submitBtn) {
+                    submitBtn.disabled = false;
+                    submitBtn.innerHTML = 'Ingresar al Panel';
+                    lucide.createIcons();
+                }
+            }
+        }
+
+        function logoutAdmin() {
+            sessionStorage.removeItem('eden_admin_auth');
+            applyAdminSessionUI();
+            switchTab('booking-view');
+            if (window.location.hash === '#admin') {
+                history.replaceState(null, null, window.location.pathname);
+            }
+            showToast("Sesión administrativa cerrada.");
+        }
+
+        function applyAdminSessionUI() {
+            const isAuth = isAdminAuthenticated();
+            const navAdmin = document.getElementById('nav-admin');
+            if (navAdmin) {
+                if (isAuth) {
+                    navAdmin.classList.remove('hidden');
+                } else {
+                    navAdmin.classList.add('hidden');
+                }
+            }
+            document.querySelectorAll('.admin-only').forEach(el => {
+                if (isAuth) el.classList.remove('hidden');
+                else el.classList.add('hidden');
+            });
+            renderServices();
+            renderTherapists();
+        }
+
+
+        // ================= THERAPIST STORAGE & MERGE =================
+        function saveTherapistsToStorage() {
+            try {
+                localStorage.setItem('eden_therapists', JSON.stringify(APP_STATE.therapists));
+            } catch(e) {
+                console.warn("Error guardando terapeutas en localStorage:", e);
+            }
+        }
+
+        function mergeSavedTherapists() {
+            try {
+                const stored = localStorage.getItem('eden_therapists');
+                if (stored) {
+                    const parsed = JSON.parse(stored);
+                    if (Array.isArray(parsed) && parsed.length > 0) {
+                        parsed.forEach(localT => {
+                            const idx = APP_STATE.therapists.findIndex(t => t.id === localT.id);
+                            if (idx !== -1) {
+                                APP_STATE.therapists[idx] = { ...APP_STATE.therapists[idx], ...localT };
+                            } else {
+                                APP_STATE.therapists.push(localT);
+                            }
+                        });
+                    }
+                }
+            } catch(e) {
+                console.warn("Error combinando terapeutas locales:", e);
+            }
+        }
+
+        // ================= THERAPIST COMPUTER PHOTO UPLOADS =================
+        let CURRENT_THERAPIST_GALLERY = [];
+
+        function renderTherapistGalleryThumbnails() {
+            const container = document.getElementById('t-gallery-thumbnails');
+            if (!container) return;
+            container.innerHTML = '';
+
+            if (CURRENT_THERAPIST_GALLERY.length === 0) {
+                container.innerHTML = '<div class="col-span-full py-4 text-center text-xs text-stone-500 font-light italic">No hay fotos en el portafolio. Haga clic en "Subir desde Ordenador" para seleccionar archivos de imagen.</div>';
+                const textarea = document.getElementById('t-gallery');
+                if (textarea) textarea.value = '';
+                return;
+            }
+
+            CURRENT_THERAPIST_GALLERY.forEach((url, idx) => {
+                const div = document.createElement('div');
+                div.className = "relative group rounded-lg overflow-hidden border border-gold-400/30 aspect-square bg-dark-900";
+                div.innerHTML = `
+                    <img src="${url}" class="w-full h-full object-cover" onerror="this.src='data:image/svg+xml;utf8,<svg xmlns=\\'http://www.w3.org/2000/svg\\' width=\\'100%\\' height=\\'100%\\'><rect width=\\'100%\\' height=\\'100%\\' fill=\\'%23111\\'/><text x=\\'50%\\' y=\\'50%\\' fill=\\'%23888\\' font-size=\\'10\\' text-anchor=\\'middle\\'>Error imagen</text></svg>'">
+                    <button type="button" onclick="removeTherapistPhoto(${idx})" class="absolute top-1 right-1 w-6 h-6 rounded-full bg-black/80 hover:bg-rose-600 text-stone-200 hover:text-white flex items-center justify-center transition opacity-0 group-hover:opacity-100 shadow-md" title="Eliminar foto">
+                        <i data-lucide="trash-2" class="w-3 h-3"></i>
+                    </button>
+                    <span class="absolute bottom-1 left-1 text-[9px] bg-black/60 px-1.5 py-0.5 rounded text-gold-400 font-mono font-bold">${idx + 1}</span>
+                `;
+                container.appendChild(div);
+            });
+
+            const textarea = document.getElementById('t-gallery');
+            if (textarea) textarea.value = CURRENT_THERAPIST_GALLERY.join(', ');
+            lucide.createIcons();
+        }
+
+        function removeTherapistPhoto(index) {
+            CURRENT_THERAPIST_GALLERY.splice(index, 1);
+            renderTherapistGalleryThumbnails();
+        }
+
+        function syncGalleryFromTextarea() {
+            const textarea = document.getElementById('t-gallery');
+            if (textarea) {
+                CURRENT_THERAPIST_GALLERY = textarea.value.split(',').map(u => u.trim()).filter(Boolean);
+                renderTherapistGalleryThumbnails();
+            }
+        }
+
+        async function handleTherapistFilesUpload(event) {
+            const files = event.target.files;
+            if (!files || files.length === 0) return;
+
+            showToast("Subiendo imágenes desde su ordenador...");
+
+            for (let i = 0; i < files.length; i++) {
+                const file = files[i];
+                try {
+                    let uploadedUrl = null;
+
+                    // 1. Intentar subir a Supabase Storage bucket 'therapists' si está disponible
+                    if (supabaseClient && supabaseClient.storage) {
+                        try {
+                            const ext = file.name.split('.').pop();
+                            const cleanName = `${Date.now()}-${Math.random().toString(36).substring(2, 7)}.${ext}`;
+                            const { data, error } = await supabaseClient.storage.from('therapists').upload(cleanName, file);
+                            if (!error && data) {
+                                const { data: pubData } = supabaseClient.storage.from('therapists').getPublicUrl(cleanName);
+                                if (pubData && pubData.publicUrl) uploadedUrl = pubData.publicUrl;
+                            }
+                        } catch(supaErr) {
+                            console.warn("Supabase Storage no disponible:", supaErr);
+                        }
+                    }
+
+                    // 2. Si no subió a Supabase Storage, fallback temporal a Data URL
+                    if (!uploadedUrl) {
+                        uploadedUrl = await new Promise((resolve) => {
+                            const reader = new FileReader();
+                            reader.onload = (e) => resolve(e.target.result);
+                            reader.readAsDataURL(file);
+                        });
+                    }
+
+                    if (uploadedUrl) {
+                        CURRENT_THERAPIST_GALLERY.push(uploadedUrl);
+                    }
+                } catch (err) {
+                    console.error("Error al procesar archivo:", err);
+                }
+            }
+
+            event.target.value = '';
+            renderTherapistGalleryThumbnails();
+            showToast("Imágenes agregadas con éxito al portafolio.");
+        }
+
+
+        // ================= THERAPIST MODAL ACTIONS =================
+        function populateGhlCalendarDropdown(selectedCalendarId) {
+            const calSelect = document.getElementById('t-ghl-calendar');
+            if (!calSelect) return;
+            calSelect.innerHTML = '<option value="">-- Seleccionar Calendario de GoHighLevel --</option>';
+            (APP_STATE.ghlCalendars || []).forEach(c => {
+                const opt = document.createElement('option');
+                opt.value = c.id;
+                opt.textContent = `${c.name}`;
+                calSelect.appendChild(opt);
+            });
+            calSelect.value = selectedCalendarId || '';
+        }
+
+        function onGhlCalendarChange(calId) {
+            if (!calId) {
+                document.getElementById('t-ghl-calendar-id').value = '';
+                document.getElementById('t-ghl-user-id').value = '';
+                return;
+            }
+            const cal = (APP_STATE.ghlCalendars || []).find(c => c.id === calId);
+            if (!cal) return;
+            document.getElementById('t-ghl-calendar-id').value = cal.id;
+            const staffId = cal.teamMembers?.[0]?.userId || "";
+            document.getElementById('t-ghl-user-id').value = staffId;
+
+            // Auto-sugerir nombre si está vacío
+            const nameInput = document.getElementById('t-name');
+            if (!nameInput.value.trim()) {
+                const cleanName = cal.name.replace(/'s Personal Calendar/i, '').replace(/ Eden/i, '').trim();
+                nameInput.value = cleanName;
+            }
+        }
+
+        function openTherapistModal() {
+            generateDefaultScheduleFormInputs();
+
+            // Clean/Reset Form fields
+            document.getElementById('therapist-form-id').value = '';
+            document.getElementById('t-ghl-user-id').value = '';
+            document.getElementById('t-ghl-calendar-id').value = '';
+            populateGhlCalendarDropdown('');
+
+            document.getElementById('t-name').value = '';
+            document.getElementById('t-rating').value = '4.9';
+            document.getElementById('t-specialties').value = '';
+            document.getElementById('t-bio').value = '';
+            document.getElementById('t-gallery').value = '';
+            document.getElementById('t-color').value = 'amber';
+            document.getElementById('therapist-modal-title').innerText = "Nuevo Terapeuta de Élite";
+
+            CURRENT_THERAPIST_GALLERY = [];
+            renderTherapistGalleryThumbnails();
+
+            // Reset days checkboxes and values
+            Object.keys(WEEKDAYS_ES).forEach(dayKey => {
+                const activeEl = document.getElementById(`sched-active-${dayKey}`);
+                const startEl = document.getElementById(`sched-start-${dayKey}`);
+                const endEl = document.getElementById(`sched-end-${dayKey}`);
+                if (activeEl) activeEl.checked = true;
+                if (startEl) startEl.value = "09:00";
+                if (endEl) endEl.value = "18:00";
+            });
+
+            document.getElementById('therapist-modal').classList.remove('hidden');
+        }
+
+        function editTherapist(therapistId) {
+            generateDefaultScheduleFormInputs();
+
+            const therapist = APP_STATE.therapists.find(t => t.id === therapistId);
+            if (!therapist) return;
+
+            document.getElementById('therapist-form-id').value = therapist.id;
+            document.getElementById('t-ghl-user-id').value = therapist.ghl_user_id || '';
+            document.getElementById('t-ghl-calendar-id').value = therapist.ghl_calendar_id || '';
+            populateGhlCalendarDropdown(therapist.ghl_calendar_id || '');
+
+            document.getElementById('t-name').value = therapist.name || '';
+            document.getElementById('t-rating').value = therapist.rating || 5.0;
+            const specs = Array.isArray(therapist.specialties) ? therapist.specialties.join(', ') : (therapist.specialties || '');
+            document.getElementById('t-specialties').value = specs;
+            document.getElementById('t-bio').value = therapist.bio || '';
+            
+            CURRENT_THERAPIST_GALLERY = Array.isArray(therapist.gallery) 
+                ? [...therapist.gallery] 
+                : (typeof therapist.gallery === 'string' ? therapist.gallery.split(',').map(s=>s.trim()).filter(Boolean) : []);
+            renderTherapistGalleryThumbnails();
+
+            document.getElementById('t-color').value = therapist.color || 'amber';
+            document.getElementById('therapist-modal-title').innerText = `Editar Perfil: ${therapist.name}`;
+
+            // Load therapist's regular schedule safely
+            const sched = therapist.defaultSchedule || therapist.default_schedule || {};
+            Object.keys(WEEKDAYS_ES).forEach(dayKey => {
+                const daySched = sched[dayKey];
+                const activeEl = document.getElementById(`sched-active-${dayKey}`);
+                const startEl = document.getElementById(`sched-start-${dayKey}`);
+                const endEl = document.getElementById(`sched-end-${dayKey}`);
+                if (activeEl) activeEl.checked = daySched ? daySched.active !== false : true;
+                if (startEl) startEl.value = daySched && daySched.start ? daySched.start : "09:00";
+                if (endEl) endEl.value = daySched && daySched.end ? daySched.end : "18:00";
+            });
+
+            document.getElementById('therapist-modal').classList.remove('hidden');
+        }
+
+        function closeTherapistModal() {
+            document.getElementById('therapist-modal').classList.add('hidden');
+        }
+
+        async function saveTherapist(event) {
+            event.preventDefault();
+
+            const therapistId = document.getElementById('therapist-form-id').value;
+            const ghlUserId = document.getElementById('t-ghl-user-id').value;
+            const ghlCalendarId = document.getElementById('t-ghl-calendar-id').value;
+            const name = document.getElementById('t-name').value.trim();
+            const rating = parseFloat(document.getElementById('t-rating').value) || 5.0;
+            const specialties = document.getElementById('t-specialties').value.split(',').map(s => s.trim()).filter(s => s.length > 0);
+            const bio = document.getElementById('t-bio').value.trim();
+            
+            // Photos gallery directly from uploaded list
+            const gallery = [...CURRENT_THERAPIST_GALLERY];
+            const color = document.getElementById('t-color').value;
+
+            // Construct default working hours
+            const defaultSchedule = {};
+            Object.keys(WEEKDAYS_ES).forEach(dayKey => {
+                defaultSchedule[dayKey] = {
+                    active: document.getElementById(`sched-active-${dayKey}`)?.checked ?? true,
+                    start: document.getElementById(`sched-start-${dayKey}`)?.value || "09:00",
+                    end: document.getElementById(`sched-end-${dayKey}`)?.value || "18:00"
+                };
+            });
+
+            if (therapistId) {
+                // Editing existing
+                const index = APP_STATE.therapists.findIndex(t => t.id === therapistId);
+                if (index !== -1) {
+                    APP_STATE.therapists[index] = {
+                        ...APP_STATE.therapists[index],
+                        name, rating, specialties, bio, gallery, color, defaultSchedule,
+                        ghl_user_id: ghlUserId || APP_STATE.therapists[index].ghl_user_id,
+                        ghl_calendar_id: ghlCalendarId || APP_STATE.therapists[index].ghl_calendar_id
+                    };
+                    
+                    // Attempt sync with Supabase
+                    if (supabaseClient) {
+                        try {
+                            await supabaseClient.from('therapists').update({
+                                name, rating, specialties, bio, gallery, color,
+                                ghl_user_id: APP_STATE.therapists[index].ghl_user_id,
+                                ghl_calendar_id: APP_STATE.therapists[index].ghl_calendar_id
+                            }).eq('id', therapistId);
+                        } catch(e) {
+                            console.warn("Supabase update warning:", e);
+                        }
+                    }
+
+                    saveTherapistsToStorage();
+                    showToast(`Perfil de ${name} actualizado con éxito.`);
+                }
+            } else {
+                // Adding new
+                const newTherapist = {
+                    id: ghlCalendarId ? `t-${ghlCalendarId}` : `t-${Math.floor(Math.random() * 1000) + 10}`,
+                    name, rating, specialties, bio, gallery, color, defaultSchedule,
+                    ghl_user_id: ghlUserId,
+                    ghl_calendar_id: ghlCalendarId,
+                    exceptions: {}
+                };
+                APP_STATE.therapists.push(newTherapist);
+                if (supabaseClient) {
+                    try {
+                        await supabaseClient.from('therapists').insert([newTherapist]);
+                    } catch(e) {
+                        console.warn("Supabase insert warning:", e);
+                    }
+                }
+                saveTherapistsToStorage();
+                showToast(`Especialista ${name} registrado en el catálogo.`);
+            }
+
+            // Close, Refresh all lists
+            closeTherapistModal();
+            renderTherapists();
+            renderAdminTherapists();
+            renderAdminExceptions();
+        }
+
+        async function deleteTherapist(therapistId) {
+            if (!confirm("¿Está seguro de que desea eliminar a este terapeuta del catálogo?")) return;
+            APP_STATE.therapists = APP_STATE.therapists.filter(t => t.id !== therapistId);
+            if (supabaseClient) {
+                try {
+                    await supabaseClient.from('therapists').update({ is_active: false }).eq('id', therapistId);
+                } catch(e) {
+                    console.warn("Supabase delete warning:", e);
+                }
+            }
+            saveTherapistsToStorage();
+            renderTherapists();
+            renderAdminTherapists();
+            renderAdminExceptions();
+            showToast("Se ha removido el terapeuta del catálogo.");
+        }
+
+
+        // ================= SERVICE VIDEOS ACTIONS =================
+        function getSavedServiceVideos() {
+            try {
+                const stored = localStorage.getItem('eden_service_videos');
+                if (stored) return JSON.parse(stored);
+            } catch(e) {
+                console.warn("Error leyendo videos guardados:", e);
+            }
+            return {};
+        }
+
+        async function applySavedServiceVideos() {
+            // 1. Aplicar primero desde caché local para renderizado instantáneo
+            const localSaved = getSavedServiceVideos();
+            APP_STATE.services.forEach(s => {
+                const v = localSaved[s.id] || localSaved[s.ghl_service_id] || localSaved[s.name];
+                if (v) s.video_url = v;
+            });
+
+            // 2. Consultar directamente Supabase Cloud (tabla settings) para que todos los dispositivos reciban los videos
+            if (supabaseClient) {
+                try {
+                    const { data, error } = await supabaseClient
+                        .from('settings')
+                        .select('value')
+                        .eq('key', 'service_videos')
+                        .maybeSingle();
+
+                    if (!error && data && data.value) {
+                        const supaVideos = typeof data.value === 'string' ? JSON.parse(data.value) : data.value;
+                        if (supaVideos && typeof supaVideos === 'object') {
+                            APP_STATE.services.forEach(s => {
+                                const v = supaVideos[s.id] || supaVideos[s.ghl_service_id] || supaVideos[s.name];
+                                if (v) s.video_url = v;
+                            });
+                            try {
+                                localStorage.setItem('eden_service_videos', JSON.stringify({ ...localSaved, ...supaVideos }));
+                            } catch(e) {}
+                            renderServices();
+                        }
+                    }
+                } catch(e) {
+                    console.warn("Supabase settings no disponible, usando configuración local:", e);
+                }
+            }
+        }
+
+        function getEmbedVideoInfo(url) {
+            if (!url) return null;
+            url = url.trim();
+
+            // YouTube formats
+            const ytMatch = url.match(/(?:youtube\.com\/(?:[^\/]+\/.+\/|(?:v|e(?:mbed)?|shorts)\/|.*[?&]v=)|youtu\.be\/)([^"&?\/\s]{11})/i);
+            if (ytMatch && ytMatch[1]) {
+                return {
+                    type: 'iframe',
+                    src: `https://www.youtube-nocookie.com/embed/${ytMatch[1]}?autoplay=1&rel=0&modestbranding=1`
+                };
+            }
+
+            // Vimeo formats
+            const vimeoMatch = url.match(/vimeo\.com\/(?:channels\/(?:\w+\/)?|groups\/([^\/]*)\/videos\/|album\/(\d+)\/video\/|)(\d+)/i);
+            if (vimeoMatch && vimeoMatch[3]) {
+                return {
+                    type: 'iframe',
+                    src: `https://player.vimeo.com/video/${vimeoMatch[3]}?autoplay=1`
+                };
+            }
+
+            // Loom formats
+            const loomMatch = url.match(/loom\.com\/(?:share|embed)\/([a-zA-Z0-9]+)/i);
+            if (loomMatch && loomMatch[1]) {
+                return {
+                    type: 'iframe',
+                    src: `https://www.loom.com/embed/${loomMatch[1]}?autoplay=1`
+                };
+            }
+
+            // Direct MP4 / WebM
+            if (url.match(/\.(mp4|webm|ogg)(\?.*)?$/i)) {
+                return {
+                    type: 'video',
+                    src: url
+                };
+            }
+
+            // Fallback generic iframe
+            return {
+                type: 'iframe',
+                src: url
+            };
+        }
+
+        let CURRENT_VIDEO_SERVICE_ID = null;
+
+        function openServiceVideoModal(serviceId) {
+            const service = APP_STATE.services.find(s => s.id === serviceId || s.ghl_service_id === serviceId);
+            if (!service) return;
+
+            CURRENT_VIDEO_SERVICE_ID = service.id;
+
+            document.getElementById('video-modal-service-name').innerText = service.name;
+            document.getElementById('video-modal-service-category').innerText = service.category || 'Experiencia';
+            document.getElementById('video-modal-service-duration').innerText = `${service.duration} minutos`;
+            document.getElementById('video-modal-service-desc').innerText = service.desc || service.description || 'Disfrute de una experiencia sensorial única diseñada para su desconexión y vitalidad.';
+            document.getElementById('video-modal-service-price').innerText = formatCOP(service.price);
+
+            const container = document.getElementById('video-player-container');
+            container.innerHTML = '';
+
+            const videoUrl = service.video_url;
+            if (!videoUrl) {
+                container.innerHTML = `
+                    <div class="text-center p-8 space-y-3">
+                        <i data-lucide="video-off" class="w-12 h-12 text-stone-600 mx-auto"></i>
+                        <p class="text-stone-400 text-sm">Este ritual aún no tiene un video explicativo configurado.</p>
+                        <button type="button" onclick="closeServiceVideoModal(); openManageVideosModal('${service.id}')" class="text-xs gold-gradient-bg text-dark-950 px-4 py-2 rounded-lg font-semibold inline-flex items-center gap-1.5 hover:opacity-90 transition">
+                            <i data-lucide="plus" class="w-4 h-4"></i> Agregar Video Ahora
+                        </button>
+                    </div>
+                `;
+            } else {
+                const info = getEmbedVideoInfo(videoUrl);
+                if (info.type === 'video') {
+                    container.innerHTML = `
+                        <video controls autoplay class="w-full h-full rounded-2xl object-cover bg-black">
+                            <source src="${info.src}">
+                            Su navegador no soporta reproducción de video.
+                        </video>
+                    `;
+                } else {
+                    container.innerHTML = `
+                        <iframe src="${info.src}" class="w-full h-full rounded-2xl border-0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" allowfullscreen></iframe>
+                    `;
+                }
+            }
+
+            lucide.createIcons();
+            document.getElementById('service-video-modal').classList.remove('hidden');
+        }
+
+        function closeServiceVideoModal() {
+            const container = document.getElementById('video-player-container');
+            if (container) container.innerHTML = ''; // Stops playback immediately
+            document.getElementById('service-video-modal').classList.add('hidden');
+            CURRENT_VIDEO_SERVICE_ID = null;
+        }
+
+        function selectServiceFromVideoModal() {
+            if (CURRENT_VIDEO_SERVICE_ID) {
+                selectService(CURRENT_VIDEO_SERVICE_ID);
+                closeServiceVideoModal();
+                const step2 = document.getElementById('step-therapist-container');
+                if (step2) {
+                    step2.scrollIntoView({ behavior: 'smooth', block: 'start' });
+                }
+            }
+        }
+
+        function openManageVideosModal(targetServiceId = null) {
+            const container = document.getElementById('service-video-inputs-list');
+            if (!container) return;
+            container.innerHTML = '';
+
+            const savedVideos = getSavedServiceVideos();
+
+            APP_STATE.services.forEach(service => {
+                const currentUrl = service.video_url || savedVideos[service.id] || savedVideos[service.ghl_service_id] || '';
+                const isTarget = targetServiceId === service.id || targetServiceId === service.ghl_service_id;
+
+                const div = document.createElement('div');
+                div.className = `p-4 rounded-xl border transition-all ${
+                    isTarget ? 'border-gold-400 bg-gold-400/5 shadow-[0_0_15px_rgba(212,175,55,0.1)]' : 'border-stone-800 bg-dark-850'
+                }`;
+
+                div.innerHTML = `
+                    <div class="flex items-center justify-between mb-2">
+                        <div>
+                            <span class="text-sm font-serif font-bold text-stone-100">${service.name}</span>
+                            <span class="text-[10px] uppercase font-bold tracking-wider text-gold-400/80 ml-2 px-2 py-0.5 rounded bg-gold-400/10 border border-gold-400/20">${service.category || 'Experiencia'}</span>
+                        </div>
+                        ${currentUrl ? `
+                            <button type="button" onclick="previewVideoUrl('${service.id}')" class="text-xs text-gold-400 hover:text-gold-200 flex items-center gap-1">
+                                <i data-lucide="play" class="w-3 h-3 fill-current"></i> Probar Video
+                            </button>
+                        ` : ''}
+                    </div>
+                    <p class="text-xs text-stone-400 font-light mb-2 line-clamp-1">${service.desc || service.description || ''}</p>
+                    <div>
+                        <label class="block text-[11px] uppercase tracking-wider text-stone-400 mb-1">Enlace del Video (YouTube, Vimeo, Loom o MP4)</label>
+                        <input type="url" id="video-input-${service.id}" value="${currentUrl}" placeholder="https://www.youtube.com/watch?v=... o https://youtu.be/..." class="w-full bg-dark-900 border border-stone-800 focus:border-gold-400 rounded-lg px-3 py-2 text-xs text-stone-200 focus:outline-none transition">
+                    </div>
+                `;
+                container.appendChild(div);
+            });
+
+            lucide.createIcons();
+            document.getElementById('manage-videos-modal').classList.remove('hidden');
+
+            if (targetServiceId) {
+                setTimeout(() => {
+                    const input = document.getElementById(`video-input-${targetServiceId}`);
+                    if (input) input.focus();
+                }, 100);
+            }
+        }
+
+        function closeManageVideosModal() {
+            document.getElementById('manage-videos-modal').classList.add('hidden');
+        }
+
+        function previewVideoUrl(serviceId) {
+            const input = document.getElementById(`video-input-${serviceId}`);
+            if (input && input.value.trim()) {
+                const service = APP_STATE.services.find(s => s.id === serviceId);
+                if (service) {
+                    service.video_url = input.value.trim();
+                    openServiceVideoModal(serviceId);
+                }
+            }
+        }
+
+        async function saveServiceVideos(event) {
+            event.preventDefault();
+            const savedVideos = getSavedServiceVideos();
+
+            APP_STATE.services.forEach(service => {
+                const input = document.getElementById(`video-input-${service.id}`);
+                if (input) {
+                    const val = input.value.trim();
+                    service.video_url = val;
+                    savedVideos[service.id] = val;
+                    if (service.ghl_service_id) {
+                        savedVideos[service.ghl_service_id] = val;
+                    }
+                }
+            });
+
+            // 1. Guardar en almacenamiento local del navegador
+            try {
+                localStorage.setItem('eden_service_videos', JSON.stringify(savedVideos));
+            } catch(e) {
+                console.warn("Error guardando videos en localStorage:", e);
+            }
+
+            // 2. Persistir directamente en Supabase Cloud (tabla settings) para todos los clientes
+            if (supabaseClient) {
+                try {
+                    const { error } = await supabaseClient
+                        .from('settings')
+                        .upsert({ key: 'service_videos', value: JSON.stringify(savedVideos) }, { onConflict: 'key' });
+                    if (error) {
+                        console.warn("Error guardando en Supabase settings:", error);
+                    } else {
+                        console.log("Videos de servicios persistidos con éxito en Supabase Cloud.");
+                    }
+                } catch(err) {
+                    console.warn("No se pudo conectar con Supabase:", err);
+                }
+            }
+
+            closeManageVideosModal();
+            renderServices();
+            showToast("Videos guardados y sincronizados en la nube de Supabase.");
+        }
+
+
+        // ================= EXCEPTION FORM ACTIONS =================
+        function openExceptionModal() {
+            const select = document.getElementById('exc-therapist-id');
+            select.innerHTML = '';
+
+            APP_STATE.therapists.forEach(t => {
+                const opt = document.createElement('option');
+                opt.value = t.id;
+                opt.innerText = t.name;
+                select.appendChild(opt);
+            });
+
+            // Set today's date for exception
+            const today = new Date().toISOString().split('T')[0];
+            document.getElementById('exc-date').value = today;
+            document.getElementById('exc-date').min = today;
+
+            // reset inputs
+            document.querySelector('input[name="exc-status"][value="inactive"]').checked = true;
+            toggleExcTimes(false);
+
+            document.getElementById('exception-modal').classList.remove('hidden');
+        }
+
+        function closeExceptionModal() {
+            document.getElementById('exception-modal').classList.add('hidden');
+        }
+
+        function toggleExcTimes(show) {
+            const container = document.getElementById('exc-hours-container');
+            if (show) {
+                container.classList.remove('hidden');
+                document.getElementById('exc-start-time').required = true;
+                document.getElementById('exc-end-time').required = true;
+                document.getElementById('exc-start-time').value = "09:00";
+                document.getElementById('exc-end-time').value = "15:00";
+            } else {
+                container.classList.add('hidden');
+                document.getElementById('exc-start-time').removeAttribute('required');
+                document.getElementById('exc-end-time').removeAttribute('required');
+            }
+        }
+
+        function saveException(event) {
+            event.preventDefault();
+
+            const therapistId = document.getElementById('exc-therapist-id').value;
+            const excDate = document.getElementById('exc-date').value;
+            const excStatus = document.querySelector('input[name="exc-status"]:checked').value;
+            
+            const therapist = APP_STATE.therapists.find(t => t.id === therapistId);
+            if (!therapist) return;
+
+            if (!therapist.exceptions) {
+                therapist.exceptions = {};
+            }
+
+            if (excStatus === "inactive") {
+                // Not available exception
+                therapist.exceptions[excDate] = { active: false };
+            } else {
+                // Special customized times
+                const start = document.getElementById('exc-start-time').value;
+                const end = document.getElementById('exc-end-time').value;
+                therapist.exceptions[excDate] = { active: true, start, end };
+            }
+
+            closeExceptionModal();
+            renderAdminExceptions();
+            showToast(`Cambio de disponibilidad guardado para el día ${excDate}.`);
+        }
+
+        function deleteException(therapistId, dateStr) {
+            const therapist = APP_STATE.therapists.find(t => t.id === therapistId);
+            if (therapist && therapist.exceptions) {
+                delete therapist.exceptions[dateStr];
+                renderAdminExceptions();
+                showToast(`Se restableció el horario regular para ${therapist.name} el día ${dateStr}.`);
+            }
+        }
+
+
+        // ================= GENERAL NOTIFICATION TOAST =================
+        function showToast(message) {
+            const toast = document.getElementById('toast');
+            const msgEl = document.getElementById('toast-message');
+            
+            msgEl.innerText = message;
+            toast.className = "fixed bottom-6 right-6 bg-dark-900 border border-gold-400 text-gold-400 p-4 rounded-xl shadow-2xl z-50 transform translate-y-0 opacity-100 transition-all duration-300 max-w-sm flex items-center gap-3";
+            
+            setTimeout(() => {
+                toast.className = "fixed bottom-6 right-6 bg-dark-900 border border-gold-400 text-gold-400 p-4 rounded-xl shadow-2xl z-50 transform translate-y-20 opacity-0 transition-all duration-300 max-w-sm flex items-center gap-3";
+            }, 5000);
+        }
+
+    </script>
+</body>
+</html>

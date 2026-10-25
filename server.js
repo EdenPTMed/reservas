@@ -88,6 +88,29 @@ app.post('/api/settings', async (req, res) => {
     }
 });
 
+// SERVICE VIDEOS (Persisted in server database)
+app.get('/api/service-videos', async (req, res) => {
+    try {
+        const row = await db.get("SELECT value FROM settings WHERE key = 'service_videos'");
+        res.json(row && row.value ? JSON.parse(row.value) : {});
+    } catch (err) {
+        res.status(500).json({ error: err.message });
+    }
+});
+
+app.post('/api/service-videos', async (req, res) => {
+    try {
+        const videos = req.body;
+        await db.run(
+            "INSERT OR REPLACE INTO settings (key, value) VALUES ('service_videos', ?)",
+            [JSON.stringify(videos || {})]
+        );
+        res.json({ message: "Service videos saved successfully in server database", videos });
+    } catch (err) {
+        res.status(500).json({ error: err.message });
+    }
+});
+
 // 1. SERVICES
 app.get('/api/services', async (req, res) => {
     try {
