@@ -35,6 +35,14 @@ app.use(express.json());
 // Serve static frontend files from 'public' directory
 app.use(express.static(path.join(__dirname, 'public')));
 
+// SPA Catch-all: serve index.html for any non-API GET request (allows /linea-oasis, /linea-edenica, etc.)
+app.get('*', (req, res, next) => {
+    if (req.path.startsWith('/api/') || req.path.startsWith('/uploads/')) {
+        return next();
+    }
+    res.sendFile(path.join(__dirname, 'public', 'index.html'));
+});
+
 // Initialize database before starting server
 let db;
 try {

@@ -206,7 +206,10 @@
                         <div class="flex justify-between items-center mb-6">
                             <div class="flex items-center gap-3">
                                 <span class="w-8 h-8 rounded-full border border-gold-400 flex items-center justify-center text-gold-400 font-serif font-bold text-sm">1</span>
-                                <h2 class="font-serif text-xl tracking-wide text-stone-100">Seleccione el Ritual</h2>
+                                <div>
+                                    <h2 class="font-serif text-xl tracking-wide text-stone-100">Seleccione el Ritual</h2>
+                                    <p id="catalog-category-subtitle" class="hidden text-xs text-gold-400/90 font-medium tracking-wider mt-0.5"></p>
+                                </div>
                             </div>
                             <div class="flex items-center gap-2">
                                 <span id="selected-service-badge" class="hidden text-xs px-3 py-1 rounded-full border border-gold-400/20 bg-gold-400/5 text-gold-400 font-medium"></span>
@@ -534,11 +537,11 @@
                 <input type="hidden" id="t-ghl-calendar-id">
                 
                 <div>
-                    <label class="block text-xs uppercase tracking-widest text-gold-400 font-semibold mb-2">Vincular con Calendario de GoHighLevel</label>
+                    <label class="block text-xs uppercase tracking-widest text-gold-400 font-semibold mb-2">Vincular con Calendario</label>
                     <select id="t-ghl-calendar" onchange="onGhlCalendarChange(this.value)" class="w-full bg-dark-850 border border-stone-800 rounded-lg px-3 py-2 text-stone-200 focus:outline-none focus:border-gold-400 transition cursor-pointer text-sm">
-                        <option value="">-- Seleccionar Calendario de GoHighLevel --</option>
+                        <option value="">-- Seleccionar Calendario del Sistema --</option>
                     </select>
-                    <p class="text-[11px] text-stone-500 mt-1 font-light">Vincula este terapeuta a su calendario real en GoHighLevel para gestionar turnos y recibir citas.</p>
+                    <p class="text-[11px] text-stone-500 mt-1 font-light">Vincula este terapeuta a su calendario para gestionar turnos y recibir citas automáticamente.</p>
                 </div>
                 
                 <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
@@ -818,6 +821,8 @@
         const SUPABASE_ANON_KEY = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Imd6b2p4d2x1dXZibWZzbXdybnVuIiwicm9sZSI6ImFub24iLCJpYXQiOjE3OTI3NTQwOTgsImV4cCI6MjEwODMzMDA5OH0.hVix8YrPDAZD3vMZouoPNKetDNZLLI8blELK1FZtlfA";
         const GHL_PIT_TOKEN = "pit-us-b5dd31a4-e7a2-4bfa-8adf-6e485c76629c";
         const GHL_LOCATION_ID = "1TxL6PNnsPBQMSiNCbEB";
+        const GHL_DEFAULT_CATEGORY_ID = "6ac430014260a3f205881b71"; // LINEA EDÉNICA por defecto
+        let CURRENT_ACTIVE_CATEGORY = null; // Detectada dinámicamente según la URL
 
         // Initialize Supabase Client
         const supabaseClient = window.supabase ? window.supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY) : null;
@@ -964,7 +969,9 @@
                 }
             ],
 
-            bookings: []
+            bookings: [],
+            serviceCategories: [],
+            allServices: []
         };
 
         // Selection Wizard state
@@ -1003,9 +1010,12 @@
         });
 
         async function initApp() {
-            // 1. Cargar servicios, complementos y calendarios directamente desde GoHighLevel API
+            // 1. Cargar categorías, servicios, complementos y calendarios directamente desde GoHighLevel API
             try {
-                const [ghlServicesRes, ghlAddonsRes, ghlCalendarsRes] = await Promise.all([
+                const [ghlCategoriesRes, ghlServicesRes, ghlAddonsRes, ghlCalendarsRes] = await Promise.all([
+                    fetch(`https://services.leadconnectorhq.com/calendars/service-categories?locationId=${GHL_LOCATION_ID}`, {
+                        headers: { "Authorization": `Bearer ${GHL_PIT_TOKEN}`, "Version": "2021-04-15" }
+                    }).catch(() => null),
                     fetch(`https://services.leadconnectorhq.com/calendars/services?locationId=${GHL_LOCATION_ID}`, {
                         headers: { "Authorization": `Bearer ${GHL_PIT_TOKEN}`, "Version": "2021-04-15" }
                     }),
@@ -1016,6 +1026,14 @@
                         headers: { "Authorization": `Bearer ${GHL_PIT_TOKEN}`, "Version": "2021-04-15" }
                     })
                 ]);
+
+                // Guardar categorías de servicios de GoHighLevel
+                if (ghlCategoriesRes && ghlCategoriesRes.ok) {
+                    const catData = await ghlCategoriesRes.json();
+                    if (Array.isArray(catData?.serviceCategories)) {
+                        APP_STATE.serviceCategories = catData.serviceCategories.filter(c => !c.deleted && c.isActive);
+                    }
+                }
 
                 if (ghlCalendarsRes && ghlCalendarsRes.ok) {
                     const ghlCalData = await ghlCalendarsRes.json();
@@ -1038,9 +1056,10 @@
                             !s.name?.toLowerCase().includes('extensión')
                         );
                         if (activeServices.length > 0) {
-                            APP_STATE.services = activeServices.map(s => {
+                            APP_STATE.allServices = activeServices.map(s => {
                                 const cleanDesc = (s.description || '').replace(/<[^>]*>/g, '').trim();
                                 const existing = APP_STATE.services.find(x => x.ghl_service_id === s._id || x.id === s._id);
+                                const catObj = (APP_STATE.serviceCategories || []).find(c => c._id === s.serviceCategoryId);
                                 return {
                                     id: s._id,
                                     ghl_service_id: s._id,
@@ -1048,10 +1067,14 @@
                                     duration: s.serviceDuration || 60,
                                     price: s.payment?.amount || existing?.price || 0, // Directo en pesos COP sin conversión
                                     desc: cleanDesc || existing?.desc || '',
-                                    category: existing?.category || 'Experiencia',
+                                    category: catObj ? catObj.name : (existing?.category || 'Experiencia'),
+                                    serviceCategoryId: s.serviceCategoryId || null,
                                     addons: (s.addOns || []).map(a => a.id)
                                 };
                             });
+
+                            // Filtrar servicios para la categoría activa detectada por URL
+                            filterServicesForActiveCategory();
                         }
 
                         // Vincular el ID de servicio de catálogo de las extensiones para agendamiento encadenado
@@ -1157,13 +1180,126 @@
                     } else {
                         openAdminLoginModal();
                     }
+                } else {
+                    filterServicesForActiveCategory();
+                    renderServices();
                 }
+            });
+
+            window.addEventListener('popstate', () => {
+                filterServicesForActiveCategory();
+                renderServices();
             });
         }
 
         // Helper to format currency
         function formatCOP(amount) {
             return new Intl.NumberFormat('es-CO', { style: 'currency', currency: 'COP', maximumFractionDigits: 0 }).format(amount);
+        }
+
+        // ================= ROUTE & CATEGORY RESOLUTION =================
+        function normalizeSlug(str) {
+            if (!str) return "";
+            return str
+                .toLowerCase()
+                .normalize('NFD')
+                .replace(/[\u0300-\u036f]/g, '')
+                .replace(/[^a-z0-9]+/g, '-')
+                .replace(/^-+|-+$/g, '');
+        }
+
+        function getRequestedCategorySlug() {
+            // 1. Check path (e.g. /linea-oasis or /linea-edenica)
+            const pathParts = window.location.pathname.split('/').filter(Boolean);
+            if (pathParts.length > 0) {
+                const firstPart = pathParts[0].toLowerCase();
+                if (firstPart !== 'index.html' && firstPart !== 'api' && firstPart !== 'uploads') {
+                    return normalizeSlug(firstPart);
+                }
+            }
+            // 2. Check query param (e.g. ?categoria=linea-oasis or ?category=linea-oasis)
+            const params = new URLSearchParams(window.location.search);
+            const queryCat = params.get('categoria') || params.get('category') || params.get('linea');
+            if (queryCat) return normalizeSlug(queryCat);
+
+            // 3. Check hash (e.g. #linea-oasis)
+            if (window.location.hash && window.location.hash !== '#admin') {
+                const cleanHash = window.location.hash.replace(/^#\/?/, '').trim();
+                if (cleanHash) return normalizeSlug(cleanHash);
+            }
+
+            return null;
+        }
+
+        function resolveActiveCategory() {
+            const requested = getRequestedCategorySlug();
+            const categories = APP_STATE.serviceCategories || [];
+
+            if (requested && categories.length > 0) {
+                // Exact or normalized match against slug or category name
+                const matched = categories.find(c => {
+                    const normSlug = normalizeSlug(c.slug);
+                    const normName = normalizeSlug(c.name);
+                    return normSlug === requested || normName === requested ||
+                           normSlug.replace(/^linea-/, '') === requested.replace(/^linea-/, '') ||
+                           normName.replace(/^linea-/, '') === requested.replace(/^linea-/, '');
+                });
+                if (matched) {
+                    CURRENT_ACTIVE_CATEGORY = matched;
+                    return matched;
+                }
+            }
+
+            // Fallback: Default to LINEA EDÉNICA (or first available category)
+            const defaultCat = categories.find(c => c._id === GHL_DEFAULT_CATEGORY_ID || normalizeSlug(c.name).includes('edenica')) || categories[0] || null;
+            CURRENT_ACTIVE_CATEGORY = defaultCat;
+            return defaultCat;
+        }
+
+        function filterServicesForActiveCategory() {
+            const activeCat = resolveActiveCategory();
+            const all = APP_STATE.allServices || [];
+
+            if (!activeCat) {
+                APP_STATE.services = [...all];
+            } else {
+                APP_STATE.services = all.filter(s => s.serviceCategoryId === activeCat._id);
+            }
+
+            // Update section header to reflect current category
+            const subtitleEl = document.getElementById('catalog-category-subtitle');
+            if (subtitleEl && activeCat) {
+                subtitleEl.innerText = `Catálogo Exclusivo: ${activeCat.name}`;
+                subtitleEl.classList.remove('hidden');
+            }
+        }
+
+        // Helper to format time in 12-hour AM/PM format
+        function formatTimeAMPM(timeInput) {
+            if (!timeInput) return "";
+            if (typeof timeInput === 'string' && (timeInput.includes('AM') || timeInput.includes('PM'))) {
+                return timeInput;
+            }
+            if (timeInput instanceof Date) {
+                return timeInput.toLocaleTimeString('en-US', { hour: 'numeric', minute: '2-digit', hour12: true });
+            }
+            if (typeof timeInput === 'string' && timeInput.includes('T')) {
+                const d = new Date(timeInput);
+                if (!isNaN(d.getTime())) {
+                    return d.toLocaleTimeString('en-US', { hour: 'numeric', minute: '2-digit', hour12: true });
+                }
+            }
+            if (typeof timeInput === 'string' && timeInput.includes(':')) {
+                const parts = timeInput.split(':');
+                const h = parseInt(parts[0], 10);
+                const m = parseInt(parts[1], 10) || 0;
+                if (!isNaN(h)) {
+                    const period = h >= 12 ? 'PM' : 'AM';
+                    const h12 = h % 12 === 0 ? 12 : h % 12;
+                    return `${h12}:${String(m).padStart(2, '0')} ${period}`;
+                }
+            }
+            return String(timeInput);
         }
 
         // ================= GENERAL ROUTING / NAVIGATION =================
@@ -1197,6 +1333,19 @@
         function renderServices() {
             const grid = document.getElementById('services-grid');
             grid.innerHTML = '';
+
+            if (!APP_STATE.services || APP_STATE.services.length === 0) {
+                const catName = CURRENT_ACTIVE_CATEGORY?.name || "esta categoría";
+                grid.innerHTML = `
+                    <div class="col-span-1 md:col-span-2 text-center py-10 bg-dark-850/60 border border-stone-800 rounded-xl px-4">
+                        <i data-lucide="sparkles" class="w-8 h-8 text-gold-400/50 mx-auto mb-2"></i>
+                        <p class="text-stone-300 font-serif text-base">No hay servicios disponibles actualmente en ${catName}.</p>
+                        <p class="text-xs text-stone-500 mt-1 font-light">Comuníquese con nosotros para consultar disponibilidad personalizada.</p>
+                    </div>
+                `;
+                lucide.createIcons();
+                return;
+            }
             
             APP_STATE.services.forEach(service => {
                 const card = document.createElement('div');
@@ -1492,10 +1641,10 @@
             updateBookingSummary();
         }
 
-        // ================= DYNAMIC TIME SLOTS CALCULATION (GHL INTEGRATED) =================
+        // ================= DYNAMIC TIME SLOTS CALCULATION =================
         async function calculateAvailableTimeSlots() {
             const container = document.getElementById('time-slots-container');
-            container.innerHTML = '<div class="col-span-3 text-center py-6 text-gold-400 text-xs animate-pulse">Consultando disponibilidad en tiempo real con GoHighLevel...</div>';
+            container.innerHTML = '<div class="col-span-3 text-center py-6 text-gold-400 text-xs animate-pulse">Consultando disponibilidad de turnos...</div>';
 
             const selectedDateStr = WIZARD_STATE.selectedDate;
             const therapist = WIZARD_STATE.selectedTherapist;
@@ -1511,83 +1660,167 @@
                 let slots = [];
                 let usedGHL = false;
 
-                if (calendarId && supabaseClient) {
+                // 1. Intentar consultar turnos libres y eventos directamente de la API
+                if (calendarId && GHL_PIT_TOKEN) {
                     try {
-                        // Rango de todo el día seleccionado en milisegundos
                         const startMs = new Date(`${selectedDateStr}T00:00:00-05:00`).getTime();
                         const endMs = new Date(`${selectedDateStr}T23:59:59-05:00`).getTime();
 
-                        console.log("Consultando slots para:", { calendarId, selectedDateStr, startMs, endMs });
+                        const fetchUrl = `https://services.leadconnectorhq.com/calendars/${calendarId}/free-slots?startDate=${startMs}&endDate=${endMs}`;
+                        const eventsUrl = `https://services.leadconnectorhq.com/calendars/events?locationId=${GHL_LOCATION_ID}&startTime=${startMs}&endTime=${endMs}&userId=${therapist.ghl_user_id || ''}`;
 
-                        const { data, error } = await supabaseClient.functions.invoke('ghl-booking', {
-                            body: {
-                                action: 'get-slots',
-                                calendarId: calendarId,
-                                userId: therapist.ghl_user_id,
-                                startDate: startMs,
-                                endDate: endMs
-                            }
-                        });
+                        const [freeSlotsRes, eventsRes] = await Promise.all([
+                            fetch(fetchUrl, {
+                                headers: { "Authorization": `Bearer ${GHL_PIT_TOKEN}`, "Version": "2021-04-15" }
+                            }).catch(() => null),
+                            (therapist.ghl_user_id ? fetch(eventsUrl, {
+                                headers: { "Authorization": `Bearer ${GHL_PIT_TOKEN}`, "Version": "2021-04-15" }
+                            }).catch(() => null) : Promise.resolve(null))
+                        ]);
 
-                        console.log("Respuesta get-slots de GHL:", data, error);
-
-                        if (!error && data) {
-                            usedGHL = true;
-                            // GHL format: { "YYYY-MM-DD": { slots: ["2026-10-23T09:00:00-05:00", ...] } } or data.slots
-                            let rawSlots = [];
-                            if (data[selectedDateStr] && data[selectedDateStr].slots) {
-                                rawSlots = data[selectedDateStr].slots;
-                            } else if (Array.isArray(data.slots)) {
-                                rawSlots = data.slots;
+                        let rawSlots = [];
+                        if (freeSlotsRes && freeSlotsRes.ok) {
+                            const freeData = await freeSlotsRes.json();
+                            if (freeData[selectedDateStr]?.slots) {
+                                rawSlots = freeData[selectedDateStr].slots;
+                            } else if (Array.isArray(freeData.slots)) {
+                                rawSlots = freeData.slots;
                             } else {
-                                // Buscar en cualquier clave que contenga slots
-                                Object.keys(data).forEach(k => {
-                                    if (data[k]?.slots && Array.isArray(data[k].slots)) {
-                                        rawSlots = rawSlots.concat(data[k].slots);
+                                Object.keys(freeData).forEach(k => {
+                                    if (freeData[k]?.slots && Array.isArray(freeData[k].slots)) {
+                                        rawSlots = rawSlots.concat(freeData[k].slots);
                                     }
                                 });
                             }
+                        }
 
-                            if (rawSlots.length > 0) {
-                                slots = rawSlots.map(isoString => {
-                                    const d = new Date(isoString);
-                                    return {
-                                        label: d.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit', hour12: false }),
-                                        rawIso: isoString
-                                    };
+                        // Si no vino de free-slots directo, intentar función Edge de Supabase
+                        if (rawSlots.length === 0 && supabaseClient) {
+                            try {
+                                const { data } = await supabaseClient.functions.invoke('ghl-booking', {
+                                    body: {
+                                        action: 'get-slots',
+                                        calendarId: calendarId,
+                                        userId: therapist.ghl_user_id,
+                                        startDate: startMs,
+                                        endDate: endMs
+                                    }
                                 });
+                                if (data) {
+                                    if (data[selectedDateStr]?.slots) rawSlots = data[selectedDateStr].slots;
+                                    else if (Array.isArray(data.slots)) rawSlots = data.slots;
+                                }
+                            } catch (_) {}
+                        }
+
+                        // Obtener eventos agendados de la API
+                        let bookedIsoRanges = [];
+                        if (eventsRes && eventsRes.ok) {
+                            const evData = await eventsRes.json();
+                            if (Array.isArray(evData?.events)) {
+                                bookedIsoRanges = evData.events
+                                    .filter(e => !e.deleted && e.appointmentStatus !== 'cancelled')
+                                    .map(e => ({
+                                        startMs: new Date(e.startTime).getTime(),
+                                        endMs: new Date(e.endTime).getTime()
+                                    }));
                             }
                         }
+
+                        // Mapear slots disponibles
+                        if (rawSlots.length > 0) {
+                            usedGHL = true;
+                            slots = rawSlots.map(isoString => {
+                                const d = new Date(isoString);
+                                return {
+                                    timeStr: d.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit', hour12: false }),
+                                    label: formatTimeAMPM(d),
+                                    rawIso: isoString,
+                                    isBooked: false
+                                };
+                            });
+
+                            // Si hay eventos agendados que se solapen con algún slot o que caigan dentro del día, agregarlos marcados como reservados
+                            bookedIsoRanges.forEach(ev => {
+                                const evDate = new Date(ev.startMs);
+                                const evIso = evDate.toISOString();
+                                const evLabel = formatTimeAMPM(evDate);
+                                const existingSlot = slots.find(s => Math.abs(new Date(s.rawIso).getTime() - ev.startMs) < 15 * 60000);
+                                if (existingSlot) {
+                                    existingSlot.isBooked = true;
+                                } else {
+                                    slots.push({
+                                        timeStr: evDate.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit', hour12: false }),
+                                        label: evLabel,
+                                        rawIso: `${selectedDateStr}T${evDate.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit', hour12: false })}:00-05:00`,
+                                        isBooked: true
+                                    });
+                                }
+                            });
+                        }
                     } catch (e) {
-                        console.warn("Fallo al invocar Edge Function get-slots:", e);
+                        console.warn("Fallo consultando slots de la API:", e);
                     }
                 }
 
-                // Fallback solo si GHL no retornó nada
+                // Fallback con baseHours regulares si la API no retornó slots
                 if (!usedGHL || slots.length === 0) {
                     const baseHours = ["09:00", "10:30", "12:00", "14:00", "15:30", "17:00", "18:30"];
                     const activeBookings = APP_STATE.bookings.filter(b => b.therapistId === therapist.id && b.date === selectedDateStr);
                     const bookedTimes = activeBookings.map(b => b.time);
-                    slots = baseHours
-                        .filter(t => !bookedTimes.includes(t))
-                        .map(t => ({ label: t, rawIso: `${selectedDateStr}T${t}:00-05:00` }));
+
+                    slots = baseHours.map(t => {
+                        const isBooked = bookedTimes.includes(t) || bookedTimes.includes(formatTimeAMPM(t));
+                        return {
+                            timeStr: t,
+                            label: formatTimeAMPM(t),
+                            rawIso: `${selectedDateStr}T${t}:00-05:00`,
+                            isBooked: isBooked
+                        };
+                    });
+                } else {
+                    // También verificar reservas locales en APP_STATE.bookings
+                    const localBookings = APP_STATE.bookings.filter(b => b.therapistId === therapist.id && b.date === selectedDateStr);
+                    localBookings.forEach(b => {
+                        const match = slots.find(s => s.timeStr === b.time || s.label === b.time || s.label === formatTimeAMPM(b.time));
+                        if (match) match.isBooked = true;
+                    });
                 }
+
+                // Ordenar cronológicamente
+                slots.sort((a, b) => new Date(a.rawIso).getTime() - new Date(b.rawIso).getTime());
 
                 container.innerHTML = '';
 
                 if (slots.length === 0) {
-                    container.innerHTML = '<div class="col-span-3 text-center py-6 text-rose-400 text-xs">No quedan turnos libres en GoHighLevel para esta fecha. Intente con otro especialista o día.</div>';
+                    container.innerHTML = '<div class="col-span-3 text-center py-6 text-rose-400 text-xs">No hay turnos disponibles para esta fecha. Intente con otro especialista o día.</div>';
                     return;
                 }
 
                 slots.forEach(slotItem => {
-                    const button = document.createElement('button');
-                    button.type = "button";
-                    button.onclick = () => selectTimeSlot(slotItem.label, slotItem.rawIso, button);
-                    button.className = "py-2 bg-dark-800 hover:bg-gold-400/20 border border-stone-800 hover:border-gold-400/40 text-stone-300 rounded-lg text-xs font-semibold transition tracking-wider";
-                    button.innerText = slotItem.label;
-                    container.appendChild(button);
+                    if (slotItem.isBooked) {
+                        // Horario bloqueado con la palabra "Reservado"
+                        const blockedDiv = document.createElement('div');
+                        blockedDiv.className = "py-2 px-1 bg-dark-950/80 border border-rose-900/40 text-stone-500 rounded-lg text-xs font-medium text-center flex flex-col items-center justify-center cursor-not-allowed opacity-60 select-none";
+                        blockedDiv.title = "Este horario ya se encuentra reservado";
+                        blockedDiv.innerHTML = `
+                            <span class="line-through text-stone-500 text-[11px]">${slotItem.label}</span>
+                            <span class="text-[9px] uppercase tracking-wider text-rose-400/90 font-bold flex items-center gap-0.5 mt-0.5">
+                                <i data-lucide="lock" class="w-2.5 h-2.5 inline"></i> Reservado
+                            </span>
+                        `;
+                        container.appendChild(blockedDiv);
+                    } else {
+                        // Horario disponible para seleccionar
+                        const button = document.createElement('button');
+                        button.type = "button";
+                        button.onclick = () => selectTimeSlot(slotItem.label, slotItem.rawIso, button);
+                        button.className = "py-2 bg-dark-800 hover:bg-gold-400/20 border border-stone-800 hover:border-gold-400/40 text-stone-300 rounded-lg text-xs font-semibold transition tracking-wider";
+                        button.innerText = slotItem.label;
+                        container.appendChild(button);
+                    }
                 });
+                lucide.createIcons();
 
             } catch (err) {
                 console.error("Error calculando turnos:", err);
@@ -1701,7 +1934,7 @@
             const datetimeBox = document.getElementById('summary-datetime-box');
             if (WIZARD_STATE.selectedDate) {
                 datetimeBox.classList.remove('hidden');
-                const timeString = WIZARD_STATE.selectedTime ? ` a las ${WIZARD_STATE.selectedTime}` : ' (Seleccione una hora)';
+                const timeString = WIZARD_STATE.selectedTime ? ` a las ${formatTimeAMPM(WIZARD_STATE.selectedTime)}` : ' (Seleccione una hora)';
                 document.getElementById('summary-datetime-val').innerText = `${WIZARD_STATE.selectedDate}${timeString}`;
             } else {
                 datetimeBox.classList.add('hidden');
@@ -1736,7 +1969,7 @@
             const confirmBtn = document.getElementById('btn-confirm-booking') || e?.target;
             const originalBtnText = confirmBtn ? confirmBtn.innerHTML : '';
             if (confirmBtn) {
-                confirmBtn.innerHTML = '<i data-lucide="loader-2" class="w-4 h-4 animate-spin"></i> Agendando servicio con GHL...';
+                confirmBtn.innerHTML = '<i data-lucide="loader-2" class="w-4 h-4 animate-spin"></i> Confirmando y agendando servicio...';
                 confirmBtn.disabled = true;
                 lucide.createIcons();
             }
@@ -1930,7 +2163,7 @@
             renderAdminBookings();
 
             showToast(ghlSuccess 
-                ? `¡Cita confirmada en GoHighLevel con éxito (${totalDuration} min)! ID Reserva: ${ghlBookingId}` 
+                ? `¡Cita confirmada con éxito (${totalDuration} min)! ID Reserva: ${ghlBookingId}` 
                 : `¡Excelente! Su reserva ha sido registrada con éxito.`);
         }
 
@@ -2046,7 +2279,7 @@
                     <div class="flex items-center justify-between">
                         <span class="text-xs font-semibold text-gold-400 flex items-center gap-1.5">
                             <i data-lucide="info" class="w-4 h-4"></i>
-                            Miembros de GoHighLevel disponibles (${unlinkedGhl.length}):
+                            Calendarios disponibles para vincular (${unlinkedGhl.length}):
                         </span>
                         <span class="text-[11px] text-stone-400">Sólo active a quienes ofrezcan servicios de masaje</span>
                     </div>
@@ -2079,8 +2312,8 @@
                 // Count portfolio photos
                 const photoCount = therapist.gallery ? (Array.isArray(therapist.gallery) ? therapist.gallery.length : JSON.parse(therapist.gallery || '[]').length) : 0;
                 const ghlStatusTag = therapist.ghl_calendar_id 
-                    ? `<span class="text-[10px] text-emerald-400 bg-emerald-950/40 border border-emerald-800/40 px-2 py-0.5 rounded font-mono">GHL Conectado</span>`
-                    : `<span class="text-[10px] text-amber-400 bg-amber-950/40 border border-amber-800/40 px-2 py-0.5 rounded font-mono">Sin vincular a GHL</span>`;
+                    ? `<span class="text-[10px] text-emerald-400 bg-emerald-950/40 border border-emerald-800/40 px-2 py-0.5 rounded font-mono">Calendario Conectado</span>`
+                    : `<span class="text-[10px] text-amber-400 bg-amber-950/40 border border-amber-800/40 px-2 py-0.5 rounded font-mono">Sin vincular</span>`;
 
                 div.innerHTML = `
                     <div class="space-y-1 flex-1">
@@ -2180,7 +2413,7 @@
                     <div class="space-y-1 text-xs text-stone-400">
                         <p class="flex items-center gap-1.5"><i data-lucide="tag" class="w-3.5 h-3.5"></i>${service ? service.name : 'Servicio Eliminado'}</p>
                         <p class="flex items-center gap-1.5"><i data-lucide="user" class="w-3.5 h-3.5"></i>Terapeuta: ${therapistName}</p>
-                        <p class="flex items-center gap-1.5 text-gold-400/90 font-semibold"><i data-lucide="calendar" class="w-3.5 h-3.5"></i>Fecha: ${booking.date} a las ${booking.time}</p>
+                        <p class="flex items-center gap-1.5 text-gold-400/90 font-semibold"><i data-lucide="calendar" class="w-3.5 h-3.5"></i>Fecha: ${booking.date} a las ${formatTimeAMPM(booking.time)}</p>
                         <p class="flex items-center gap-1.5"><i data-lucide="phone" class="w-3.5 h-3.5"></i>Teléfono: ${booking.clientPhone}</p>
                     </div>
 
@@ -2508,7 +2741,7 @@
         function populateGhlCalendarDropdown(selectedCalendarId) {
             const calSelect = document.getElementById('t-ghl-calendar');
             if (!calSelect) return;
-            calSelect.innerHTML = '<option value="">-- Seleccionar Calendario de GoHighLevel --</option>';
+            calSelect.innerHTML = '<option value="">-- Seleccionar Calendario del Sistema --</option>';
             (APP_STATE.ghlCalendars || []).forEach(c => {
                 const opt = document.createElement('option');
                 opt.value = c.id;
